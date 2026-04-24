@@ -9,3 +9,7 @@ git push -u origin main
 git remote add origin https://github.com/Pita-box/mai-etek.git
 git branch -M main
 git push -u origin main
+
+git add . – připraví všechny nové a upravené soubory v aktuální složce.
+git commit -m "..." – vytvoří tzv. commit (můžete si upravit text v uvozovkách podle potřeby).
+git push – odešle tyto změny do vašeho repozitáře na GitHubu.

@@ -1,0 +1,44 @@
+
+> chrome-extension@1.0.0 build /Users/mai/Documents/App/Ds/apps/chrome-extension
+> webpack --mode production
+
+Entrypoint main =
+
+ERROR in main
+Module not found: Error: Can't resolve './src' in '/Users/mai/Documents/App/Ds/apps/chrome-extension'
+resolve './src' in '/Users/mai/Documents/App/Ds/apps/chrome-extension'
+  using description file: /Users/mai/Documents/App/Ds/apps/chrome-extension/package.json (relative path: .)
+    Field 'browser' doesn't contain a valid alias configuration
+    using description file: /Users/mai/Documents/App/Ds/apps/chrome-extension/package.json (relative path: ./src)
+      no extension
+        Field 'browser' doesn't contain a valid alias configuration
+        /Users/mai/Documents/App/Ds/apps/chrome-extension/src is not a file
+      .js
+        Field 'browser' doesn't contain a valid alias configuration
+        /Users/mai/Documents/App/Ds/apps/chrome-extension/src.js doesn't exist
+      .json
+        Field 'browser' doesn't contain a valid alias configuration
+        /Users/mai/Documents/App/Ds/apps/chrome-extension/src.json doesn't exist
+      .wasm
+        Field 'browser' doesn't contain a valid alias configuration
+        /Users/mai/Documents/App/Ds/apps/chrome-extension/src.wasm doesn't exist
+      as directory
+        existing directory /Users/mai/Documents/App/Ds/apps/chrome-extension/src
+          using description file: /Users/mai/Documents/App/Ds/apps/chrome-extension/package.json (relative path: ./src)
+            using path: /Users/mai/Documents/App/Ds/apps/chrome-extension/src/index
+              using description file: /Users/mai/Documents/App/Ds/apps/chrome-extension/package.json (relative path: ./src/index)
+                no extension
+                  Field 'browser' doesn't contain a valid alias configuration
+                  /Users/mai/Documents/App/Ds/apps/chrome-extension/src/index doesn't exist
+                .js
+                  Field 'browser' doesn't contain a valid alias configuration
+                  /Users/mai/Documents/App/Ds/apps/chrome-extension/src/index.js doesn't exist
+                .json
+                  Field 'browser' doesn't contain a valid alias configuration
+                  /Users/mai/Documents/App/Ds/apps/chrome-extension/src/index.json doesn't exist
+                .wasm
+                  Field 'browser' doesn't contain a valid alias configuration
+                  /Users/mai/Documents/App/Ds/apps/chrome-extension/src/index.wasm doesn't exist
+
+webpack 5.106.2 compiled with 1 error in 106 ms
+ ELIFECYCLE  Command failed with exit code 1.

@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # ── PostgreSQL (Supabase) ────────────────────
+  supabase-db:
+    image: supabase/postgres:15.1.1.61
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=domsub
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d
+    restart: always
+
+  # ── Redis ────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    restart: always
+
+  # ── MinIO Object Storage ─────────────────────
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"     # API
+      - "9001:9001"     # Console
+    volumes:
+      - minio-data:/data
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data --console-address ":9001"
+    restart: always
+
+volumes:
+  pgdata:
+  redis-data:
+  minio-data:
