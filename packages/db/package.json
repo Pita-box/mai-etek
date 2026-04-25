@@ -1,0 +1,17 @@
+{
+  "name": "@maietek/db",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "@maietek/config": "workspace:*",
+    "@types/node": "^25.6.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,23 @@
+### Step 1: API & Actions
+- **Files changed**:
+  - `apps/web/src/actions/tasks.ts` (created)
+  - `apps/web/src/utils/supabase/server.ts` (created)
+- **What changed**:
+  - Created Next.js Server Actions for Task CRUD (getTasks, createTask, updateTask, deleteTask, startTask, submitTask, approveTask, rejectTask).
+  - Setup async Supabase server client.
+- **Verification command(s)**: `cd apps/web && npm run build`
+- **Result**: pass
+### Step 2: UI Components
+- **Files changed**:
+  - `apps/web/src/components/tasks/TaskCard.tsx` (created)
+  - `apps/web/src/components/tasks/TaskForm.tsx` (created)
+  - `apps/web/src/components/tasks/EvidenceUpload.tsx` (created)
+  - `apps/web/src/components/tasks/TaskStatusBadge.tsx` (created)
+  - `apps/web/src/components/tasks/PriorityBadge.tsx` (created)
+- **What changed**:
+  - Built TaskCard with status and priority badges.
+  - Built TaskForm using react-hook-form and zod with validation.
+  - Built EvidenceUpload form.
+  - Added shadcn-ui components: textarea, select.
+- **Verification command(s)**: `cd apps/web && npm run build`
+- **Result**: pass

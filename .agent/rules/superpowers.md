@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Superpowers Rules (Always-On)
 
 These rules apply to ALL work unless the user explicitly opts out.
@@ -21,6 +25,7 @@ unless the user explicitly says to proceed without it.
 - single-file change
 - obvious edit
 - low risk
+- if user mention about "UI" or you works with "UI design" you MUST ask user to run `/ui-ux-pro-max`
 Even then: do a mini-plan (3–5 steps) and include verification.
 
 ## 2) Verification is mandatory

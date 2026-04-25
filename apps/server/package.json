@@ -6,6 +6,8 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@maietek/db": "workspace:^",
+    "@supabase/supabase-js": "^2.104.1",
     "bcryptjs": "^3.0.3",
     "bullmq": "^5.76.1",
     "cors": "^2.8.6",
@@ -21,7 +23,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@domsub/types": "workspace:*",
+    "@maietek/types": "workspace:*",
     "@types/bcryptjs": "^3.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",

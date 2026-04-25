@@ -1,0 +1,134 @@
+
+> web@0.1.0 lint /Users/mai/Documents/App/Ds/apps/web
+> eslint
+
+
+/Users/mai/Documents/App/Ds/apps/web/src/actions/tasks.ts
+  48:11  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/mai/Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx
+  46:21  warning  'authData' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  57:19  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+/Users/mai/Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx
+  68:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/mai/Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx
+  16:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/mai/Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx
+  20:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/mai/Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx
+  33:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/mai/Documents/App/Ds/apps/web/src/app/(dashboard)/tasks/[id]/page.tsx
+  143:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  168:18  error    'Star' is not defined                                                                                                                                                                                                                                                                    react/jsx-no-undef
+  176:37  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  176:57  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+
+/Users/mai/Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx
+   32:77  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  117:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/mai/Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:117:16
+  115 |                 <span className="font-black tracking-tight text-xl">Maietek</span>
+  116 |               </div>
+> 117 |               <NavLinks />
+      |                ^^^^^^^^ This component is created during render
+  118 |             </div>
+  119 |           </SheetContent>
+  120 |         </Sheet>
+
+/Users/mai/Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:42:20
+  40 |   });
+  41 |
+> 42 |   const NavLinks = () => (
+     |                    ^^^^^^^
+> 43 |     <div className="flex flex-col space-y-1 w-full">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 44 |       {navItems.map((item) => {
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 90 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 91 |   );
+     | ^^^^ The component is created during render here
+  92 |
+  93 |   return (
+  94 |     <>  react-hooks/static-components
+  132:12  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/mai/Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:132:12
+  130 |             <span className="font-black tracking-tight text-2xl">Maietek</span>
+  131 |           </div>
+> 132 |           <NavLinks />
+      |            ^^^^^^^^ This component is created during render
+  133 |         </div>
+  134 |       </aside>
+  135 |     </>
+
+/Users/mai/Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:42:20
+  40 |   });
+  41 |
+> 42 |   const NavLinks = () => (
+     |                    ^^^^^^^
+> 43 |     <div className="flex flex-col space-y-1 w-full">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 44 |       {navItems.map((item) => {
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 90 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 91 |   );
+     | ^^^^ The component is created during render here
+  92 |
+  93 |   return (
+  94 |     <>                                         react-hooks/static-components
+
+/Users/mai/Documents/App/Ds/apps/web/src/components/tasks/PriorityBadge.tsx
+  14:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/mai/Documents/App/Ds/apps/web/src/components/tasks/TaskStatusBadge.tsx
+  18:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/mai/Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts
+   5:38  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  15:19  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  23:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/mai/Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts:23:5
+  21 |
+  22 |   useEffect(() => {
+> 23 |     loadUsers();
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  24 |   }, []);
+  25 |
+  26 |   return { users, loading, error, refetch: loadUsers };  react-hooks/set-state-in-effect
+  47:58  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+
+/Users/mai/Documents/App/Ds/apps/web/src/lib/api-client.ts
+  27:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/mai/Documents/App/Ds/apps/web/src/utils/supabase/server.ts
+  1:35  warning  'CookieOptions' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/mai/Documents/App/Ds/apps/web/tailwind.config.ts
+  23:13  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+✖ 25 problems (20 errors, 5 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.

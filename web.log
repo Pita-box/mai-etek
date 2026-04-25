@@ -1,0 +1,3553 @@
+
+> web@0.1.0 dev /Users/mai/Documents/App/Ds/apps/web
+> next dev
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.14:3000
+- Environments: .env.local
+✓ Ready in 578ms
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/mai/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/mai/Documents/App/Ds/pnpm-workspace.yaml
+
+
+ GET /login 200 in 516ms (next.js: 178ms, application-code: 338ms)
+ GET / 307 in 104ms (next.js: 39ms, application-code: 65ms)
+ GET /dashboard 200 in 1199ms (next.js: 1029ms, application-code: 170ms)
+ GET /login 200 in 39ms (next.js: 4ms, application-code: 35ms)
+ GET / 307 in 81ms (next.js: 3ms, application-code: 77ms)
+ GET /dashboard 200 in 45ms (next.js: 2ms, application-code: 43ms)
+ GET /login 200 in 23ms (next.js: 3ms, application-code: 21ms)
+ GET / 307 in 85ms (next.js: 3ms, application-code: 83ms)
+ GET /dashboard 200 in 46ms (next.js: 1882µs, application-code: 44ms)
+ GET /login 200 in 36ms (next.js: 4ms, application-code: 33ms)
+ GET / 307 in 77ms (next.js: 3ms, application-code: 73ms)
+ GET /dashboard 200 in 34ms (next.js: 2ms, application-code: 32ms)
+ GET /login 200 in 23ms (next.js: 4ms, application-code: 19ms)
+ GET /dashboard 200 in 34ms (next.js: 5ms, application-code: 29ms)
+ GET /tasks 200 in 458ms (next.js: 425ms, application-code: 33ms)
+ GET /tasks 200 in 22ms (next.js: 2ms, application-code: 19ms)
+ GET /chat 200 in 322ms (next.js: 297ms, application-code: 24ms)
+ GET /gallery 404 in 254ms (next.js: 230ms, application-code: 24ms)
+ GET /gallery 404 in 48ms (next.js: 3ms, application-code: 46ms)
+ GET /chat 200 in 42ms (next.js: 2ms, application-code: 40ms)
+ GET /gallery 404 in 33ms (next.js: 4ms, application-code: 29ms)
+ GET /gallery 404 in 36ms (next.js: 3ms, application-code: 33ms)
+ GET /tasks 200 in 98ms (next.js: 3ms, application-code: 95ms)
+ GET /monitoring 404 in 31ms (next.js: 5ms, application-code: 26ms)
+ GET /monitoring 404 in 35ms (next.js: 6ms, application-code: 29ms)
+ GET /tasks 200 in 60ms (next.js: 3ms, application-code: 56ms)
+ GET /superadmin 200 in 357ms (next.js: 334ms, application-code: 24ms)
+ GET /settings 404 in 30ms (next.js: 4ms, application-code: 26ms)
+ GET /settings 404 in 50ms (next.js: 6ms, application-code: 44ms)
+ GET /superadmin 200 in 47ms (next.js: 3ms, application-code: 44ms)
+ GET / 307 in 87ms (next.js: 6ms, application-code: 80ms)
+ GET /dashboard 200 in 45ms (next.js: 2ms, application-code: 43ms)
+ GET /loginout 404 in 47ms (next.js: 4ms, application-code: 43ms)
+ GET /login 200 in 67ms (next.js: 5ms, application-code: 62ms)
+ GET /register 200 in 762ms (next.js: 727ms, application-code: 35ms)
+ GET /register 200 in 154ms (next.js: 69ms, application-code: 84ms)
+ GET /login 200 in 42ms (next.js: 18ms, application-code: 24ms)
+ GET /dashboard 200 in 58ms (next.js: 30ms, application-code: 28ms)
+ GET / 307 in 231ms (next.js: 23ms, application-code: 208ms)
+ GET /dashboard 200 in 113ms (next.js: 1688µs, application-code: 112ms)
+ GET /login 200 in 132ms (next.js: 3ms, application-code: 130ms)
+ GET /login 200 in 140ms (next.js: 23ms, application-code: 117ms)
+ GET /login 200 in 110ms (next.js: 3ms, application-code: 107ms)
+ GET /login 200 in 130ms (next.js: 3ms, application-code: 127ms)
+ GET /login 200 in 181ms (next.js: 3ms, application-code: 178ms)
+ GET /login 200 in 148ms (next.js: 4ms, application-code: 144ms)
+ GET /login 200 in 156ms (next.js: 6ms, application-code: 150ms)
+ GET /login 200 in 115ms (next.js: 4ms, application-code: 111ms)
+ GET /login 200 in 95ms (next.js: 6ms, application-code: 90ms)
+ GET /login 200 in 70ms (next.js: 6ms, application-code: 64ms)
+ GET /login 200 in 57ms (next.js: 3ms, application-code: 54ms)
+ GET /login 200 in 75ms (next.js: 4ms, application-code: 71ms)
+⨯ ./Documents/App/Ds/apps/web/src/app/superadmin
+You cannot have two parallel pages that resolve to the same path. Please check /(dashboard)/superadmin and /superadmin.
+
+ GET /login 500 in 499ms (next.js: 297ms, application-code: 203ms)
+⨯ ./Documents/App/Ds/apps/web/src/app/superadmin
+You cannot have two parallel pages that resolve to the same path. Please check /(dashboard)/superadmin and /superadmin.
+
+ GET /login 500 in 13ms (next.js: 4ms, application-code: 9ms)
+⨯ ./Documents/App/Ds/apps/web/src/app/superadmin
+You cannot have two parallel pages that resolve to the same path. Please check /(dashboard)/superadmin and /superadmin.
+
+ GET /login 500 in 31ms (next.js: 13ms, application-code: 19ms)
+⨯ ./Documents/App/Ds/apps/web/src/app/superadmin
+You cannot have two parallel pages that resolve to the same path. Please check /(dashboard)/superadmin and /superadmin.
+
+⨯ ./Documents/App/Ds/apps/web/src/app/superadmin
+You cannot have two parallel pages that resolve to the same path. Please check /(dashboard)/superadmin and /superadmin.
+
+ GET /login 500 in 59ms (next.js: 12ms, application-code: 47ms)
+ GET /login 500 in 82ms (next.js: 30ms, application-code: 52ms)
+⨯ ./Documents/App/Ds/apps/web/src/app/superadmin
+You cannot have two parallel pages that resolve to the same path. Please check /(dashboard)/superadmin and /superadmin.
+
+[browser] Uncaught Error: ./Documents/App/Ds/apps/web/src/app/superadmin
+You cannot have two parallel pages that resolve to the same path. Please check /(dashboard)/superadmin and /superadmin.
+
+⨯ ./Documents/App/Ds/apps/web/src/app/superadmin
+You cannot have two parallel pages that resolve to the same path. Please check /(dashboard)/superadmin and /superadmin.
+
+ GET /login 500 in 115ms (next.js: 101ms, application-code: 15ms)
+✓ Compiled in 247ms
+[browser] Uncaught Error: ./Documents/App/Ds/apps/web/src/app/superadmin
+You cannot have two parallel pages that resolve to the same path. Please check /(dashboard)/superadmin and /superadmin.
+
+✓ Compiled in 58ms
+ GET /login 200 in 490ms (next.js: 113ms, application-code: 377ms)
+ GET /login 200 in 166ms (next.js: 65ms, application-code: 101ms)
+ GET /login 200 in 54ms (next.js: 1725µs, application-code: 52ms)
+ GET /login 200 in 234ms (next.js: 125ms, application-code: 109ms)
+ GET /login 200 in 117ms (next.js: 1940µs, application-code: 115ms)
+ GET /login 200 in 128ms (next.js: 2ms, application-code: 126ms)
+ GET /login 200 in 169ms (next.js: 4ms, application-code: 165ms)
+ GET /login 200 in 116ms (next.js: 4ms, application-code: 113ms)
+ GET /login 200 in 115ms (next.js: 3ms, application-code: 112ms)
+ GET /login 200 in 105ms (next.js: 4ms, application-code: 102ms)
+ GET /login 200 in 95ms (next.js: 3ms, application-code: 92ms)
+ GET /login 200 in 86ms (next.js: 4ms, application-code: 82ms)
+ GET /login 200 in 73ms (next.js: 2ms, application-code: 71ms)
+ GET /login 200 in 71ms (next.js: 3ms, application-code: 68ms)
+ GET /login 200 in 67ms (next.js: 3ms, application-code: 63ms)
+ GET /login 200 in 65ms (next.js: 3ms, application-code: 62ms)
+ GET /login 200 in 63ms (next.js: 1820µs, application-code: 61ms)
+ GET /login 200 in 64ms (next.js: 1783µs, application-code: 62ms)
+ GET /login 200 in 78ms (next.js: 2ms, application-code: 76ms)
+ GET /login 200 in 59ms (next.js: 3ms, application-code: 56ms)
+ GET /login 200 in 56ms (next.js: 1677µs, application-code: 54ms)
+ GET /login 200 in 56ms (next.js: 1368µs, application-code: 54ms)
+ GET /login 200 in 38ms (next.js: 2ms, application-code: 35ms)
+ GET /login 200 in 20ms (next.js: 3ms, application-code: 17ms)
+ GET /login 200 in 247ms (next.js: 112ms, application-code: 135ms)
+ GET /login 200 in 107ms (next.js: 1856µs, application-code: 105ms)
+ GET /login 200 in 108ms (next.js: 3ms, application-code: 105ms)
+ GET /login 200 in 81ms (next.js: 2ms, application-code: 79ms)
+ GET /login 200 in 85ms (next.js: 1860µs, application-code: 84ms)
+ GET /login 200 in 86ms (next.js: 1906µs, application-code: 84ms)
+ GET /login 200 in 85ms (next.js: 3ms, application-code: 82ms)
+ GET /login 200 in 79ms (next.js: 3ms, application-code: 76ms)
+ GET /login 200 in 75ms (next.js: 2ms, application-code: 72ms)
+ GET /login 200 in 74ms (next.js: 2ms, application-code: 72ms)
+ GET /login 200 in 68ms (next.js: 2ms, application-code: 66ms)
+ GET /login 200 in 65ms (next.js: 3ms, application-code: 61ms)
+ GET /login 200 in 60ms (next.js: 1761µs, application-code: 58ms)
+ GET /login 200 in 63ms (next.js: 1721µs, application-code: 61ms)
+ GET /login 200 in 63ms (next.js: 3ms, application-code: 61ms)
+ GET /login 200 in 60ms (next.js: 2ms, application-code: 58ms)
+ GET /login 200 in 56ms (next.js: 3ms, application-code: 53ms)
+ GET /login 200 in 59ms (next.js: 1744µs, application-code: 58ms)
+ GET /login 200 in 59ms (next.js: 1579µs, application-code: 57ms)
+ GET /login 200 in 42ms (next.js: 2ms, application-code: 40ms)
+ GET /login 200 in 19ms (next.js: 2ms, application-code: 16ms)
+ GET /dashboard 200 in 59ms (next.js: 28ms, application-code: 31ms)
+ GET /settings 200 in 373ms (next.js: 354ms, application-code: 19ms)
+ GET /settings 200 in 25ms (next.js: 3ms, application-code: 23ms)
+ GET /superadmin 200 in 59ms (next.js: 31ms, application-code: 27ms)
+ GET /tasks 200 in 53ms (next.js: 30ms, application-code: 23ms)
+ GET /settings 200 in 28ms (next.js: 5ms, application-code: 23ms)
+ GET /superadmin 200 in 28ms (next.js: 6ms, application-code: 22ms)
+✓ Compiled in 348ms
+✓ Compiled in 0ms
+ GET /superadmin 200 in 496ms (next.js: 183ms, application-code: 312ms)
+ GET /superadmin 200 in 209ms (next.js: 96ms, application-code: 113ms)
+✓ Compiled in 129ms
+✓ Compiled in 48ms
+✓ Compiled in 115ms
+✓ Compiled in 67ms
+✓ Compiled in 72ms
+✓ Compiled in 78ms
+✓ Compiled in 47ms
+✓ Compiled in 48ms
+✓ Compiled in 52ms
+ GET /superadmin 200 in 175ms (next.js: 88ms, application-code: 88ms)
+ GET /superadmin 200 in 59ms (next.js: 1626µs, application-code: 58ms)
+ GET /superadmin 200 in 60ms (next.js: 1435µs, application-code: 58ms)
+ GET /superadmin 200 in 60ms (next.js: 1445µs, application-code: 59ms)
+ GET /superadmin 200 in 41ms (next.js: 1678µs, application-code: 39ms)
+ GET /superadmin 200 in 22ms (next.js: 2ms, application-code: 20ms)
+[browser] `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog 
+[browser] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[browser] `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog 
+[browser] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+ GET /settings 200 in 30ms (next.js: 12ms, application-code: 18ms)
+ GET /superadmin 200 in 28ms (next.js: 3ms, application-code: 25ms)
+ GET /tasks 200 in 35ms (next.js: 16ms, application-code: 18ms)
+✓ Compiled in 47ms
+ GET /tasks 200 in 153ms (next.js: 55ms, application-code: 98ms)
+ GET /tasks 200 in 78ms (next.js: 1481µs, application-code: 77ms)
+ GET /tasks 200 in 78ms (next.js: 1620µs, application-code: 76ms)
+ GET /tasks 200 in 56ms (next.js: 1532µs, application-code: 55ms)
+ GET /tasks 200 in 39ms (next.js: 1747µs, application-code: 37ms)
+ GET /tasks 200 in 21ms (next.js: 1656µs, application-code: 19ms)
+✓ Compiled in 41ms
+ GET /tasks 200 in 148ms (next.js: 6ms, application-code: 142ms)
+✓ Compiled in 41ms
+ GET /tasks 200 in 56ms (next.js: 6ms, application-code: 50ms)
+[browser] `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog 
+[browser] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[browser] `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog 
+[browser] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+✓ Compiled in 46ms
+✓ Compiled in 41ms
+✓ Compiled in 43ms
+ GET /tasks 200 in 181ms (next.js: 65ms, application-code: 115ms)
+ GET /tasks 200 in 90ms (next.js: 1891µs, application-code: 88ms)
+ GET /tasks 200 in 81ms (next.js: 2ms, application-code: 78ms)
+ GET /tasks 200 in 58ms (next.js: 1323µs, application-code: 57ms)
+ GET /tasks 200 in 37ms (next.js: 1845µs, application-code: 35ms)
+ GET /tasks 200 in 18ms (next.js: 1418µs, application-code: 17ms)
+✓ Compiled in 43ms
+ GET /tasks 200 in 173ms (next.js: 73ms, application-code: 100ms)
+ GET /tasks 200 in 77ms (next.js: 2ms, application-code: 75ms)
+ GET /tasks 200 in 76ms (next.js: 2ms, application-code: 74ms)
+ GET /tasks 200 in 66ms (next.js: 3ms, application-code: 63ms)
+ GET /tasks 200 in 45ms (next.js: 1535µs, application-code: 43ms)
+ GET /tasks 200 in 25ms (next.js: 1707µs, application-code: 23ms)
+✓ Compiled in 38ms
+✓ Compiled in 42ms
+ GET /settings 200 in 61ms (next.js: 27ms, application-code: 34ms)
+ GET /tasks 200 in 33ms (next.js: 10ms, application-code: 23ms)
+ GET /settings 200 in 29ms (next.js: 3ms, application-code: 27ms)
+ GET /superadmin 200 in 56ms (next.js: 33ms, application-code: 23ms)
+ GET /settings 200 in 27ms (next.js: 3ms, application-code: 24ms)
+ GET /superadmin 200 in 45ms (next.js: 11ms, application-code: 34ms)
+ GET /superadmin 200 in 189ms (next.js: 9ms, application-code: 180ms)
+ GET /tasks 200 in 54ms (next.js: 11ms, application-code: 43ms)
+ GET /superadmin 200 in 31ms (next.js: 7ms, application-code: 25ms)
+✓ Compiled in 193ms
+✓ Compiled in 129ms
+✓ Compiled in 106ms
+✓ Compiled in 51ms
+✓ Compiled in 52ms
+✓ Compiled in 127ms
+ GET /superadmin 200 in 210ms (next.js: 92ms, application-code: 118ms)
+ GET /superadmin 200 in 65ms (next.js: 6ms, application-code: 58ms)
+ GET /superadmin 200 in 207ms (next.js: 8ms, application-code: 199ms)
+ GET /tasks 200 in 52ms (next.js: 27ms, application-code: 25ms)
+ GET /chat 200 in 61ms (next.js: 32ms, application-code: 29ms)
+ GET /gallery 404 in 36ms (next.js: 17ms, application-code: 18ms)
+ GET /gallery 404 in 33ms (next.js: 3ms, application-code: 30ms)
+ GET /tasks 200 in 39ms (next.js: 4ms, application-code: 35ms)
+ GET /settings 200 in 54ms (next.js: 27ms, application-code: 27ms)
+✓ Compiled in 61ms
+ GET /settings 200 in 160ms (next.js: 12ms, application-code: 149ms)
+ GET /settings 200 in 59ms (next.js: 7ms, application-code: 52ms)
+ GET /settings 200 in 11ms (next.js: 3ms, application-code: 8ms)
+ GET /settings 200 in 21ms (next.js: 2ms, application-code: 19ms)
+ GET /superadmin 200 in 29ms (next.js: 6ms, application-code: 23ms)
+ GET /settings 200 in 29ms (next.js: 3ms, application-code: 26ms)
+ GET /superadmin 200 in 24ms (next.js: 3ms, application-code: 22ms)
+ GET /settings 200 in 30ms (next.js: 3ms, application-code: 27ms)
+✓ Compiled in 99ms
+ GET /settings 200 in 55ms (next.js: 8ms, application-code: 47ms)
+✓ Compiled in 40ms
+✓ Compiled in 160ms
+✓ Compiled in 129ms
+ GET /superadmin 200 in 38ms (next.js: 10ms, application-code: 28ms)
+✓ Compiled in 77ms
+ GET /tasks 200 in 41ms (next.js: 8ms, application-code: 33ms)
+✓ Compiled in 916ms
+ GET /tasks 200 in 855ms (next.js: 250ms, application-code: 605ms)
+ GET /tasks 200 in 844ms (next.js: 152ms, application-code: 692ms)
+ GET /tasks 200 in 1172ms (next.js: 699ms, application-code: 473ms)
+ GET /tasks 200 in 1055ms (next.js: 486ms, application-code: 569ms)
+ GET /tasks 200 in 1201ms (next.js: 829ms, application-code: 372ms)
+ GET /tasks 200 in 867ms (next.js: 31ms, application-code: 836ms)
+✓ Compiled in 0ms
+ GET /tasks 200 in 607ms (next.js: 165ms, application-code: 442ms)
+ GET /tasks 200 in 117ms (next.js: 5ms, application-code: 112ms)
+ GET /tasks 200 in 121ms (next.js: 30ms, application-code: 91ms)
+ GET /tasks 200 in 146ms (next.js: 67ms, application-code: 79ms)
+ GET /tasks 200 in 756ms (next.js: 249ms, application-code: 506ms)
+✓ Compiled in 83ms
+✓ Compiled in 116ms
+✓ Compiled in 116ms
+ GET /settings 200 in 69ms (next.js: 36ms, application-code: 34ms)
+ GET /superadmin 200 in 56ms (next.js: 32ms, application-code: 25ms)
+✓ Compiled in 172ms
+✓ Compiled in 52ms
+✓ Compiled in 51ms
+ GET /tasks 200 in 42ms (next.js: 11ms, application-code: 32ms)
+ GET /superadmin 200 in 41ms (next.js: 12ms, application-code: 29ms)
+ GET / 307 in 105ms (next.js: 29ms, application-code: 76ms)
+ GET /dashboard 200 in 93ms (next.js: 27ms, application-code: 66ms)
+ GET /tasks 200 in 35ms (next.js: 7ms, application-code: 28ms)
+ GET /settings 200 in 34ms (next.js: 8ms, application-code: 26ms)
+ GET /superadmin 200 in 33ms (next.js: 5ms, application-code: 28ms)
+ GET /tasks 200 in 30ms (next.js: 3ms, application-code: 27ms)
+ GET /superadmin 200 in 26ms (next.js: 3ms, application-code: 23ms)
+ GET / 307 in 84ms (next.js: 12ms, application-code: 72ms)
+ GET /dashboard 200 in 45ms (next.js: 4ms, application-code: 42ms)
+ GET /login 200 in 69ms (next.js: 32ms, application-code: 36ms)
+ GET /dashboard 200 in 41ms (next.js: 3ms, application-code: 38ms)
+ GET /settings 200 in 30ms (next.js: 5ms, application-code: 25ms)
+ GET /settings 200 in 69ms (next.js: 3ms, application-code: 66ms)
+ GET /chat 200 in 56ms (next.js: 31ms, application-code: 25ms)
+ GET /chat 200 in 55ms (next.js: 5ms, application-code: 50ms)
+ GET /tasks 200 in 53ms (next.js: 10ms, application-code: 43ms)
+ GET / 307 in 88ms (next.js: 9ms, application-code: 79ms)
+ GET /dashboard 200 in 46ms (next.js: 3ms, application-code: 43ms)
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/lib/api-client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts:1:1
+Module not found: Can't resolve '@supabase/ssr'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { createBrowserClient } [36mfrom[0m [32m'@supabase/ssr'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mexport[0m [36mfunction[0m createClient() {
+  [90m4 |[0m   [36mreturn[0m createBrowserClient(
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/utils/supabase/client.ts [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+✓ Compiled in 832ms
+ GET /dashboard 500 in 415ms (next.js: 335ms, application-code: 80ms)
+ GET /superadmin 500 in 2.1s (next.js: 1816ms, application-code: 308ms)
+✓ Compiled in 2.1s
+ GET /superadmin 200 in 438ms (next.js: 339ms, application-code: 99ms)
+ GET /superadmin 200 in 146ms (next.js: 71ms, application-code: 75ms)
+ GET /dashboard 200 in 2.9s (next.js: 1959ms, application-code: 919ms)
+ GET /superadmin 200 in 593ms (next.js: 235ms, application-code: 358ms)
+ GET /dashboard 200 in 3.2s (next.js: 2.2s, application-code: 1087ms)
+ GET /dashboard 200 in 3.3s (next.js: 2.3s, application-code: 1030ms)
+ GET /dashboard 200 in 3.3s (next.js: 2.3s, application-code: 1053ms)
+ GET /dashboard 200 in 3.3s (next.js: 2.2s, application-code: 1077ms)
+ GET /dashboard 200 in 3.4s (next.js: 2.4s, application-code: 1028ms)
+ GET /dashboard 200 in 339ms (next.js: 257ms, application-code: 81ms)
+ GET /dashboard 200 in 265ms (next.js: 218ms, application-code: 47ms)
+ GET /dashboard 200 in 347ms (next.js: 220ms, application-code: 126ms)
+ GET /dashboard 200 in 348ms (next.js: 172ms, application-code: 176ms)
+ GET /dashboard 200 in 349ms (next.js: 110ms, application-code: 239ms)
+ GET /superadmin 200 in 932ms (next.js: 6ms, application-code: 926ms)
+ GET /dashboard 200 in 616ms (next.js: 79ms, application-code: 538ms)
+✓ Compiled in 82ms
+✓ Compiled in 80ms
+✓ Compiled in 74ms
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  [90m1 |[0m [36mimport[0m * [36mas[0m [33mReact[0m [36mfrom[0m [32m"react"[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mInput[0m [36mas[0m [33mInputPrimitive[0m } [36mfrom[0m [32m"@base-ui/react/input"[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m
+  [90m5 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /superadmin 500 in 275ms (next.js: 133ms, application-code: 142ms)
+ GET /dashboard 500 in 348ms (next.js: 194ms, application-code: 154ms)
+ GET /dashboard 500 in 346ms (next.js: 245ms, application-code: 102ms)
+ GET /dashboard 500 in 343ms (next.js: 275ms, application-code: 68ms)
+ GET /dashboard 500 in 317ms (next.js: 279ms, application-code: 38ms)
+ GET /dashboard 500 in 335ms (next.js: 222ms, application-code: 112ms)
+ GET /dashboard 500 in 334ms (next.js: 286ms, application-code: 48ms)
+ GET /superadmin 500 in 216ms (next.js: 151ms, application-code: 65ms)
+ GET /superadmin 500 in 135ms (next.js: 90ms, application-code: 45ms)
+ GET /dashboard 500 in 409ms (next.js: 155ms, application-code: 254ms)
+ GET /dashboard 500 in 676ms (next.js: 355ms, application-code: 321ms)
+ GET /dashboard 500 in 570ms
+ GET /dashboard 500 in 633ms (next.js: 383ms, application-code: 249ms)
+ GET /dashboard 500 in 629ms (next.js: 559ms, application-code: 70ms)
+[browser] Uncaught Error: ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  1 | import * as React from "react"
+> 2 | import { Input as InputPrimitive } from "@base-ui/react/input"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | import { cn } from "@/lib/utils"
+  5 |
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (Error: (./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+[browser] Uncaught Error: ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1
+Module not found: Can't resolve '@base-ui/react/input'
+  1 | import * as React from "react"
+> 2 | import { Input as InputPrimitive } from "@base-ui/react/input"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | import { cn } from "@/lib/utils"
+  5 |
+
+
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/ui/input.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (Error: (./Documents/App/Ds/apps/web/src/components/ui/input.tsx:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+✓ Compiled in 730ms
+ GET /dashboard 200 in 806ms (next.js: 176ms, application-code: 630ms)
+ GET /superadmin 200 in 807ms (next.js: 302ms, application-code: 506ms)
+✓ Compiled in 1220ms
+✓ Compiled in 119ms
+✓ Compiled in 103ms
+✓ Compiled in 1541ms
+ GET /superadmin 200 in 678ms (next.js: 216ms, application-code: 462ms)
+ GET /dashboard 200 in 683ms (next.js: 138ms, application-code: 545ms)
+ GET /superadmin 200 in 417ms (next.js: 178ms, application-code: 239ms)
+ GET /dashboard 200 in 420ms (next.js: 235ms, application-code: 185ms)
+ GET /dashboard 200 in 199ms (next.js: 41ms, application-code: 157ms)
+ GET /dashboard 200 in 188ms (next.js: 28ms, application-code: 160ms)
+ GET /dashboard 200 in 130ms (next.js: 25ms, application-code: 105ms)
+ GET /superadmin 200 in 128ms (next.js: 42ms, application-code: 86ms)
+ GET /dashboard 200 in 133ms (next.js: 7ms, application-code: 126ms)
+ GET /superadmin 200 in 139ms (next.js: 2ms, application-code: 137ms)
+ GET /superadmin 200 in 116ms (next.js: 5ms, application-code: 110ms)
+ GET /superadmin 200 in 84ms (next.js: 3ms, application-code: 81ms)
+ GET /superadmin 200 in 560ms (next.js: 432ms, application-code: 127ms)
+ GET /dashboard 200 in 523ms (next.js: 117ms, application-code: 406ms)
+ GET /dashboard 200 in 525ms (next.js: 196ms, application-code: 329ms)
+ GET /dashboard 200 in 534ms (next.js: 289ms, application-code: 245ms)
+ GET /dashboard 200 in 553ms (next.js: 362ms, application-code: 191ms)
+ GET /dashboard 200 in 533ms (next.js: 242ms, application-code: 291ms)
+ GET /dashboard 200 in 569ms (next.js: 466ms, application-code: 104ms)
+ GET /superadmin 200 in 222ms (next.js: 1916µs, application-code: 220ms)
+ GET /superadmin 200 in 239ms (next.js: 3ms, application-code: 236ms)
+ GET /superadmin 200 in 217ms (next.js: 5ms, application-code: 212ms)
+ GET /dashboard 200 in 236ms (next.js: 27ms, application-code: 208ms)
+ GET /dashboard 200 in 236ms (next.js: 93ms, application-code: 142ms)
+ GET /dashboard 200 in 238ms (next.js: 47ms, application-code: 190ms)
+ GET /dashboard 200 in 238ms (next.js: 114ms, application-code: 125ms)
+ GET /dashboard 200 in 240ms (next.js: 67ms, application-code: 173ms)
+ GET /superadmin 200 in 85ms (next.js: 3ms, application-code: 82ms)
+ GET /dashboard 200 in 220ms (next.js: 114ms, application-code: 106ms)
+ GET /superadmin 200 in 188ms (next.js: 4ms, application-code: 184ms)
+ GET /superadmin 200 in 184ms (next.js: 4ms, application-code: 180ms)
+ GET /superadmin 200 in 178ms (next.js: 6ms, application-code: 173ms)
+ GET /dashboard 200 in 195ms (next.js: 56ms, application-code: 139ms)
+ GET /dashboard 200 in 197ms (next.js: 36ms, application-code: 160ms)
+ GET /dashboard 200 in 199ms (next.js: 20ms, application-code: 179ms)
+ GET /dashboard 200 in 182ms (next.js: 58ms, application-code: 124ms)
+ GET /dashboard 200 in 182ms (next.js: 74ms, application-code: 108ms)
+ GET /superadmin 200 in 91ms (next.js: 21ms, application-code: 70ms)
+ GET /dashboard 200 in 130ms (next.js: 39ms, application-code: 91ms)
+ GET /superadmin 200 in 167ms (next.js: 3ms, application-code: 164ms)
+ GET /superadmin 200 in 168ms (next.js: 4ms, application-code: 164ms)
+ GET /superadmin 200 in 167ms (next.js: 7ms, application-code: 160ms)
+ GET /dashboard 200 in 166ms (next.js: 36ms, application-code: 130ms)
+ GET /dashboard 200 in 167ms (next.js: 4ms, application-code: 163ms)
+ GET /dashboard 200 in 168ms (next.js: 20ms, application-code: 148ms)
+ GET /superadmin 200 in 117ms (next.js: 42ms, application-code: 76ms)
+ GET /dashboard 200 in 171ms (next.js: 54ms, application-code: 117ms)
+ GET /dashboard 200 in 172ms (next.js: 71ms, application-code: 101ms)
+ GET /superadmin 200 in 80ms (next.js: 5ms, application-code: 75ms)
+ GET /superadmin 200 in 124ms (next.js: 4ms, application-code: 120ms)
+ GET /superadmin 200 in 102ms (next.js: 7ms, application-code: 94ms)
+ GET /superadmin 200 in 99ms (next.js: 3ms, application-code: 96ms)
+ GET /superadmin 200 in 93ms (next.js: 4ms, application-code: 89ms)
+ GET /superadmin 200 in 84ms (next.js: 3ms, application-code: 80ms)
+ GET /superadmin 200 in 76ms (next.js: 1919µs, application-code: 75ms)
+ GET /superadmin 200 in 58ms (next.js: 2ms, application-code: 56ms)
+ GET /superadmin 200 in 41ms (next.js: 3ms, application-code: 38ms)
+ GET /superadmin 200 in 23ms (next.js: 3ms, application-code: 20ms)
+✓ Compiled in 101ms
+✓ Compiled in 140ms
+ GET /superadmin 200 in 489ms (next.js: 97ms, application-code: 391ms)
+ GET /dashboard 200 in 493ms (next.js: 198ms, application-code: 295ms)
+ GET /dashboard 200 in 354ms (next.js: 6ms, application-code: 348ms)
+ GET /superadmin 200 in 306ms (next.js: 88ms, application-code: 218ms)
+ GET /dashboard 200 in 355ms (next.js: 51ms, application-code: 304ms)
+ GET /dashboard 200 in 357ms (next.js: 91ms, application-code: 266ms)
+ GET /superadmin 200 in 191ms (next.js: 2ms, application-code: 189ms)
+ GET /superadmin 200 in 157ms (next.js: 5ms, application-code: 152ms)
+✓ Compiled in 1747ms
+ GET /superadmin 200 in 1717ms (next.js: 215ms, application-code: 1502ms)
+ GET /superadmin 200 in 745ms (next.js: 143ms, application-code: 602ms)
+ GET /dashboard 200 in 1763ms (next.js: 775ms, application-code: 988ms)
+ GET /dashboard 200 in 1776ms (next.js: 855ms, application-code: 920ms)
+ GET /dashboard 200 in 1782ms (next.js: 898ms, application-code: 884ms)
+ GET /dashboard 200 in 1775ms (next.js: 678ms, application-code: 1097ms)
+ GET /dashboard 200 in 1793ms (next.js: 812ms, application-code: 981ms)
+ GET /dashboard 200 in 859ms (next.js: 15ms, application-code: 844ms)
+ GET /superadmin 200 in 864ms (next.js: 80ms, application-code: 783ms)
+✓ Compiled in 8.1s
+ GET /dashboard 200 in 8.5s (next.js: 7.8s, application-code: 682ms)
+ GET /dashboard 200 in 8.5s (next.js: 7.9s, application-code: 584ms)
+ GET /dashboard 200 in 8.5s (next.js: 8.0s, application-code: 539ms)
+ GET /dashboard 200 in 8.5s (next.js: 7.7s, application-code: 801ms)
+ GET /dashboard 200 in 8.5s (next.js: 7.6s, application-code: 956ms)
+ GET /superadmin 200 in 286ms (next.js: 120ms, application-code: 167ms)
+ GET /dashboard 200 in 8.8s (next.js: 7.9s, application-code: 861ms)
+ GET /superadmin 200 in 280ms (next.js: 11ms, application-code: 269ms)
+ GET /superadmin 200 in 202ms (next.js: 7ms, application-code: 196ms)
+ GET /superadmin 200 in 326ms (next.js: 6ms, application-code: 320ms)
+ GET /superadmin 200 in 344ms (next.js: 6ms, application-code: 338ms)
+ GET /superadmin 200 in 351ms (next.js: 9ms, application-code: 342ms)
+ GET /superadmin 200 in 176ms (next.js: 26ms, application-code: 149ms)
+ GET /superadmin 200 in 157ms (next.js: 6ms, application-code: 151ms)
+ GET /superadmin 200 in 115ms (next.js: 15ms, application-code: 101ms)
+ GET /superadmin 200 in 489ms (next.js: 116ms, application-code: 373ms)
+ GET /dashboard 200 in 490ms (next.js: 211ms, application-code: 279ms)
+ GET /dashboard 200 in 487ms (next.js: 257ms, application-code: 231ms)
+ GET /dashboard 200 in 488ms (next.js: 293ms, application-code: 195ms)
+ GET /dashboard 200 in 269ms (next.js: 76ms, application-code: 193ms)
+ GET /dashboard 200 in 198ms (next.js: 35ms, application-code: 164ms)
+ GET /superadmin 200 in 136ms (next.js: 33ms, application-code: 104ms)
+ GET /dashboard 200 in 173ms (next.js: 34ms, application-code: 139ms)
+ GET /superadmin 200 in 230ms (next.js: 3ms, application-code: 228ms)
+ GET /superadmin 200 in 244ms (next.js: 9ms, application-code: 236ms)
+ GET /dashboard 200 in 229ms (next.js: 7ms, application-code: 222ms)
+ GET /superadmin 200 in 201ms (next.js: 48ms, application-code: 153ms)
+ GET /dashboard 200 in 244ms (next.js: 49ms, application-code: 195ms)
+ GET /dashboard 200 in 248ms (next.js: 30ms, application-code: 218ms)
+ GET /dashboard 200 in 224ms (next.js: 68ms, application-code: 155ms)
+ GET /dashboard 200 in 181ms (next.js: 58ms, application-code: 124ms)
+ GET /dashboard 200 in 128ms (next.js: 23ms, application-code: 105ms)
+ GET /superadmin 200 in 141ms (next.js: 2ms, application-code: 139ms)
+ GET /superadmin 200 in 192ms (next.js: 5ms, application-code: 187ms)
+ GET /superadmin 200 in 188ms (next.js: 4ms, application-code: 184ms)
+ GET /superadmin 200 in 193ms (next.js: 21ms, application-code: 171ms)
+ GET /dashboard 200 in 197ms (next.js: 39ms, application-code: 158ms)
+ GET /dashboard 200 in 198ms (next.js: 4ms, application-code: 194ms)
+ GET /dashboard 200 in 218ms (next.js: 59ms, application-code: 159ms)
+ GET /dashboard 200 in 144ms (next.js: 4ms, application-code: 140ms)
+ GET /dashboard 200 in 143ms (next.js: 20ms, application-code: 123ms)
+ GET /superadmin 200 in 110ms (next.js: 21ms, application-code: 89ms)
+ GET /dashboard 200 in 145ms (next.js: 36ms, application-code: 109ms)
+ GET /superadmin 200 in 179ms (next.js: 4ms, application-code: 175ms)
+ GET /superadmin 200 in 178ms (next.js: 6ms, application-code: 172ms)
+ GET /superadmin 200 in 173ms (next.js: 38ms, application-code: 135ms)
+ GET /dashboard 200 in 193ms (next.js: 5ms, application-code: 188ms)
+ GET /dashboard 200 in 194ms (next.js: 21ms, application-code: 172ms)
+ GET /dashboard 200 in 140ms (next.js: 5ms, application-code: 134ms)
+ GET /superadmin 200 in 119ms (next.js: 51ms, application-code: 68ms)
+ GET /dashboard 200 in 140ms (next.js: 35ms, application-code: 105ms)
+ GET /dashboard 200 in 141ms (next.js: 20ms, application-code: 121ms)
+ GET /dashboard 200 in 124ms (next.js: 34ms, application-code: 90ms)
+ GET /superadmin 200 in 94ms (next.js: 3ms, application-code: 91ms)
+ GET /superadmin 200 in 92ms (next.js: 4ms, application-code: 89ms)
+ GET /superadmin 200 in 105ms (next.js: 8ms, application-code: 98ms)
+ GET /dashboard 200 in 122ms (next.js: 21ms, application-code: 102ms)
+ GET /superadmin 200 in 86ms (next.js: 3ms, application-code: 83ms)
+ GET /superadmin 200 in 109ms (next.js: 3ms, application-code: 106ms)
+ GET /superadmin 200 in 133ms (next.js: 5ms, application-code: 128ms)
+ GET /superadmin 200 in 110ms (next.js: 1832µs, application-code: 109ms)
+ GET /superadmin 200 in 94ms (next.js: 8ms, application-code: 85ms)
+ GET /superadmin 200 in 73ms (next.js: 1916µs, application-code: 71ms)
+ GET /superadmin 200 in 51ms (next.js: 3ms, application-code: 47ms)
+ GET /superadmin 200 in 29ms (next.js: 3ms, application-code: 26ms)
+✓ Compiled in 91ms
+ GET /dashboard 200 in 276ms (next.js: 17ms, application-code: 260ms)
+Error fetching tasks: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.tasks' in the schema cache"
+}
+ GET /tasks 200 in 529ms (next.js: 82ms, application-code: 446ms)
+ GET / 307 in 159ms (next.js: 39ms, application-code: 120ms)
+ GET /dashboard 200 in 45ms (next.js: 4ms, application-code: 41ms)
+✓ Compiled in 142ms
+✓ Compiled in 94ms
+✓ Compiled in 55ms
+ GET /superadmin 200 in 660ms (next.js: 14ms, application-code: 646ms)
+ GET /superadmin 200 in 455ms (next.js: 160ms, application-code: 295ms)
+ GET /superadmin 200 in 169ms (next.js: 1809µs, application-code: 168ms)
+ GET /superadmin 200 in 172ms (next.js: 3ms, application-code: 170ms)
+ GET /superadmin 200 in 116ms (next.js: 1332µs, application-code: 115ms)
+ GET /superadmin 200 in 64ms (next.js: 1966µs, application-code: 62ms)
+Error fetching tasks: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.tasks' in the schema cache"
+}
+Error fetching tasks: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.tasks' in the schema cache"
+}
+Error fetching tasks: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.tasks' in the schema cache"
+}
+Error fetching tasks: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.tasks' in the schema cache"
+}
+ GET /tasks 200 in 259ms (next.js: 5ms, application-code: 254ms)
+ GET /tasks 200 in 734ms (next.js: 267ms, application-code: 468ms)
+ GET /tasks 200 in 337ms (next.js: 20ms, application-code: 317ms)
+ GET /tasks 200 in 395ms (next.js: 18ms, application-code: 377ms)
+Error fetching tasks: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.tasks' in the schema cache"
+}
+ GET /tasks 200 in 1056ms (next.js: 106ms, application-code: 950ms)
+Error fetching tasks: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.tasks' in the schema cache"
+}
+ GET /tasks 200 in 271ms (next.js: 1948µs, application-code: 269ms)
+✓ Compiled in 101ms
+ GET /superadmin 200 in 820ms (next.js: 11ms, application-code: 809ms)
+ GET /superadmin 200 in 279ms (next.js: 21ms, application-code: 258ms)
+ GET /superadmin 200 in 278ms (next.js: 6ms, application-code: 272ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+ GET /tasks 200 in 1090ms (next.js: 476ms, application-code: 615ms)
+ GET /superadmin 200 in 281ms (next.js: 3ms, application-code: 278ms)
+ GET /tasks 200 in 496ms (next.js: 46ms, application-code: 450ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+ GET /superadmin 200 in 335ms (next.js: 33ms, application-code: 301ms)
+ GET /tasks 200 in 563ms (next.js: 36ms, application-code: 526ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+ GET /superadmin 200 in 358ms (next.js: 11ms, application-code: 347ms)
+ GET /tasks 200 in 542ms (next.js: 25ms, application-code: 517ms)
+ GET /tasks 200 in 415ms (next.js: 4ms, application-code: 412ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+ GET /superadmin 200 in 382ms (next.js: 32ms, application-code: 351ms)
+ GET /tasks 200 in 398ms (next.js: 8ms, application-code: 391ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+ GET /superadmin 200 in 319ms (next.js: 84ms, application-code: 236ms)
+ GET /tasks 200 in 351ms (next.js: 32ms, application-code: 319ms)
+ GET /superadmin 200 in 175ms (next.js: 44ms, application-code: 131ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+ GET /tasks 200 in 246ms (next.js: 13ms, application-code: 233ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+ GET /tasks 200 in 211ms (next.js: 7ms, application-code: 204ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 92ms
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+ GET /tasks 200 in 1054ms (next.js: 4ms, application-code: 1050ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 100ms
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+ GET /tasks 200 in 431ms (next.js: 7ms, application-code: 425ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 100ms
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '1542517164'
+}
+ GET /tasks 200 in 554ms (next.js: 7ms, application-code: 547ms)
+✓ Compiled in 77ms
+ GET /superadmin 200 in 222ms (next.js: 106ms, application-code: 117ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '4069028841'
+}
+ GET /tasks 200 in 604ms (next.js: 24ms, application-code: 580ms)
+ GET /superadmin 200 in 74ms (next.js: 18ms, application-code: 56ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '4069028841'
+}
+ GET /tasks 200 in 431ms (next.js: 7ms, application-code: 424ms)
+ GET /superadmin 200 in 84ms (next.js: 57ms, application-code: 27ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '4069028841'
+}
+ GET /tasks 200 in 372ms (next.js: 7ms, application-code: 366ms)
+ GET /superadmin 200 in 85ms (next.js: 5ms, application-code: 80ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '4069028841'
+}
+ GET /tasks 200 in 373ms (next.js: 7ms, application-code: 366ms)
+ GET /superadmin 200 in 173ms (next.js: 95ms, application-code: 77ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '4069028841'
+}
+ GET /tasks 200 in 562ms (next.js: 16ms, application-code: 545ms)
+ GET /superadmin 200 in 79ms (next.js: 1691µs, application-code: 77ms)
+⨯ Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at async TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | } {
+  digest: '4069028841'
+}
+ GET /tasks 200 in 341ms (next.js: 26ms, application-code: 316ms)
+[browser] Uncaught Error: Could not find the table 'public.tasks' in the schema cache
+    at getTasks (src/actions/taskActions.ts:64:20)
+    at  TasksPage (src/app/(dashboard)/tasks/page.tsx:31:17)
+  62 |
+  63 |   const { data, error } = await query;
+> 64 |   if (error) throw new Error(error.message);
+     |                    ^
+  65 |   
+  66 |   return data as Task[];
+  67 | }
+✓ Compiled in 201ms
+⨯ ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  [90m80 |[0m     </div>
+  [90m81 |[0m   );
+[31m[1m>[0m [90m82 |[0m       })}
+  [90m   |[0m        [31m[1m^[0m
+  [90m83 |[0m
+  [90m84 |[0m       <div className=[32m"pt-8 pb-2"[0m>
+  [90m85 |[0m         <div className=[32m"h-px w-full bg-border"[0m></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+
+⨯ ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  [90m80 |[0m     </div>
+  [90m81 |[0m   );
+[31m[1m>[0m [90m82 |[0m       })}
+  [90m   |[0m        [31m[1m^[0m
+  [90m83 |[0m
+  [90m84 |[0m       <div className=[32m"pt-8 pb-2"[0m>
+  [90m85 |[0m         <div className=[32m"h-px w-full bg-border"[0m></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+
+ GET /superadmin 500 in 102ms (next.js: 42ms, application-code: 60ms)
+ GET /tasks 500 in 112ms (next.js: 82ms, application-code: 30ms)
+⨯ ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  [90m80 |[0m     </div>
+  [90m81 |[0m   );
+[31m[1m>[0m [90m82 |[0m       })}
+  [90m   |[0m        [31m[1m^[0m
+  [90m83 |[0m
+  [90m84 |[0m       <div className=[32m"pt-8 pb-2"[0m>
+  [90m85 |[0m         <div className=[32m"h-px w-full bg-border"[0m></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+
+ GET /superadmin 500 in 119ms (next.js: 89ms, application-code: 30ms)
+⨯ ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  [90m80 |[0m     </div>
+  [90m81 |[0m   );
+[31m[1m>[0m [90m82 |[0m       })}
+  [90m   |[0m        [31m[1m^[0m
+  [90m83 |[0m
+  [90m84 |[0m       <div className=[32m"pt-8 pb-2"[0m>
+  [90m85 |[0m         <div className=[32m"h-px w-full bg-border"[0m></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+
+ GET /superadmin 500 in 68ms (next.js: 27ms, application-code: 41ms)
+⨯ ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  [90m80 |[0m     </div>
+  [90m81 |[0m   );
+[31m[1m>[0m [90m82 |[0m       })}
+  [90m   |[0m        [31m[1m^[0m
+  [90m83 |[0m
+  [90m84 |[0m       <div className=[32m"pt-8 pb-2"[0m>
+  [90m85 |[0m         <div className=[32m"h-px w-full bg-border"[0m></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+
+[browser] Uncaught Error: ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+
+    at <unknown> (Error: ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8)
+    at <unknown> (Error: (./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8)
+[browser] Uncaught Error: ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+
+    at <unknown> (Error: ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8)
+    at <unknown> (Error: (./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8)
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 
+[browser] ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:82:8
+Expression expected
+  80 |     </div>
+  81 |   );
+> 82 |       })}
+     |        ^
+  83 |
+  84 |       <div className="pt-8 pb-2">
+  85 |         <div className="h-px w-full bg-border"></div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component Browser]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Client Component SSR]
+    ./Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx [Server Component] 

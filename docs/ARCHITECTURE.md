@@ -1,6 +1,6 @@
 # DomSub Control App - Architecture Plan
 
-> Private DOM/SUB relationship management application with real-time monitoring, task management, gamification, and Chrome Extension integration.
+> Private DOM/SUB (BDSM culture) relationship management application with real-time monitoring, task management, gamification, and Chrome Extension integration.
 
 ---
 
@@ -63,6 +63,7 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 | **Consent** | No formal consent system |
 | **Hosting** | Self-hosted VPS |
 | **Timeline** | No rush, quality over speed |
+| **Language** | Czech language only (Celý projekt výhradně v českém jazyce) |
 | **MVP Scope** | Full MVP (all features including Chrome Extension) |
 
 ---
@@ -1805,6 +1806,7 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 - [ ] Role-based middleware (DOM/SUB)
 - [ ] Mobile-first responsive layout (bottom nav + sidebar)
 - [ ] Dashboard home page (placeholder sections)
+- [ ] Zbytek SuperAdmin a řízení přístupů (bude dotaženo v pozdější fázi po základních modulech)
 - [ ] Telegram bot setup (basic notifications)
 
 **Deliverable**: Working auth flow, deployed infrastructure, basic app shell.

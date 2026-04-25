@@ -1,4 +1,11 @@
 {
-  "name": "@domsub/config",
-  "version": "1.0.0"
+  "name": "@maietek/config",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0"
+  }
 }
