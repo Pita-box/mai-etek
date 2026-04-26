@@ -20,21 +20,78 @@ export async function getTasks() {
 
 export async function getTask(id: string) {
   const supabase = await createClient();
-  const { data: task, error } = await supabase
+  
+  if (!id) {
+    console.error("Error: getTask called without id");
+    return null;
+  }
+
+  // Fallback pattern: first get task, then get evidence to avoid RLS/relationship issues 
+  // with joined tables if they aren't perfectly configured
+  const { data: task, error: taskError } = await supabase
     .from("tasks")
-    .select("*, task_evidence(*)")
+    .select("*")
     .eq("id", id)
     .single();
 
-  if (error) {
-    console.error("Error fetching task:", error);
+  if (taskError) {
+    console.error("Error fetching task:", taskError);
     return null;
   }
-  return task;
+
+  if (!task) return null;
+
+  // Try to fetch evidence separately
+  const { data: evidence } = await supabase
+    .from("task_evidence")
+    .select("*")
+    .eq("task_id", id);
+
+  return {
+    ...task,
+    task_evidence: evidence || []
+  };
 }
 
 export async function createTask(formData: FormData) {
   const supabase = await createClient();
+  
+  // Get current user profile
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    return { error: "Not authenticated" };
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", session.user.id)
+    .single();
+
+  if (!profile) {
+    return { error: "Profile not found" };
+  }
+
+  // Determine assigned_by and assigned_to based on role
+  let assigned_by = session.user.id;
+  let assigned_to = formData.get("assigned_to") as string;
+  
+  if (!assigned_to) {
+    // If no assigned_to provided, and user is DOM, assign to their SUB
+    // For now we just get the first SUB assigned to this DOM
+    const { data: subProfile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("dom_id", session.user.id)
+      .single();
+      
+    if (subProfile) {
+      assigned_to = subProfile.id;
+    } else {
+      return { error: "No sub assigned to this dom" };
+    }
+  }
+
   // TODO: validate input with zod
   const task = {
     title: formData.get("title") as string,
@@ -43,11 +100,16 @@ export async function createTask(formData: FormData) {
     points_reward: parseInt(formData.get("points_reward") as string) || 0,
     deadline: formData.get("deadline") as string || null,
     status: "pending",
+    assigned_by,
+    assigned_to,
   };
 
   const { data, error } = await supabase.from("tasks").insert(task).select().single();
 
   if (error) {
+    if (error?.message?.includes('NEXT_REDIRECT')) {
+      throw error;
+    }
     console.error("Error creating task:", error);
     return { error: error.message };
   }

@@ -23,10 +23,8 @@ export default async function TasksPage() {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-  // Fetch user role - assuming it's in the raw_user_meta_data or we need to query users table
-  // For now, let's assume 'dom' to show the create button, ideally fetch from db
-  const { data: userData } = await supabase.from('users').select('role').eq('id', user?.id).single();
-  const role = userData?.role || 'sub';
+  const { data: profileData } = await supabase.from('profiles').select('role').eq('id', user?.id).single();
+  const role = profileData?.role || 'sub';
 
   const tasks = await getTasks();
 

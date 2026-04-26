@@ -13,10 +13,13 @@ import { revalidatePath } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
-export default async function TaskDetailPage({ params }: { params: { id: string } }) {
-  // Extract id directly, not via 'await params' to match standard server component signature
-  const taskId = params.id;
+export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: taskId } = await params;
   const task = await getTask(taskId);
+
+  if (!task) {
+    return <div className="p-6 max-w-4xl mx-auto text-white">Úkol nenalezen.</div>;
+  }
   
   const cookieStore = await cookies();
   const supabase = createServerClient(
@@ -45,10 +48,10 @@ export default async function TaskDetailPage({ params }: { params: { id: string 
   // Action to start task (Server action directly in component for simplicity in Next 14+)
   async function startTaskAction() {
     'use server';
-    const formData = new FormData();
-    formData.append('status', 'in_progress');
-    await updateTask(taskId, formData);
-    revalidatePath(`/tasks/${taskId}`);
+    await updateTask(taskId, new FormData()); // formData is not needed since we don't have form fields, but it expects it
+    // Wait, let's use the explicit startTask function in actions
+    const { startTask } = await import('@/actions/tasks');
+    await startTask(taskId);
   }
 
   const isSub = role === 'sub';

@@ -19,9 +19,6 @@ export default function NewTaskPage() {
   const [points, setPoints] = useState(0);
   const [deadline, setDeadline] = useState('');
   const [recurrence, setRecurrence] = useState<RecurrenceType>('none');
-  
-  // TODO: Fetch available SUBs to assign to. Hardcoded for now assuming 1-on-1.
-  const assigned_to = 'placeholder-sub-id'; // This needs to be dynamic in full app
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,9 +26,6 @@ export default function NewTaskPage() {
     setError('');
 
     try {
-      // In a real scenario, we need a valid assigned_to UUID. 
-      // For this step without a DB state, it might fail if FK constraint is strictly enforced on 'placeholder-sub-id'.
-      // Usually, you'd select the SUB from a dropdown.
       const formData = new FormData();
       formData.append('title', title);
       formData.append('description', description);
@@ -39,10 +33,16 @@ export default function NewTaskPage() {
       formData.append('points_reward', points.toString());
       if (deadline) formData.append('deadline', new Date(deadline).toISOString());
       
-      await createTask(formData);
+      const result = await createTask(formData);
+      if (result && result.error) {
+        throw new Error(result.error);
+      }
       
-      router.push('/tasks');
-      router.refresh();
+      // router.push and refresh are handled in createTask redirect, but just in case it doesn't redirect due to error:
+      if (!result?.error) {
+         router.push('/tasks');
+         router.refresh();
+      }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
