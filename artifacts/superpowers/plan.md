@@ -1,58 +1,47 @@
-# Tasks (Úkoly) Module Implementation Plan
+# Plan — Full task detail page parity with popup
 
-## 1. Overview
-The Tasks module allows the DOM to assign tasks to the SUB, set deadlines, points, and recurrence. The SUB views tasks, uploads evidence, and submits them for approval. The DOM then approves (with rating and feedback) or rejects the task (with comments). The system handles task expiry and auto-assigns punishments or manually assigned punishments by the DOM - SuperAdmin.
+## Goal
+Make `/tasks/[id]` show the full task detail experience, not the current reduced legacy page.
 
-## 2. Database Schema (Existing verification)
-The `tasks` and `task_evidence` tables already exist in `database/migrations/001_initial_schema.sql` with necessary fields (status, priority, points, deadline, recurrence, rating, etc.). We will use Supabase for CRUD operations. No new DB schema changes are required at this stage.
+## Current gap
+- `TaskDetailPopup` already contains the rich task detail UX.
+- `/app/(dashboard)/tasks/[id]/page.tsx` still renders an older simplified detail page.
+- Clicking a notification opens the standalone route, so users see a degraded experience compared to the popup.
 
-## 3. Backend API Routes (`apps/web/src/app/api/tasks`)
-Since we are using Next.js App Router and Supabase, we will implement API routes for complex operations (like task submission, approval, and rejection which might trigger other actions) and use direct Supabase queries in Server Components/Actions for simple data fetching.
+## Plan
 
-*   **`GET /api/tasks`**: List tasks with filtering (status, priority, date).
-*   **`POST /api/tasks`**: Create a new task (DOM only).
-*   **`GET /api/tasks/[id]`**: Get task details and evidence.
-*   **`PUT /api/tasks/[id]`**: Update a task (DOM only).
-*   **`DELETE /api/tasks/[id]`**: Delete a task (DOM only).
-*   **`POST /api/tasks/[id]/submit`**: SUB submits a task with evidence. Updates status to `in_review`.
-*   **`POST /api/tasks/[id]/approve`**: DOM approves task. Sets rating, feedback, points. Status to `completed`.
-*   **`POST /api/tasks/[id]/reject`**: DOM rejects task. Status to `rejected`. (Triggers punishment logic later).
+### Step 1 — Identify shared vs shell-specific responsibility
+- Separate popup-only responsibilities from reusable detail content.
+- Define a shared component API for full task detail content.
+- Verification: code review of extracted props/interfaces.
 
-## 4. Frontend Implementation (`apps/web/src/app/(dashboard)/tasks`)
+### Step 2 — Extract reusable task detail content component
+- Create a shared task detail content/layout component used by both views.
+- Move rich content from `TaskDetailPopup` into the shared component.
+- Keep popup shell responsibilities in `TaskDetailPopup` only.
+- Verification: `pnpm exec eslint <touched-files> && pnpm exec tsc --noEmit`.
 
-### 4.1. Shared Components
-*   `TaskCard.tsx`: Displays summary of a task (title, priority badge, status, deadline countdown).
-*   `TaskStatusBadge.tsx`: Visual badge for 'pending', 'in_progress', 'in_review', 'completed', 'rejected', 'expired'.
-*   `PriorityBadge.tsx`: Visual badge for 'low', 'medium', 'high', 'urgent'.
+### Step 3 — Upgrade standalone `/tasks/[id]` page to use shared full detail view
+- Replace simplified legacy layout with the shared full detail content.
+- Preserve route-specific needs such as back navigation and page shell.
+- Ensure role-based actions work in standalone mode.
+- Verification: `pnpm exec eslint <touched-files> && pnpm exec tsc --noEmit`.
 
-### 4.2. DOM Views (Superadmin)
-*   **`app/(dashboard)/tasks/page.tsx`**:
-    *   List all tasks with filters (tabs for Active, In Review, Completed).
-    *   "Vytvořit úkol" (Create Task) button.
-*   **`app/(dashboard)/tasks/new/page.tsx`**:
-    *   Form to create a task: Title, Description (markdown support), Priority, Points Reward, Deadline, Recurrence.
-*   **`app/(dashboard)/tasks/[id]/page.tsx`**:
-    *   Detailed view.
-    *   If status is `in_review`: Show SUB's evidence. Buttons to "Schválit" (Approve) or "Zamítnout" (Reject).
-    *   Approve modal: Add rating (1-5 stars) and feedback.
+### Step 4 — Review UX parity and edge cases
+- Check DOM vs SUB behavior.
+- Confirm feedback/evidence/comments sections appear correctly.
+- Confirm no popup-only affordances appear on the standalone page.
+- Verification: manual route walkthrough via `/tasks/[id]` and optional dev runtime check.
 
-### 4.3. SUB Views (User)
-*   **`app/(dashboard)/tasks/page.tsx`**:
-    *   List tasks. Focused on "To Do" and "Active".
-*   **`app/(dashboard)/tasks/[id]/page.tsx`**:
-    *   Detailed view of instructions.
-    *   Button to "Začít úkol" (Start Task) -> changes status to `in_progress`.
-    *   If `in_progress`: `EvidenceUpload.tsx` component to add text, image, or video evidence.
-    *   "Odeslat ke kontrole" (Submit for Review) button.
+## Files likely involved
+- `apps/web/src/components/tasks/TaskDetailPopup.tsx`
+- `apps/web/src/app/(dashboard)/tasks/[id]/page.tsx`
+- new shared task detail component file under `apps/web/src/components/tasks/`
 
-## 5. Background Jobs (Later Phase)
-*   *Task Expiry Worker*: Cron job to check for tasks past deadline and mark them 'expired', auto-assigning punishments.
-*   *Recurring Task Generator*: Cron job to spawn daily/weekly tasks from templates.
-
-## 6. Implementation Steps
-1.  **API & Actions**: Create Next.js Server Actions for Task CRUD and state transitions (submit, approve, reject).
-2.  **UI Components**: Build `TaskCard`, `TaskForm` (using `react-hook-form` & `zod`), `EvidenceUpload`.
-3.  **Pages**: Implement the DOM and SUB views for the task list and task details.
-4.  **Integration**: Connect frontend forms to Server Actions, handle loading states and error toasts.
-
-*(Language Note: All UI text will be in Czech as per project requirements).*
+## Acceptance criteria
+- `/tasks/[id]` visually exposes the same core detail information and controls as the popup.
+- Evidence/comments/approval-related sections are available on the page route too.
+- Role-based behavior matches popup behavior.
+- Existing popup still works.
+- No TypeScript or lint errors.
+- Manual validation confirms notification click -> full detail page parity.

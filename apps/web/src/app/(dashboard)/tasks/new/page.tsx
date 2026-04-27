@@ -32,6 +32,7 @@ export default function NewTaskPage() {
       formData.append('priority', priority);
       formData.append('points_reward', points.toString());
       if (deadline) formData.append('deadline', new Date(deadline).toISOString());
+      formData.append('recurrence', recurrence);
       
       const result = await createTask(formData);
       if (result && result.error) {

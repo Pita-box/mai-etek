@@ -3,101 +3,22 @@
 > eslint
 
 
-/Users/mai/Documents/App/Ds/apps/web/src/actions/tasks.ts
-  48:11  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
-
 /Users/mai/Documents/App/Ds/apps/web/src/app/(auth)/login/page.tsx
   46:21  warning  'authData' is assigned a value but never used  @typescript-eslint/no-unused-vars
   57:19  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
 
 /Users/mai/Documents/App/Ds/apps/web/src/app/(auth)/register/page.tsx
-  68:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  71:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 /Users/mai/Documents/App/Ds/apps/web/src/app/(dashboard)/layout.tsx
   16:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-/Users/mai/Documents/App/Ds/apps/web/src/app/(dashboard)/settings/page.tsx
-  20:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  38:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 /Users/mai/Documents/App/Ds/apps/web/src/app/(dashboard)/superadmin/page.tsx
   33:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   38:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-/Users/mai/Documents/App/Ds/apps/web/src/app/(dashboard)/tasks/[id]/page.tsx
-  143:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
-  168:18  error    'Star' is not defined                                                                                                                                                                                                                                                                    react/jsx-no-undef
-  176:37  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
-  176:57  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
-
 /Users/mai/Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx
-   32:77  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
-  117:16  error  Error: Cannot create components during render
-
-Components created during render will reset their state each time they are created. Declare components outside of render.
-
-/Users/mai/Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:117:16
-  115 |                 <span className="font-black tracking-tight text-xl">Maietek</span>
-  116 |               </div>
-> 117 |               <NavLinks />
-      |                ^^^^^^^^ This component is created during render
-  118 |             </div>
-  119 |           </SheetContent>
-  120 |         </Sheet>
-
-/Users/mai/Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:42:20
-  40 |   });
-  41 |
-> 42 |   const NavLinks = () => (
-     |                    ^^^^^^^
-> 43 |     <div className="flex flex-col space-y-1 w-full">
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 44 |       {navItems.map((item) => {
-     …
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 90 |     </div>
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 91 |   );
-     | ^^^^ The component is created during render here
-  92 |
-  93 |   return (
-  94 |     <>  react-hooks/static-components
-  132:12  error  Error: Cannot create components during render
-
-Components created during render will reset their state each time they are created. Declare components outside of render.
-
-/Users/mai/Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:132:12
-  130 |             <span className="font-black tracking-tight text-2xl">Maietek</span>
-  131 |           </div>
-> 132 |           <NavLinks />
-      |            ^^^^^^^^ This component is created during render
-  133 |         </div>
-  134 |       </aside>
-  135 |     </>
-
-/Users/mai/Documents/App/Ds/apps/web/src/components/shared/Navigation.tsx:42:20
-  40 |   });
-  41 |
-> 42 |   const NavLinks = () => (
-     |                    ^^^^^^^
-> 43 |     <div className="flex flex-col space-y-1 w-full">
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 44 |       {navItems.map((item) => {
-     …
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 90 |     </div>
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 91 |   );
-     | ^^^^ The component is created during render here
-  92 |
-  93 |   return (
-  94 |     <>                                         react-hooks/static-components
-
-/Users/mai/Documents/App/Ds/apps/web/src/components/tasks/PriorityBadge.tsx
-  14:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-/Users/mai/Documents/App/Ds/apps/web/src/components/tasks/TaskStatusBadge.tsx
-  18:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 /Users/mai/Documents/App/Ds/apps/web/src/hooks/useSuperAdmin.ts
    5:38  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
@@ -129,6 +50,6 @@ Calling setState synchronously within an effect body causes cascading renders th
 /Users/mai/Documents/App/Ds/apps/web/tailwind.config.ts
   23:13  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
 
-✖ 25 problems (20 errors, 5 warnings)
+✖ 14 problems (11 errors, 3 warnings)
 
  ELIFECYCLE  Command failed with exit code 1.

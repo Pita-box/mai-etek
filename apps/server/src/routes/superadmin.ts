@@ -41,6 +41,7 @@ const isDom = async (req: any, res: any, next: any) => {
 router.post('/register', async (req, res) => {
   try {
     const { email, password, username, full_name } = req.body;
+    const displayName = typeof full_name === 'string' && full_name.trim() ? full_name.trim() : 'subíček';
     
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
@@ -51,7 +52,7 @@ router.post('/register', async (req, res) => {
       email,
       password,
       email_confirm: true,
-      user_metadata: { username, full_name }
+      user_metadata: { username, full_name: displayName }
     });
 
     if (authError) throw authError;

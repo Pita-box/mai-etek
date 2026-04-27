@@ -2,11 +2,9 @@
 
 import React, { useState } from 'react';
 import { approveTask, rejectTask } from '@/actions/tasks';
-import { useRouter } from 'next/navigation';
 import { Check, X, Star } from 'lucide-react';
 
-export const DOMApproval = ({ taskId }: { taskId: string }) => {
-  const router = useRouter();
+export const DOMApproval = ({ taskId, onTaskMutated }: { taskId: string; onTaskMutated: () => Promise<void> }) => {
   const [rating, setRating] = useState(3);
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,9 +13,13 @@ export const DOMApproval = ({ taskId }: { taskId: string }) => {
     setIsSubmitting(true);
     try {
       const formData = new FormData();
+      formData.append('rating', rating.toString());
       formData.append('feedback', feedback);
-      await rejectTask(taskId, formData);
-      router.refresh();
+      const result = await approveTask(taskId, formData);
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+      await onTaskMutated();
     } catch (e) {
       console.error(e);
       alert('Chyba při schvalování');
@@ -34,10 +36,12 @@ export const DOMApproval = ({ taskId }: { taskId: string }) => {
     setIsSubmitting(true);
     try {
       const formData = new FormData();
-      formData.append('rating', rating.toString());
       formData.append('feedback', feedback);
-      await approveTask(taskId, formData);
-      router.refresh();
+      const result = await rejectTask(taskId, formData);
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+      await onTaskMutated();
     } catch (e) {
       console.error(e);
       alert('Chyba při zamítání');
@@ -84,14 +88,14 @@ export const DOMApproval = ({ taskId }: { taskId: string }) => {
             disabled={isSubmitting}
             className="flex-1 flex items-center justify-center gap-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 font-semibold py-3 px-4 rounded-lg hover:bg-emerald-500/30 transition-colors disabled:opacity-50"
           >
-            <Check className="w-5 h-5" /> Schválit a odměnit
+            <Check className="w-5 h-5" /> Schválit úkol
           </button>
           <button
             onClick={handleReject}
             disabled={isSubmitting}
             className="flex-1 flex items-center justify-center gap-2 bg-red-500/20 text-red-400 border border-red-500/50 font-semibold py-3 px-4 rounded-lg hover:bg-red-500/30 transition-colors disabled:opacity-50"
           >
-            <X className="w-5 h-5" /> Zamítnout
+            <X className="w-5 h-5" /> Odmítnout úkol
           </button>
         </div>
       </div>

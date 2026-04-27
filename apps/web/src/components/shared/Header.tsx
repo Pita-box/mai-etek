@@ -1,7 +1,8 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Bell, AlertOctagon, User } from 'lucide-react';
+import { AlertOctagon, User } from 'lucide-react';
+import { NotificationsPopover } from '@/components/shared/NotificationsPopover';
 import { Button } from '@/components/ui/button';
 
 export default function Header() {
@@ -29,10 +30,7 @@ export default function Header() {
         
         <div className="w-px h-6 bg-border mx-2"></div>
         
-        <Button variant="ghost" size="icon" className="relative text-muted hover:text-foreground hover:bg-secondary rounded-full">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full shadow-[0_0_5px_rgba(255,31,87,0.8)]"></span>
-        </Button>
+        <NotificationsPopover />
         
         {/* User Profile Placeholder */}
         <Button variant="ghost" size="icon" className="rounded-full bg-secondary overflow-hidden border border-border">

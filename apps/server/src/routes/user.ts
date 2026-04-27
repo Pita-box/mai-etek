@@ -29,19 +29,35 @@ const requireAuth = async (req: any, res: any, next: any) => {
 router.put('/settings', requireAuth, async (req: any, res: any) => {
   try {
     const userId = req.user.id;
-    const { email, password } = req.body;
+    const { email, password, full_name } = req.body;
+    const displayName = typeof full_name === 'string' ? full_name.trim() : undefined;
 
-    if (!email && !password) {
-      return res.status(400).json({ error: 'Email or password is required' });
+    if (!email && !password && displayName === undefined) {
+      return res.status(400).json({ error: 'Email, password or name is required' });
     }
 
     const updates: any = {};
     if (email) updates.email = email;
     if (password) updates.password = password;
+    if (displayName !== undefined) {
+      updates.user_metadata = {
+        ...(req.user.user_metadata || {}),
+        full_name: displayName || 'subíček',
+      };
+    }
 
     // 1. Update in Supabase Auth
     const { data, error } = await supabaseAdmin.auth.admin.updateUserById(userId, updates);
     if (error) throw error;
+
+    if (displayName !== undefined) {
+      const { error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .update({ full_name: displayName || 'subíček' })
+        .eq('id', userId);
+
+      if (profileError) throw profileError;
+    }
 
     // 2. If email updated, also sync profiles (optional, but good if you store email in profile)
     // Note: Depends on if 'email' is in profiles table. If not, skip this. Let's just update auth.users.
@@ -65,7 +81,7 @@ router.put('/settings', requireAuth, async (req: any, res: any) => {
       }
     }
 
-    res.json({ success: true, message: 'Nastavení bylo úspěšně uloženo.' });
+    res.json({ success: true, message: 'Nastavení bylo úspěšně uloženo.', user: data.user });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 
 const registerSchema = z.object({
   email: z.string().email({ message: 'Neplatný e-mail' }),
+  full_name: z.string().optional(),
   password: z.string().min(6, { message: 'Heslo musí mít alespoň 6 znaků' }),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -36,6 +37,7 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: '',
+      full_name: '',
       password: '',
       confirmPassword: '',
     },
@@ -52,7 +54,8 @@ export default function RegisterPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          email: data.email, 
+          email: data.email,
+          full_name: data.full_name?.trim() || 'subíček',
           password: data.password
         }),
       });
@@ -105,6 +108,24 @@ export default function RegisterPage() {
                       className="bg-input/50 border-border focus-visible:ring-ring text-foreground  rounded-xl h-12"
                     />
                   </FormControl>
+                  <FormMessage className="text-destructive" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="full_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">Jméno</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="subíček"
+                      {...field}
+                      className="bg-input/50 border-border focus-visible:ring-ring text-foreground  rounded-xl h-12"
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted">Nepovinné — když ho nevyplníš, nastavíme jméno subíček.</p>
                   <FormMessage className="text-destructive" />
                 </FormItem>
               )}

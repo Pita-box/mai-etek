@@ -44,8 +44,8 @@ export const TaskStatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     expired: { icon: AlertCircle, className: 'text-orange-400 bg-orange-500/10 border-orange-500/20', label: 'Vypršelo' },
   };
 
-  // Typecast to handle 'submitted' vs 'in_review' mapping gracefully if needed
-  const c = config[status as keyof typeof config] || config.pending;
+  // Typecast to handle legacy or server-only statuses gracefully
+  const c = config[status as keyof typeof config] || config.in_progress;
   const Icon = c.icon;
 
   return (
