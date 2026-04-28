@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Task } from '@/types/task';
 import { TaskDetailContent } from './TaskDetailContent';
+import { useTaskViewTracking } from './useTaskViewTracking';
 
 type TaskDetailPageClientProps = {
   task: Task;
@@ -11,6 +12,8 @@ type TaskDetailPageClientProps = {
 
 export function TaskDetailPageClient({ task, role }: TaskDetailPageClientProps) {
   const router = useRouter();
+
+  useTaskViewTracking({ taskId: task.id, enabled: role === 'sub' });
 
   const refreshPage = async () => {
     router.refresh();

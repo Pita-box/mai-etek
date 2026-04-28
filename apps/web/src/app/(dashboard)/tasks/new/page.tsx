@@ -148,7 +148,7 @@ export default function NewTaskPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 bg-primary text-black font-semibold py-3 px-6 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 bg-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
               Uložit a zadat úkol

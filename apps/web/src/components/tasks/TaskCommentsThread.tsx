@@ -223,7 +223,7 @@ function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
                   />
                   <div className="flex justify-end gap-2">
                     <button onClick={() => setEditingId(null)} className="rounded-lg px-3 py-1 text-xs text-zinc-400 hover:text-white hover:bg-white/5 transition">Zrušit</button>
-                    <button onClick={() => submitEdit(comment.id)} disabled={isPending || !editBody.trim()} className="rounded-lg bg-primary px-3 py-1 text-xs text-black hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed">Uložit</button>
+                    <button onClick={() => submitEdit(comment.id)} disabled={isPending || !editBody.trim()} className="rounded-lg bg-primary px-3 py-1 text-xs text-white hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed">Uložit</button>
                   </div>
                 </div>
               ) : (

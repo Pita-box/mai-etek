@@ -103,7 +103,7 @@ export const EvidenceUpload = ({ taskId }: { taskId: string }) => {
         <button
           type="submit"
           disabled={isSubmitting || !content.trim()}
-          className="w-full flex items-center justify-center gap-2 bg-primary text-black font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
           Odeslat ke kontrole

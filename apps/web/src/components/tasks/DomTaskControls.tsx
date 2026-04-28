@@ -100,11 +100,11 @@ export function DomTaskControls({ task }: DomTaskControlsProps) {
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row">
-            <button id="task-dom-save" disabled={isPending} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 font-bold text-black disabled:opacity-50">
+            <button id="task-dom-save" disabled={isPending} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 font-bold text-white disabled:opacity-50">
               {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               Uložit
             </button>
-            <button id="task-dom-cancel" type="button" disabled={isPending} onClick={cancel} className="flex items-center justify-center gap-2 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 font-bold text-red-200 disabled:opacity-50">
+            <button id="task-dom-cancel" type="button" disabled={isPending} onClick={cancel} className="flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-4 py-3 font-bold text-slate-300 disabled:opacity-50">
               <Trash2 className="h-4 w-4" />
               Zrušit/smazat
             </button>

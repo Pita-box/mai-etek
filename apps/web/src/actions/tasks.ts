@@ -32,6 +32,21 @@ type TaskAttemptRow = {
   submitted_at: string | null;
 };
 
+type TaskViewSummaryRow = {
+  task_id: string;
+  last_viewed_at: string | null;
+  view_count: number | null;
+};
+
+function getLatestViewSummary(rows: TaskViewSummaryRow[]) {
+  return rows.reduce<TaskViewSummaryRow | null>((latest, row) => {
+    if (!latest) return row;
+    if (!row.last_viewed_at) return latest;
+    if (!latest.last_viewed_at) return row;
+    return new Date(row.last_viewed_at) > new Date(latest.last_viewed_at) ? row : latest;
+  }, null);
+}
+
 async function getLatestTaskAttempt(
   supabase: Awaited<ReturnType<typeof createClient>>,
   taskId: string,
@@ -108,7 +123,7 @@ export async function getTasks() {
     return [];
   }
 
-  const [attemptsResult, evidenceResult, mediaResult] = await Promise.all([
+  const [attemptsResult, evidenceResult, mediaResult, viewSummaryResult] = await Promise.all([
     supabase
       .from("task_attempts")
       .select("*")
@@ -123,15 +138,23 @@ export async function getTasks() {
       .select("*")
       .in("task_id", taskIds)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("task_view_summary")
+      .select("task_id, last_viewed_at, view_count")
+      .in("task_id", taskIds),
   ]);
 
   const attempts = attemptsResult.error && !isMissingRelationError(attemptsResult.error) ? [] : attemptsResult.data || [];
   const evidence = evidenceResult.error && !isMissingRelationError(evidenceResult.error) ? [] : evidenceResult.data || [];
   const media = mediaResult.error && !isMissingRelationError(mediaResult.error) ? [] : mediaResult.data || [];
+  const viewSummaries = viewSummaryResult.error && !isMissingRelationError(viewSummaryResult.error)
+    ? []
+    : (viewSummaryResult.data || []) as TaskViewSummaryRow[];
 
   const attemptsByTask = new Map<string, typeof attempts>();
   const evidenceByTask = new Map<string, typeof evidence>();
   const mediaByTask = new Map<string, typeof media>();
+  const viewSummaryByTask = new Map<string, TaskViewSummaryRow>();
 
   for (const attempt of attempts) {
     const taskAttempts = attemptsByTask.get(attempt.task_id) || [];
@@ -151,13 +174,25 @@ export async function getTasks() {
     mediaByTask.set(item.task_id, taskMedia);
   }
 
-  return taskList.map((task) => ({
-    ...task,
-    public_task_id: getPublicTaskId(task),
-    task_attempts: attemptsByTask.get(task.id) || [],
-    task_evidence: evidenceByTask.get(task.id) || [],
-    task_media: mediaByTask.get(task.id) || [],
-  }));
+  for (const summary of viewSummaries) {
+    const existing = viewSummaryByTask.get(summary.task_id);
+    const latest = getLatestViewSummary(existing ? [existing, summary] : [summary]);
+    if (latest) viewSummaryByTask.set(summary.task_id, latest);
+  }
+
+  return taskList.map((task) => {
+    const viewSummary = viewSummaryByTask.get(task.id);
+
+    return {
+      ...task,
+      public_task_id: getPublicTaskId(task),
+      last_viewed_at: viewSummary?.last_viewed_at ?? null,
+      view_count: viewSummary?.view_count ?? null,
+      task_attempts: attemptsByTask.get(task.id) || [],
+      task_evidence: evidenceByTask.get(task.id) || [],
+      task_media: mediaByTask.get(task.id) || [],
+    };
+  });
 }
 
 export async function getTask(id: string) {
@@ -205,9 +240,20 @@ export async function getTask(id: string) {
     .eq("task_id", task.id)
     .order("created_at", { ascending: false });
 
+  const { data: viewSummaries, error: viewSummaryError } = await supabase
+    .from("task_view_summary")
+    .select("task_id, last_viewed_at, view_count")
+    .eq("task_id", task.id);
+
+  const viewSummary = viewSummaryError && !isMissingRelationError(viewSummaryError)
+    ? null
+    : getLatestViewSummary((viewSummaries || []) as TaskViewSummaryRow[]);
+
   return {
     ...task,
     public_task_id: publicTaskId,
+    last_viewed_at: viewSummary?.last_viewed_at ?? null,
+    view_count: viewSummary?.view_count ?? null,
     task_attempts: attemptsError && !isMissingRelationError(attemptsError) ? [] : attempts || [],
     task_media: mediaError && !isMissingRelationError(mediaError) ? [] : media || [],
     task_evidence: evidence || []

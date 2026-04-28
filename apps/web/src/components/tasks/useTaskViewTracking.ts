@@ -9,7 +9,7 @@ type UseTaskViewTrackingOptions = {
   delayMs?: number;
 };
 
-export function useTaskViewTracking({ taskId, enabled, delayMs = 5000 }: UseTaskViewTrackingOptions) {
+export function useTaskViewTracking({ taskId, enabled, delayMs = 1500 }: UseTaskViewTrackingOptions) {
   useEffect(() => {
     if (!enabled || !taskId) return;
 

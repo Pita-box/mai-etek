@@ -20,7 +20,7 @@ export default function DashboardLayout({
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (!session) {
         router.push('/login');
         return;
@@ -39,7 +39,7 @@ export default function DashboardLayout({
     checkUser();
   }, [router, supabase]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className='text-white p-4 center items-center content-center'>Načítám...</div>;
 
   // Show Lock Screen for unassigned users
   if (profile?.role === 'unassigned') {

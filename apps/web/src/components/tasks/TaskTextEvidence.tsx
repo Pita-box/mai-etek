@@ -56,15 +56,18 @@ export function TaskTextEvidence({ task, role, onTaskMutated }: TaskTextEvidence
             <h4 className="font-bold">Textové odevzdání</h4>
             <p className="text-sm text-zinc-500">
               {role === 'sub'
-                ? 'Sem napiš hlavní popis toho, jak jsi úkol splnil. Tato akce text uloží, ale ještě neodešle celý úkol DOMovi.'
-                : 'Hlavní textové odevzdání od SUB připravené ke kontrole.'}
+                ? 'Sem napiš hlavní popis toho, jak jsi úkol splnil.'
+                : 'Hlavní textové odevzdání od subíčka je připravené ke kontrole.'}
             </p>
           </div>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-xs text-zinc-400">
-          <Sparkles className="h-3.5 w-3.5 text-primary" />
-          {role === 'sub' ? 'Průběžné ukládání' : 'Read-only náhled'}
-        </div>
+
+        {role === 'dom' && (
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-xs text-zinc-400">
+            <Sparkles className="h-3.5 w-3.5 text-primary" /> Read only
+          </div>
+        )}
+
       </div>
 
       {role === 'sub' ? (
@@ -91,7 +94,7 @@ export function TaskTextEvidence({ task, role, onTaskMutated }: TaskTextEvidence
               type="button"
               onClick={handleSave}
               disabled={isPending || !canSave || !value.trim()}
-              className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-bold text-black transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-bold text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
               Uložit textové odevzdání

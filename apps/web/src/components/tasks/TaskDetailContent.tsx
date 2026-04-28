@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Award, Calendar, Clock, Loader2, Send } from 'lucide-react';
+import { Award, Calendar, Clock, Eye, Loader2, Send, Timer as TimerIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cs } from 'date-fns/locale';
 import { submitTask } from '@/actions/tasks';
@@ -52,14 +52,7 @@ export function TaskDetailContent({ task, role, titleId, layout = 'popup', onTas
                 </span>
               ) : null}
             </div>
-            <div>
-              <h1 id={titleId} className="text-3xl font-black tracking-tight text-white md:text-5xl">
-                {task.title}
-              </h1>
-              <p className="mt-2 max-w-2xl text-sm text-zinc-400">
-                Full-screen přehled úkolu, instrukcí, stavu a odevzdání.
-              </p>
-            </div>
+
           </div>
 
 
@@ -68,6 +61,9 @@ export function TaskDetailContent({ task, role, titleId, layout = 'popup', onTas
 
       <div className={isPage ? 'grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]' : 'grid flex-1 overflow-y-auto p-6 md:grid-cols-[1fr_20rem] md:gap-6 md:p-8'}>
         <main className="space-y-6">
+          <h1 id={titleId} className="text-3xl font-black tracking-tight first-letter:uppercase text-white md:text-5xl">
+            {task.title}
+          </h1>
           <article className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
             <h2 className="text-lg font-bold text-white">Instrukce</h2>
             <p className="mt-4 whitespace-pre-wrap text-zinc-300">
@@ -110,6 +106,28 @@ export function TaskDetailContent({ task, role, titleId, layout = 'popup', onTas
                   {deadlineDate ? format(deadlineDate, 'PPp', { locale: cs }) : 'Bez termínu'}
                 </dd>
               </div>
+              <div className="flex items-center justify-between gap-3">
+                <dt className="flex items-center gap-2 text-zinc-400">
+                  <TimerIcon className="h-4 w-4" />
+                  Vytvořeno
+                </dt>
+                <dd className="text-right text-white">
+                  {new Date(task.created_at).toLocaleDateString('cs-CZ')}
+                </dd>
+              </div>
+              {role === 'dom' && task.last_viewed_at ? (
+                <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+                  <dt className="flex items-center gap-2 text-zinc-400">
+                    <Eye className="h-4 w-4" />
+                    Naposledy zobrazeno
+                  </dt>
+                  <dd className="text-right text-white">
+                    {format(new Date(task.last_viewed_at), 'dd.MM.yyyy (HH:mm)', { locale: cs })}{' '}<br />
+                    <span className="text-zinc-400">({task.view_count || 1}x celkem)</span>
+                  </dd>
+                </div>
+              ) : null}
+
             </dl>
           </div>
 
@@ -136,15 +154,6 @@ export function TaskDetailContent({ task, role, titleId, layout = 'popup', onTas
           {showDomApproval ? <DOMApproval taskId={task.id} onTaskMutated={onTaskMutated} /> : null}
 
           {role === 'dom' ? <DomTaskControls task={task} /> : null}
-
-          {role === 'dom' && task.last_viewed_at ? (
-            <div className="rounded-3xl border border-cyan-300/20 bg-cyan-400/10 p-5">
-              <h2 className="font-bold text-cyan-200">SUB zobrazení</h2>
-              <p className="mt-3 text-sm text-cyan-50/90">
-                Naposledy zobrazeno {format(new Date(task.last_viewed_at), 'PPp', { locale: cs })} ({task.view_count || 1}×)
-              </p>
-            </div>
-          ) : null}
 
           {task.dom_feedback ? (
             <div className="rounded-3xl border border-amber-300/20 bg-amber-400/10 p-5">

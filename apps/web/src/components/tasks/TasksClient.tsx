@@ -22,11 +22,35 @@ const domFilters: Array<{ key: DomFilter; label: string }> = [
   { key: 'completed', label: 'Dokončené' },
 ];
 
-const subVisibleStatuses = ['in_progress', 'revision_requested', 'in_review', 'completed'] as const;
+const subActiveStatuses = ['pending', 'in_progress', 'revision_requested', 'in_review'] as const;
+const subCompletedStatuses = ['completed', 'approved'] as const;
 const domActiveStatuses = ['in_progress'] as const;
+const COMPLETED_TASK_SUB_VISIBILITY_MS = 24 * 60 * 60 * 1000;
+
+function isCompletedTaskStillVisibleToSub(task: Task) {
+  if (!subCompletedStatuses.includes(task.status as (typeof subCompletedStatuses)[number])) {
+    return false;
+  }
+
+  if (!task.completed_at) {
+    return true;
+  }
+
+  const completedAt = new Date(task.completed_at).getTime();
+
+  if (Number.isNaN(completedAt)) {
+    return true;
+  }
+
+  return Date.now() - completedAt < COMPLETED_TASK_SUB_VISIBILITY_MS;
+}
 
 function isSubVisibleTask(task: Task) {
-  return task.status === 'pending' || subVisibleStatuses.includes(task.status as (typeof subVisibleStatuses)[number]);
+  if (subActiveStatuses.includes(task.status as (typeof subActiveStatuses)[number])) {
+    return true;
+  }
+
+  return isCompletedTaskStillVisibleToSub(task);
 }
 
 export function TasksClient({ tasks: initialTasks, role }: TasksClientProps) {
@@ -49,23 +73,17 @@ export function TasksClient({ tasks: initialTasks, role }: TasksClientProps) {
     <div className="relative p-6 max-w-7xl mx-auto space-y-8">
       <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary/70">DOM/SUB workflow</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">DOM/SUB workflow</p>
           <h1 className="mt-2 text-4xl font-black text-white tracking-tight">Úkoly</h1>
           <div className="mt-1 flex flex-wrap items-center gap-3 text-gray-400">
-            <p>Správa, kontrola a plnění povinností v jednom přehledu.</p>
-            {isRealtimeSyncing ? (
-              <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-100">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Živá synchronizace…
-              </span>
-            ) : null}
+            <p>Správa, kontrola a plnění povinností.</p>
           </div>
         </div>
         {role === 'dom' ? (
           <Link
             id="tasks-create-task-link"
             href="/tasks/new"
-            className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3 font-bold text-black shadow-[0_0_30px_rgba(var(--primary-rgb),0.25)] transition hover:bg-primary/90"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3 font-bold text-white shadow-[0_0_30px_rgba(var(--primary-rgb),0.25)] transition hover:bg-primary/90"
           >
             <Plus className="w-5 h-5" />
             Vytvořit úkol
@@ -83,9 +101,8 @@ export function TasksClient({ tasks: initialTasks, role }: TasksClientProps) {
                 key={filter.key}
                 type="button"
                 onClick={() => setActiveFilter(filter.key)}
-                className={`rounded-2xl px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-primary ${
-                  isActive ? 'bg-primary text-black' : 'bg-white/5 text-zinc-300 hover:bg-white/10'
-                }`}
+                className={`rounded-2xl px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-primary ${isActive ? 'bg-primary text-white' : 'bg-white/5 text-zinc-300 hover:bg-white/10'
+                  }`}
               >
                 {filter.label} <span className="opacity-70">({domGroups[filter.key].length})</span>
               </button>
@@ -111,6 +128,16 @@ export function TasksClient({ tasks: initialTasks, role }: TasksClientProps) {
           onClose={() => setSelectedTaskId(null)}
           onTaskMutated={refreshTasks}
         />
+      ) : null}
+
+      {isRealtimeSyncing ? (
+        <div
+          className="fixed bottom-5 right-5 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-cyan-300/20 bg-black/70 text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,0.18)] backdrop-blur-xl"
+          aria-label="Probíhá živá synchronizace"
+          role="status"
+        >
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+        </div>
       ) : null}
     </div>
   );
