@@ -1,22 +1,35 @@
 "use server";
 
+import { createActivityNotification } from "@/actions/notifications";
 import { createClient } from "@/utils/supabase/server";
 import { uploadTaskFileToDrive } from "@/lib/google-drive/tasks";
+import {
+  sendTaskCommentNotification,
+  sendTaskSubmittedNotification,
+} from "@/lib/telegram/notifications";
 import { getPublicTaskId, getTaskHref, getTaskIdColumn } from "@/lib/tasks/ids";
-import { getTaskMediaSizeError, TASK_MEDIA_MAX_BYTES } from "@/lib/tasks/media-limits";
+import {
+  getTaskMediaSizeError,
+  TASK_MEDIA_MAX_BYTES,
+} from "@/lib/tasks/media-limits";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-function isMissingRelationError(error: { code?: string; message?: string } | null) {
+function isMissingRelationError(
+  error: { code?: string; message?: string } | null,
+) {
   return Boolean(
     error?.code === "42P01" ||
-      error?.code === "42703" ||
-      error?.message?.toLowerCase().includes("schema cache") ||
-      error?.message?.toLowerCase().includes("does not exist")
+    error?.code === "42703" ||
+    error?.message?.toLowerCase().includes("schema cache") ||
+    error?.message?.toLowerCase().includes("does not exist"),
   );
 }
 
-function revalidateTaskPaths(task: { id: string; public_task_id?: string | null }) {
+function revalidateTaskPaths(task: {
+  id: string;
+  public_task_id?: string | null;
+}) {
   revalidatePath("/tasks");
   revalidatePath(`/tasks/${task.id}`);
   revalidatePath(getTaskHref(task));
@@ -43,18 +56,22 @@ function getLatestViewSummary(rows: TaskViewSummaryRow[]) {
     if (!latest) return row;
     if (!row.last_viewed_at) return latest;
     if (!latest.last_viewed_at) return row;
-    return new Date(row.last_viewed_at) > new Date(latest.last_viewed_at) ? row : latest;
+    return new Date(row.last_viewed_at) > new Date(latest.last_viewed_at)
+      ? row
+      : latest;
   }, null);
 }
 
 async function getLatestTaskAttempt(
   supabase: Awaited<ReturnType<typeof createClient>>,
   taskId: string,
-  submittedBy: string
+  submittedBy: string,
 ) {
   const { data, error } = await supabase
     .from("task_attempts")
-    .select("id, task_id, submitted_by, attempt_number, text_content, status, submitted_at")
+    .select(
+      "id, task_id, submitted_by, attempt_number, text_content, status, submitted_at",
+    )
     .eq("task_id", taskId)
     .eq("submitted_by", submittedBy)
     .order("attempt_number", { ascending: false })
@@ -72,19 +89,27 @@ async function getLatestTaskAttempt(
 async function ensureDraftTaskAttempt(
   supabase: Awaited<ReturnType<typeof createClient>>,
   taskId: string,
-  submittedBy: string
+  submittedBy: string,
 ) {
-  const latestAttemptResult = await getLatestTaskAttempt(supabase, taskId, submittedBy);
+  const latestAttemptResult = await getLatestTaskAttempt(
+    supabase,
+    taskId,
+    submittedBy,
+  );
 
   if (latestAttemptResult.error) {
     return latestAttemptResult;
   }
 
-  if (latestAttemptResult.attempt?.status === "draft" || latestAttemptResult.attempt?.status === "revision_requested") {
+  if (
+    latestAttemptResult.attempt?.status === "draft" ||
+    latestAttemptResult.attempt?.status === "revision_requested"
+  ) {
     return latestAttemptResult;
   }
 
-  const nextAttemptNumber = (latestAttemptResult.attempt?.attempt_number || 0) + 1;
+  const nextAttemptNumber =
+    (latestAttemptResult.attempt?.attempt_number || 0) + 1;
   const { data, error } = await supabase
     .from("task_attempts")
     .insert({
@@ -93,7 +118,9 @@ async function ensureDraftTaskAttempt(
       attempt_number: nextAttemptNumber,
       status: "draft",
     })
-    .select("id, task_id, submitted_by, attempt_number, text_content, status, submitted_at");
+    .select(
+      "id, task_id, submitted_by, attempt_number, text_content, status, submitted_at",
+    );
 
   if (error && !isMissingRelationError(error)) {
     console.error("Error creating draft task attempt:", error);
@@ -123,33 +150,41 @@ export async function getTasks() {
     return [];
   }
 
-  const [attemptsResult, evidenceResult, mediaResult, viewSummaryResult] = await Promise.all([
-    supabase
-      .from("task_attempts")
-      .select("*")
-      .in("task_id", taskIds)
-      .order("attempt_number", { ascending: false }),
-    supabase
-      .from("task_evidence")
-      .select("*")
-      .in("task_id", taskIds),
-    supabase
-      .from("task_media")
-      .select("*")
-      .in("task_id", taskIds)
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("task_view_summary")
-      .select("task_id, last_viewed_at, view_count")
-      .in("task_id", taskIds),
-  ]);
+  const [attemptsResult, evidenceResult, mediaResult, viewSummaryResult] =
+    await Promise.all([
+      supabase
+        .from("task_attempts")
+        .select("*")
+        .in("task_id", taskIds)
+        .order("attempt_number", { ascending: false }),
+      supabase.from("task_evidence").select("*").in("task_id", taskIds),
+      supabase
+        .from("task_media")
+        .select("*")
+        .in("task_id", taskIds)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("task_view_summary")
+        .select("task_id, last_viewed_at, view_count")
+        .in("task_id", taskIds),
+    ]);
 
-  const attempts = attemptsResult.error && !isMissingRelationError(attemptsResult.error) ? [] : attemptsResult.data || [];
-  const evidence = evidenceResult.error && !isMissingRelationError(evidenceResult.error) ? [] : evidenceResult.data || [];
-  const media = mediaResult.error && !isMissingRelationError(mediaResult.error) ? [] : mediaResult.data || [];
-  const viewSummaries = viewSummaryResult.error && !isMissingRelationError(viewSummaryResult.error)
-    ? []
-    : (viewSummaryResult.data || []) as TaskViewSummaryRow[];
+  const attempts =
+    attemptsResult.error && !isMissingRelationError(attemptsResult.error)
+      ? []
+      : attemptsResult.data || [];
+  const evidence =
+    evidenceResult.error && !isMissingRelationError(evidenceResult.error)
+      ? []
+      : evidenceResult.data || [];
+  const media =
+    mediaResult.error && !isMissingRelationError(mediaResult.error)
+      ? []
+      : mediaResult.data || [];
+  const viewSummaries =
+    viewSummaryResult.error && !isMissingRelationError(viewSummaryResult.error)
+      ? []
+      : ((viewSummaryResult.data || []) as TaskViewSummaryRow[]);
 
   const attemptsByTask = new Map<string, typeof attempts>();
   const evidenceByTask = new Map<string, typeof evidence>();
@@ -176,7 +211,9 @@ export async function getTasks() {
 
   for (const summary of viewSummaries) {
     const existing = viewSummaryByTask.get(summary.task_id);
-    const latest = getLatestViewSummary(existing ? [existing, summary] : [summary]);
+    const latest = getLatestViewSummary(
+      existing ? [existing, summary] : [summary],
+    );
     if (latest) viewSummaryByTask.set(summary.task_id, latest);
   }
 
@@ -197,7 +234,7 @@ export async function getTasks() {
 
 export async function getTask(id: string) {
   const supabase = await createClient();
-  
+
   if (!id) {
     console.error("Error: getTask called without id");
     return null;
@@ -205,7 +242,7 @@ export async function getTask(id: string) {
 
   const taskIdColumn = getTaskIdColumn(id);
 
-  // Fallback pattern: first get task, then get evidence to avoid RLS/relationship issues 
+  // Fallback pattern: first get task, then get evidence to avoid RLS/relationship issues
   // with joined tables if they aren't perfectly configured
   const { data: task, error: taskError } = await supabase
     .from("tasks")
@@ -245,26 +282,33 @@ export async function getTask(id: string) {
     .select("task_id, last_viewed_at, view_count")
     .eq("task_id", task.id);
 
-  const viewSummary = viewSummaryError && !isMissingRelationError(viewSummaryError)
-    ? null
-    : getLatestViewSummary((viewSummaries || []) as TaskViewSummaryRow[]);
+  const viewSummary =
+    viewSummaryError && !isMissingRelationError(viewSummaryError)
+      ? null
+      : getLatestViewSummary((viewSummaries || []) as TaskViewSummaryRow[]);
 
   return {
     ...task,
     public_task_id: publicTaskId,
     last_viewed_at: viewSummary?.last_viewed_at ?? null,
     view_count: viewSummary?.view_count ?? null,
-    task_attempts: attemptsError && !isMissingRelationError(attemptsError) ? [] : attempts || [],
-    task_media: mediaError && !isMissingRelationError(mediaError) ? [] : media || [],
-    task_evidence: evidence || []
+    task_attempts:
+      attemptsError && !isMissingRelationError(attemptsError)
+        ? []
+        : attempts || [],
+    task_media:
+      mediaError && !isMissingRelationError(mediaError) ? [] : media || [],
+    task_evidence: evidence || [],
   };
 }
 
 export async function createTask(formData: FormData) {
   const supabase = await createClient();
-  
+
   // Get current user profile
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   if (!session) {
     return { error: "Not authenticated" };
   }
@@ -282,7 +326,7 @@ export async function createTask(formData: FormData) {
   // Determine assigned_by and assigned_to based on role
   const assigned_by = session.user.id;
   let assigned_to = formData.get("assigned_to") as string;
-  
+
   if (!assigned_to) {
     // If no assigned_to provided, and user is DOM, assign to their SUB
     // For now we just get the first SUB assigned to this DOM
@@ -291,7 +335,7 @@ export async function createTask(formData: FormData) {
       .select("id")
       .eq("dom_id", session.user.id)
       .single();
-      
+
     if (subProfile) {
       assigned_to = subProfile.id;
     } else {
@@ -305,22 +349,37 @@ export async function createTask(formData: FormData) {
     description: formData.get("description") as string,
     priority: formData.get("priority") as string,
     points_reward: parseInt(formData.get("points_reward") as string) || 0,
-    deadline: formData.get("deadline") as string || null,
-    recurrence: formData.get("recurrence") as string || "none",
+    deadline: (formData.get("deadline") as string) || null,
+    recurrence: (formData.get("recurrence") as string) || "none",
     status: "in_progress",
     assigned_by,
     assigned_to,
   };
 
-  const { error } = await supabase.from("tasks").insert(task).select().single();
+  const { data, error } = await supabase
+    .from("tasks")
+    .insert(task)
+    .select()
+    .single();
 
   if (error) {
-    if (error?.message?.includes('NEXT_REDIRECT')) {
+    if (error?.message?.includes("NEXT_REDIRECT")) {
       throw error;
     }
     console.error("Error creating task:", error);
     return { error: error.message };
   }
+
+  await createActivityNotification({
+    recipientId: assigned_to,
+    pageKey: "tasks",
+    entityType: "task",
+    entityId: data.id,
+    taskId: data.id,
+    title: "Nový úkol",
+    body: `DOM přidal nový úkol: ${task.title}`,
+    type: "task_created",
+  });
 
   revalidatePath("/tasks");
   redirect("/tasks");
@@ -334,11 +393,16 @@ export async function updateTask(id: string, formData: FormData) {
     description: formData.get("description") as string,
     priority: formData.get("priority") as string,
     points_reward: parseInt(formData.get("points_reward") as string) || 0,
-    deadline: formData.get("deadline") as string || null,
-    recurrence: formData.get("recurrence") as string || "none",
+    deadline: (formData.get("deadline") as string) || null,
+    recurrence: (formData.get("recurrence") as string) || "none",
   };
 
-  const { data, error } = await supabase.from("tasks").update(updates).eq("id", id).select().single();
+  const { data, error } = await supabase
+    .from("tasks")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) {
     console.error("Error updating task:", error);
@@ -352,14 +416,36 @@ export async function updateTask(id: string, formData: FormData) {
 export async function deleteTask(id: string) {
   const supabase = await createClient();
 
-  const [{ count: evidenceCount }, { count: mediaCount }, { count: attemptCount }, { count: commentCount }] = await Promise.all([
-    supabase.from("task_evidence").select("id", { count: "exact", head: true }).eq("task_id", id),
-    supabase.from("task_media").select("id", { count: "exact", head: true }).eq("task_id", id),
-    supabase.from("task_attempts").select("id", { count: "exact", head: true }).eq("task_id", id),
-    supabase.from("task_comments").select("id", { count: "exact", head: true }).eq("task_id", id),
+  const [
+    { count: evidenceCount },
+    { count: mediaCount },
+    { count: attemptCount },
+    { count: commentCount },
+  ] = await Promise.all([
+    supabase
+      .from("task_evidence")
+      .select("id", { count: "exact", head: true })
+      .eq("task_id", id),
+    supabase
+      .from("task_media")
+      .select("id", { count: "exact", head: true })
+      .eq("task_id", id),
+    supabase
+      .from("task_attempts")
+      .select("id", { count: "exact", head: true })
+      .eq("task_id", id),
+    supabase
+      .from("task_comments")
+      .select("id", { count: "exact", head: true })
+      .eq("task_id", id),
   ]);
 
-  const hasHistory = Boolean((evidenceCount || 0) + (mediaCount || 0) + (attemptCount || 0) + (commentCount || 0));
+  const hasHistory = Boolean(
+    (evidenceCount || 0) +
+    (mediaCount || 0) +
+    (attemptCount || 0) +
+    (commentCount || 0),
+  );
 
   if (hasHistory) {
     const { data, error } = await supabase
@@ -409,7 +495,9 @@ export async function startTask(id: string) {
 
 export async function saveTaskTextEvidence(id: string, text: string) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return { error: "Not authenticated" };
@@ -417,14 +505,17 @@ export async function saveTaskTextEvidence(id: string, text: string) {
 
   const { data: taskRows, error: taskLookupError } = await supabase
     .from("tasks")
-    .select("id, assigned_to")
+    .select("id, assigned_to, assigned_by, title, public_task_id")
     .eq("id", id)
     .limit(1);
 
   const task = taskRows?.[0] ?? null;
 
   if (taskLookupError || !task) {
-    console.error("Error loading task before saving text evidence:", taskLookupError);
+    console.error(
+      "Error loading task before saving text evidence:",
+      taskLookupError,
+    );
     return { error: taskLookupError?.message || "Task not found" };
   }
 
@@ -432,10 +523,16 @@ export async function saveTaskTextEvidence(id: string, text: string) {
     return { error: "Unauthorized" };
   }
 
-  const draftAttemptResult = await ensureDraftTaskAttempt(supabase, id, session.user.id);
+  const draftAttemptResult = await ensureDraftTaskAttempt(
+    supabase,
+    id,
+    session.user.id,
+  );
 
   if (draftAttemptResult.error || !draftAttemptResult.attempt) {
-    return { error: draftAttemptResult.error || "Unable to prepare task draft" };
+    return {
+      error: draftAttemptResult.error || "Unable to prepare task draft",
+    };
   }
 
   const normalizedText = text.trim();
@@ -458,13 +555,32 @@ export async function saveTaskTextEvidence(id: string, text: string) {
     return { error: "Textové odevzdání se nepodařilo uložit." };
   }
 
+  if (normalizedText) {
+    await createActivityNotification({
+      recipientId: task.assigned_by,
+      pageKey: "tasks",
+      entityType: "task",
+      entityId: id,
+      taskId: id,
+      title: `Úkol: ${task.title || "Odevzdání"}`,
+      body: "Subíček upravil textové odevzdání.",
+      type: "task_text_evidence",
+      dedupeKey: `task_text_evidence:${id}:${attempt.id}`,
+    });
+  }
+
   revalidateTaskPaths(task);
   return { success: true, attempt };
 }
 
-export async function submitTask(id: string, evidenceData: { text?: string; imageUrl?: string; videoUrl?: string }) {
+export async function submitTask(
+  id: string,
+  evidenceData: { text?: string; imageUrl?: string; videoUrl?: string },
+) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return { error: "Not authenticated" };
@@ -486,7 +602,11 @@ export async function submitTask(id: string, evidenceData: { text?: string; imag
   }
 
   const providedText = evidenceData.text?.trim() || "";
-  const draftAttemptResult = await ensureDraftTaskAttempt(supabase, id, session.user.id);
+  const draftAttemptResult = await ensureDraftTaskAttempt(
+    supabase,
+    id,
+    session.user.id,
+  );
 
   if (draftAttemptResult.error) {
     return { error: draftAttemptResult.error };
@@ -495,27 +615,43 @@ export async function submitTask(id: string, evidenceData: { text?: string; imag
   const draftAttempt = draftAttemptResult.attempt;
   const textContent = providedText || draftAttempt?.text_content?.trim() || "";
 
-  const [{ count: mediaCount }, { count: legacyEvidenceCount }] = await Promise.all([
-    supabase
-      .from("task_media")
-      .select("id", { count: "exact", head: true })
-      .eq("task_id", id),
-    supabase
-      .from("task_evidence")
-      .select("id", { count: "exact", head: true })
-      .eq("task_id", id)
-      .in("type", ["image", "video"]),
-  ]);
+  const [{ count: mediaCount }, { count: legacyEvidenceCount }] =
+    await Promise.all([
+      supabase
+        .from("task_media")
+        .select("id", { count: "exact", head: true })
+        .eq("task_id", id),
+      supabase
+        .from("task_evidence")
+        .select("id", { count: "exact", head: true })
+        .eq("task_id", id)
+        .in("type", ["image", "video"]),
+    ]);
 
-  const hasAnyEvidence = Boolean(textContent || evidenceData.imageUrl || evidenceData.videoUrl || (mediaCount || 0) > 0 || (legacyEvidenceCount || 0) > 0);
+  const hasAnyEvidence = Boolean(
+    textContent ||
+    evidenceData.imageUrl ||
+    evidenceData.videoUrl ||
+    (mediaCount || 0) > 0 ||
+    (legacyEvidenceCount || 0) > 0,
+  );
 
   if (!hasAnyEvidence) {
-    return { error: "Pro odevzdání úkolu je potřeba přidat textové nebo mediální odevzdání." };
+    return {
+      error:
+        "Pro odevzdání úkolu je potřeba přidat textové nebo mediální odevzdání.",
+    };
   }
 
+  const isResubmission =
+    task.status === "revision_requested" ||
+    draftAttempt?.status === "revision_requested";
   let attempt = draftAttempt;
 
-  if (draftAttempt?.status === "draft" || draftAttempt?.status === "revision_requested") {
+  if (
+    draftAttempt?.status === "draft" ||
+    draftAttempt?.status === "revision_requested"
+  ) {
     const { data: updatedAttempt, error: attemptUpdateError } = await supabase
       .from("task_attempts")
       .update({
@@ -528,7 +664,10 @@ export async function submitTask(id: string, evidenceData: { text?: string; imag
       .single();
 
     if (attemptUpdateError && !isMissingRelationError(attemptUpdateError)) {
-      console.error("Error updating task attempt during submit:", attemptUpdateError);
+      console.error(
+        "Error updating task attempt during submit:",
+        attemptUpdateError,
+      );
       return { error: attemptUpdateError.message };
     }
 
@@ -574,21 +713,23 @@ export async function submitTask(id: string, evidenceData: { text?: string; imag
   }
 
   if (providedText || evidenceData.imageUrl || evidenceData.videoUrl) {
-    let type = 'text';
+    let type = "text";
     let content = providedText;
     if (evidenceData.imageUrl) {
-      type = 'image';
+      type = "image";
       content = evidenceData.imageUrl;
     } else if (evidenceData.videoUrl) {
-      type = 'video';
+      type = "video";
       content = evidenceData.videoUrl;
     }
     if (content) {
-      const { error: evidenceError } = await supabase.from("task_evidence").insert({
-        task_id: id,
-        type,
-        content,
-      });
+      const { error: evidenceError } = await supabase
+        .from("task_evidence")
+        .insert({
+          task_id: id,
+          type,
+          content,
+        });
       if (evidenceError) {
         console.error("Error adding task evidence:", evidenceError);
         return { error: evidenceError.message };
@@ -596,13 +737,23 @@ export async function submitTask(id: string, evidenceData: { text?: string; imag
     }
   }
 
-  await supabase.from("notifications").insert({
-    user_id: task.assigned_by,
-    actor_id: session.user.id,
-    task_id: id,
+  await createActivityNotification({
+    recipientId: task.assigned_by,
+    pageKey: "tasks",
+    entityType: "task",
+    entityId: id,
+    taskId: id,
     title: `Úkol: ${task.title}`,
     body: "Subíček odevzdal tento task úkol.",
     type: "task_submitted",
+  });
+
+  const submitter = await getViewerCommentContext(supabase, session.user.id);
+  await sendTaskSubmittedNotification({
+    taskId: getPublicTaskId(data || task),
+    taskTitle: task.title,
+    actorName: submitter.fullName,
+    isResubmission,
   });
 
   revalidateTaskPaths(data || task);
@@ -611,7 +762,6 @@ export async function submitTask(id: string, evidenceData: { text?: string; imag
 
 export async function approveTask(id: string, formData: FormData) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
   const rating = parseInt(formData.get("rating") as string) || 0;
   const feedback = formData.get("feedback") as string;
 
@@ -626,47 +776,42 @@ export async function approveTask(id: string, formData: FormData) {
     return { error: lookupError?.message || "Task not found" };
   }
 
-  const { data, error } = await supabase.from("tasks").update({ 
-    status: "completed",
-    rating,
-    dom_feedback: feedback,
-    completed_at: new Date().toISOString(),
-    xp_awarded_at: existingTask.xp_awarded_at || new Date().toISOString(),
-  }).eq("id", id).select().single();
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({
+      status: "completed",
+      rating,
+      dom_feedback: feedback,
+      completed_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) {
     console.error("Error approving task:", error);
     return { error: error.message };
   }
 
-  if (!existingTask.xp_awarded_at && (existingTask.points_reward || 0) > 0) {
-    const { error: statsError } = await supabase.rpc("increment_user_task_stats", {
-      target_user_id: existingTask.assigned_to,
-      points_delta: existingTask.points_reward,
-    });
+  const { error: awardError } = await supabase.rpc("award_task_xp", {
+    task_uuid: id,
+  });
 
-    if (statsError && !isMissingRelationError(statsError)) {
-      const { error: updateStatsError } = await supabase
-        .from("user_stats")
-        .upsert({
-          user_id: existingTask.assigned_to,
-          total_points: existingTask.points_reward,
-          tasks_completed: 1,
-        }, { onConflict: "user_id" });
-
-      if (updateStatsError && !isMissingRelationError(updateStatsError)) {
-        console.error("Error awarding task points:", updateStatsError);
-        return { error: updateStatsError.message };
-      }
-    }
+  if (awardError) {
+    console.error("Error awarding task XP:", awardError);
+    return { error: awardError.message };
   }
 
-  await supabase.from("notifications").insert({
-    user_id: existingTask.assigned_to,
-    actor_id: session?.user.id,
-    task_id: id,
+  await createActivityNotification({
+    recipientId: existingTask.assigned_to,
+    pageKey: "tasks",
+    entityType: "task",
+    entityId: id,
+    taskId: id,
     title: "DOM schválil úkol",
-    body: feedback || `Získal jsi ${existingTask.points_reward || 0} XP za uspokojení alfa samečka. Jen tak dál, subíčku!`,
+    body:
+      feedback ||
+      `Získal jsi ${existingTask.points_reward || 0} XP za uspokojení alfa samečka. Jen tak dál, subíčku!`,
     type: "task_approved",
   });
 
@@ -676,8 +821,14 @@ export async function approveTask(id: string, formData: FormData) {
 
 export async function rejectTask(id: string, formData: FormData) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const feedback = formData.get("feedback") as string;
+  const disciplinePoints =
+    parseInt(String(formData.get("discipline_points") || ""), 10) || 0;
+  const disciplineReason =
+    (formData.get("discipline_reason") as string | null)?.trim() || feedback;
 
   const { data: task } = await supabase
     .from("tasks")
@@ -685,10 +836,15 @@ export async function rejectTask(id: string, formData: FormData) {
     .eq("id", id)
     .single();
 
-  const { data, error } = await supabase.from("tasks").update({ 
-    status: "revision_requested",
-    dom_feedback: feedback
-  }).eq("id", id).select().single();
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({
+      status: "revision_requested",
+      dom_feedback: feedback,
+    })
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) {
     console.error("Error rejecting task:", error);
@@ -707,12 +863,36 @@ export async function rejectTask(id: string, formData: FormData) {
     .eq("status", "submitted");
 
   if (task) {
-    await supabase.from("notifications").insert({
-      user_id: task.assigned_to,
-      actor_id: session?.user.id,
-      task_id: id,
+    if (disciplinePoints > 0) {
+      const { error: disciplineError } = await supabase.rpc(
+        "apply_manual_discipline",
+        {
+          target_user_id: task.assigned_to,
+          points: disciplinePoints,
+          reason: `Odmítnutý úkol: ${task.title || "Úkol"}. ${disciplineReason}`,
+          source_type: "task_rejection_penalty",
+          source_id: id,
+        },
+      );
+
+      if (disciplineError) {
+        console.error("Error applying rejection discipline:", disciplineError);
+        return {
+          error: `Úkol byl odmítnut, ale kázeňská penalizace se nepodařila uložit: ${disciplineError.message}`,
+        };
+      }
+    }
+
+    await createActivityNotification({
+      recipientId: task.assigned_to,
+      pageKey: "tasks",
+      entityType: "task",
+      entityId: id,
+      taskId: id,
       title: "DOM odmítl úkol",
-      body: feedback || "Úkol potřebuje opravu. Zkontroluj zpětnou vazbu a odešli ho znovu.",
+      body:
+        feedback ||
+        "Úkol potřebuje opravu. Zkontroluj zpětnou vazbu a odešli ho znovu.",
       type: "task_revision_requested",
     });
   }
@@ -761,10 +941,15 @@ type ViewerCommentContext = {
 };
 
 function normalizeProfileName(fullName: string | null | undefined) {
-  return typeof fullName === "string" && fullName.trim() ? fullName.trim() : "subíček";
+  return typeof fullName === "string" && fullName.trim()
+    ? fullName.trim()
+    : "subíček";
 }
 
-async function getViewerCommentContext(supabase: Awaited<ReturnType<typeof createClient>>, userId: string): Promise<ViewerCommentContext> {
+async function getViewerCommentContext(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+): Promise<ViewerCommentContext> {
   const { data: profile, error } = await supabase
     .from("profiles")
     .select("full_name, role")
@@ -777,14 +962,19 @@ async function getViewerCommentContext(supabase: Awaited<ReturnType<typeof creat
 
   return {
     userId,
-    role: profile?.role === "dom" ? "dom" : profile?.role === "unassigned" ? "unassigned" : "sub",
+    role:
+      profile?.role === "dom"
+        ? "dom"
+        : profile?.role === "unassigned"
+          ? "unassigned"
+          : "sub",
     fullName: normalizeProfileName(profile?.full_name),
   };
 }
 
 async function getTaskCommentProfiles(
   supabase: Awaited<ReturnType<typeof createClient>>,
-  authorIds: string[]
+  authorIds: string[],
 ) {
   const profilesById = new Map<string, TaskCommentProfile>();
 
@@ -809,7 +999,10 @@ async function getTaskCommentProfiles(
 
     if (fallback.error) {
       if (!isMissingRelationError(fallback.error)) {
-        console.error("Error fetching fallback task comment authors:", fallback.error);
+        console.error(
+          "Error fetching fallback task comment authors:",
+          fallback.error,
+        );
       }
       return profilesById;
     }
@@ -833,7 +1026,7 @@ async function getTaskCommentProfiles(
 
 async function getTaskCommentLikes(
   supabase: Awaited<ReturnType<typeof createClient>>,
-  commentIds: string[]
+  commentIds: string[],
 ) {
   const likesByCommentId = new Map<string, Set<string>>();
 
@@ -865,9 +1058,11 @@ async function getTaskCommentLikes(
 async function enrichTaskComments(
   supabase: Awaited<ReturnType<typeof createClient>>,
   comments: TaskCommentRow[],
-  viewer: ViewerCommentContext
+  viewer: ViewerCommentContext,
 ): Promise<TaskCommentPayload[]> {
-  const authorIds = Array.from(new Set(comments.map((comment) => comment.author_id)));
+  const authorIds = Array.from(
+    new Set(comments.map((comment) => comment.author_id)),
+  );
   const commentIds = comments.map((comment) => comment.id);
   const [profilesById, likesByCommentId] = await Promise.all([
     getTaskCommentProfiles(supabase, authorIds),
@@ -878,7 +1073,13 @@ async function enrichTaskComments(
     const author = profilesById.get(comment.author_id);
     const likes = likesByCommentId.get(comment.id) || new Set<string>();
     const authorRole =
-      author?.role === "dom" ? "dom" : author?.role === "unassigned" ? "unassigned" : comment.author_id === viewer.userId ? viewer.role : "sub";
+      author?.role === "dom"
+        ? "dom"
+        : author?.role === "unassigned"
+          ? "unassigned"
+          : comment.author_id === viewer.userId
+            ? viewer.role
+            : "sub";
 
     return {
       ...comment,
@@ -893,9 +1094,14 @@ async function enrichTaskComments(
   });
 }
 
-export async function getTaskComments(taskId: string, tabType: "text" | "photos" | "videos") {
+export async function getTaskComments(
+  taskId: string,
+  tabType: "text" | "photos" | "videos",
+) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return { error: "Not authenticated", comments: [] as TaskCommentPayload[] };
@@ -912,7 +1118,10 @@ export async function getTaskComments(taskId: string, tabType: "text" | "photos"
 
   if (error) {
     if (isMissingRelationError(error)) {
-      return { error: "Komentáře budou dostupné po aplikaci databázových migrací.", comments: [] as TaskCommentPayload[] };
+      return {
+        error: "Komentáře budou dostupné po aplikaci databázových migrací.",
+        comments: [] as TaskCommentPayload[],
+      };
     }
     console.error("Error fetching task comments:", error);
     return { error: error.message, comments: [] as TaskCommentPayload[] };
@@ -922,9 +1131,15 @@ export async function getTaskComments(taskId: string, tabType: "text" | "photos"
   return { comments: await enrichTaskComments(supabase, comments, viewer) };
 }
 
-export async function addTaskComment(taskId: string, tabType: "text" | "photos" | "videos", body: string) {
+export async function addTaskComment(
+  taskId: string,
+  tabType: "text" | "photos" | "videos",
+  body: string,
+) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return { error: "Not authenticated" };
@@ -958,7 +1173,9 @@ export async function addTaskComment(taskId: string, tabType: "text" | "photos" 
 
   if (error) {
     if (isMissingRelationError(error)) {
-      return { error: "Komentáře budou dostupné po aplikaci databázových migrací." };
+      return {
+        error: "Komentáře budou dostupné po aplikaci databázových migrací.",
+      };
     }
     console.error("Error adding task comment:", error);
     return { error: error.message };
@@ -966,17 +1183,36 @@ export async function addTaskComment(taskId: string, tabType: "text" | "photos" 
 
   const isSubActivity = session.user.id === task.assigned_to;
   const recipientId = isSubActivity ? task.assigned_by : task.assigned_to;
-  await supabase.from("notifications").insert({
-    user_id: recipientId,
-    actor_id: session.user.id,
-    task_id: taskId,
-    title: isSubActivity ? `Úkol: ${task.title}` : "DOM přidal komentář k úkolu",
-    body: isSubActivity ? "Subíček okomentoval tento task úkol." : cleanBody.slice(0, 180),
+  await createActivityNotification({
+    recipientId,
+    pageKey: "tasks",
+    entityType: "task",
+    entityId: taskId,
+    taskId,
+    title: isSubActivity
+      ? `Úkol: ${task.title}`
+      : "DOM přidal komentář k úkolu",
+    body: isSubActivity
+      ? "Subíček okomentoval tento task úkol."
+      : cleanBody.slice(0, 180),
     type: "task_comment",
   });
 
   const viewer = await getViewerCommentContext(supabase, session.user.id);
-  const [enrichedComment] = await enrichTaskComments(supabase, [comment as TaskCommentRow], viewer);
+  if (isSubActivity) {
+    await sendTaskCommentNotification({
+      taskId: getPublicTaskId(task),
+      taskTitle: task.title,
+      comment: cleanBody,
+      actorName: viewer.fullName,
+    });
+  }
+
+  const [enrichedComment] = await enrichTaskComments(
+    supabase,
+    [comment as TaskCommentRow],
+    viewer,
+  );
 
   revalidateTaskPaths(task);
   return { success: true, comment: enrichedComment };
@@ -984,7 +1220,9 @@ export async function addTaskComment(taskId: string, tabType: "text" | "photos" 
 
 export async function updateTaskComment(commentId: string, body: string) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return { error: "Not authenticated" };
@@ -1022,18 +1260,28 @@ export async function updateTaskComment(commentId: string, body: string) {
 
   if (error) {
     if (isMissingRelationError(error)) {
-      return { error: "Editace komentářů bude dostupná po aplikaci databázových migrací." };
+      return {
+        error:
+          "Editace komentářů bude dostupná po aplikaci databázových migrací.",
+      };
     }
     console.error("Error updating task comment:", error);
     return { error: error.message };
   }
 
   if (!comment) {
-    return { error: "Nepodařilo se uložit úpravu (pravděpodobně chybí oprávnění nebo komentář neexistuje)." };
+    return {
+      error:
+        "Nepodařilo se uložit úpravu (pravděpodobně chybí oprávnění nebo komentář neexistuje).",
+    };
   }
 
   const viewer = await getViewerCommentContext(supabase, session.user.id);
-  const [enrichedComment] = await enrichTaskComments(supabase, [comment as TaskCommentRow], viewer);
+  const [enrichedComment] = await enrichTaskComments(
+    supabase,
+    [comment as TaskCommentRow],
+    viewer,
+  );
 
   revalidateTaskPaths({ id: existingComment.task_id });
   return { success: true, comment: enrichedComment };
@@ -1041,7 +1289,9 @@ export async function updateTaskComment(commentId: string, body: string) {
 
 export async function deleteTaskComment(commentId: string) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return { error: "Not authenticated" };
@@ -1072,7 +1322,10 @@ export async function deleteTaskComment(commentId: string) {
 
   if (error) {
     if (isMissingRelationError(error)) {
-      return { error: "Mazání komentářů bude dostupné po aplikaci databázových migrací." };
+      return {
+        error:
+          "Mazání komentářů bude dostupné po aplikaci databázových migrací.",
+      };
     }
     console.error("Error deleting task comment:", error);
     return { error: "Komentář se nepodařilo smazat." };
@@ -1084,7 +1337,9 @@ export async function deleteTaskComment(commentId: string) {
 
 export async function toggleTaskCommentLike(commentId: string) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return { error: "Not authenticated" };
@@ -1113,7 +1368,9 @@ export async function toggleTaskCommentLike(commentId: string) {
 
   if (likeLookupError) {
     if (isMissingRelationError(likeLookupError)) {
-      return { error: "Srdíčka budou dostupná po aplikaci databázových migrací." };
+      return {
+        error: "Srdíčka budou dostupná po aplikaci databázových migrací.",
+      };
     }
     console.error("Error loading task comment like:", likeLookupError);
     return { error: likeLookupError.message };
@@ -1140,7 +1397,9 @@ export async function toggleTaskCommentLike(commentId: string) {
 
     if (likeError) {
       if (isMissingRelationError(likeError)) {
-        return { error: "Srdíčka budou dostupná po aplikaci databázových migrací." };
+        return {
+          error: "Srdíčka budou dostupná po aplikaci databázových migrací.",
+        };
       }
       console.error("Error adding task comment like:", likeError);
       return { error: likeError.message };
@@ -1161,7 +1420,9 @@ export async function toggleTaskCommentLike(commentId: string) {
 
 export async function uploadTaskMedia(taskId: string, formData: FormData) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return { error: "Not authenticated" };
@@ -1198,7 +1459,11 @@ export async function uploadTaskMedia(taskId: string, formData: FormData) {
   }
 
   try {
-    const uploaded = await uploadTaskFileToDrive({ taskId, taskTitle: task.title, file });
+    const uploaded = await uploadTaskFileToDrive({
+      taskId,
+      taskTitle: task.title,
+      file,
+    });
     const { error: mediaError } = await supabase.from("task_media").insert({
       task_id: taskId,
       uploaded_by: session.user.id,
@@ -1215,12 +1480,17 @@ export async function uploadTaskMedia(taskId: string, formData: FormData) {
     }
 
     if (session.user.id === task.assigned_to) {
-      await supabase.from("notifications").insert({
-        user_id: task.assigned_by,
-        actor_id: session.user.id,
-        task_id: taskId,
+      await createActivityNotification({
+        recipientId: task.assigned_by,
+        pageKey: "tasks",
+        entityType: "task",
+        entityId: taskId,
+        taskId,
         title: `Úkol: ${task.title}`,
-        body: mediaType === "image" ? "Subíček nahrál fotku/fotky." : "Subíček nahrál video/videa.",
+        body:
+          mediaType === "image"
+            ? "Subíček nahrál fotku/fotky."
+            : "Subíček nahrál video/videa.",
         type: "task_media_uploaded",
       });
     }
@@ -1235,7 +1505,9 @@ export async function uploadTaskMedia(taskId: string, formData: FormData) {
 
 export async function deleteTaskMedia(mediaId: string) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     return { error: "Not authenticated" };
@@ -1284,13 +1556,18 @@ export async function deleteTaskMedia(mediaId: string) {
 
   const task = Array.isArray(media.tasks) ? media.tasks[0] : media.tasks;
   revalidateTaskPaths(task || { id: media.task_id });
-  return { success: true, deletedMediaId: deletedRows[0].id, taskId: media.task_id };
+  return {
+    success: true,
+    deletedMediaId: deletedRows[0].id,
+    taskId: media.task_id,
+  };
 }
-
 
 export async function recordTaskView(taskId: string) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) return { error: "Not authenticated" };
 
@@ -1315,12 +1592,15 @@ export async function recordTaskView(taskId: string) {
     .eq("viewer_id", session.user.id)
     .maybeSingle();
 
-  const { error } = await supabase.from("task_view_summary").upsert({
-    task_id: taskId,
-    viewer_id: session.user.id,
-    last_viewed_at: new Date().toISOString(),
-    view_count: (existing?.view_count || 0) + 1,
-  }, { onConflict: "task_id,viewer_id" });
+  const { error } = await supabase.from("task_view_summary").upsert(
+    {
+      task_id: taskId,
+      viewer_id: session.user.id,
+      last_viewed_at: new Date().toISOString(),
+      view_count: (existing?.view_count || 0) + 1,
+    },
+    { onConflict: "task_id,viewer_id" },
+  );
 
   if (error) {
     if (isMissingRelationError(error)) return { success: true, skipped: true };

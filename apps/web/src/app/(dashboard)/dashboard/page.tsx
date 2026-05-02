@@ -1,10 +1,23 @@
-'use client';
+import { getGamificationDashboard } from "@/actions/gamification";
+import { GamificationDashboard } from "@/components/gamification/GamificationDashboard";
 
-export default function DashboardPage() {
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      <p className="text-gray-400">Welcome to your dashboard.</p>
-    </div>
-  );
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const result = await getGamificationDashboard();
+
+  if (result.error || !result.data) {
+    return (
+      <div className="mx-auto max-w-5xl p-6">
+        <div
+          role="alert"
+          className="rounded-3xl border border-rose-400/20 bg-rose-500/10 p-6 text-rose-100"
+        >
+          Nepodařilo se načíst gamification dashboard: {result.error}
+        </div>
+      </div>
+    );
+  }
+
+  return <GamificationDashboard data={result.data} />;
 }

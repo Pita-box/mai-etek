@@ -10,6 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 const auth_1 = __importDefault(require("./routes/auth"));
 const superadmin_1 = __importDefault(require("./routes/superadmin"));
 const user_1 = __importDefault(require("./routes/user"));
+const chat_1 = __importDefault(require("./routes/chat"));
 const app = (0, express_1.default)();
 const port = process.env.PORT || 4000;
 app.use((0, cors_1.default)());
@@ -20,6 +21,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', auth_1.default);
 app.use('/api/superadmin', superadmin_1.default);
 app.use('/api/user', user_1.default);
+app.use('/api/chat', chat_1.default);
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

@@ -1,31 +1,42 @@
-# Finish
+# Finish: Automatická správa SUB přístupu ke stránkám
 
-## Summary of changes
-- Extracted a shared `TaskDetailContent` component as the single source of truth for rich task detail UI.
-- Refactored `TaskDetailPopup` to keep only popup shell responsibilities: modal layout, close button, and ESC behavior.
-- Replaced the reduced standalone `/tasks/[id]` page with a premium page shell that renders the same full detail content as the popup.
-- Added `TaskDetailPageClient` so standalone page mutations can refresh the route after submit/approval/comment/evidence changes.
+## Hotovo
+- Přidán centrální page access model:
+  - `apps/web/src/types/page-access.ts`
+  - `apps/web/src/lib/page-access/config.ts`
+  - `apps/web/src/lib/page-access/dashboard-pages.ts`
+- Dashboard stránky se zjišťují z `apps/web/src/app/(dashboard)` a normalizují do registry s českými labely, ikonami, pořadím a default stavem.
+- Nový config tvar je `profiles.app_config.page_access[pageKey].enabled`.
+- Starý `profiles.app_config.modules` se čte jako fallback kvůli kompatibilitě.
+- Nové neznámé dashboard stránky jsou defaultně povolené pro SUB.
+- Citlivé známé stránky mají metadata:
+  - `punishments` defaultně nepovoleno, ale DOM může odemknout.
+  - `monitoring` defaultně nepovoleno, až route vznikne.
+  - `superadmin` je `systemOnly` a zůstává DOM-only.
+- Dashboard layout je nově server wrapper + client shell:
+  - `apps/web/src/app/(dashboard)/layout.tsx`
+  - `apps/web/src/components/shared/DashboardShell.tsx`
+- SUB při přímém otevření nepovolené stránky uvidí hlášku `K této stránce nemáš přístup.` přes `PageAccessDenied`.
+- `Navigation.tsx` už nemá ruční `allNavItems`; renderuje stránky z registry a zobrazuje jen povolené stránky pro SUB.
+- SuperAdmin stránka má nový chips UI:
+  - povolené stránky jako primary chip/button s textem `Povoleno`,
+  - nepovolené stránky jako destructive chip/button s textem `Nepovoleno`,
+  - seznam stránek se generuje automaticky z registry.
+- `docs/ARCHITECTURE.md` zaznamenává registry-driven SuperAdmin page access.
 
-## Verification commands run + results
-- `pnpm exec eslint src/components/tasks/TaskDetailContent.tsx src/components/tasks/TaskDetailPopup.tsx && pnpm exec tsc --noEmit`
-  - **Result:** pass
-- `pnpm exec eslint src/components/tasks/TaskDetailContent.tsx src/components/tasks/TaskDetailPopup.tsx src/components/tasks/TaskDetailPageClient.tsx 'src/app/(dashboard)/tasks/[id]/page.tsx' && pnpm exec tsc --noEmit`
-  - **Result:** pass
+## Ověření
+- `pnpm --filter web exec tsc --noEmit` -> prošlo.
+- `pnpm --filter web exec eslint src/types/page-access.ts src/lib/page-access/config.ts src/lib/page-access/dashboard-pages.ts src/components/shared/DashboardShell.tsx src/components/shared/Navigation.tsx src/components/shared/PageAccessDenied.tsx src/components/superadmin/SuperAdminClient.tsx src/app/\(dashboard\)/layout.tsx src/app/\(dashboard\)/superadmin/page.tsx` -> prošlo.
+- `git diff --check -- <upravené soubory>` -> prošlo.
+- `pnpm --filter web build` -> prošlo.
+- Build route list potvrdil aktuální dashboard pages: `/dashboard`, `/tasks`, `/chat`, `/gallery`, `/punishments`, `/rewards`, `/settings`, `/superadmin`, `/wishes`, `/achievements`.
 
-## Manual validation steps
-1. Open dashboard tasks list and open a task in the popup.
-2. Confirm popup still shows instructions, evidence/comments, DOM/SUB actions, metadata, and feedback.
-3. Click a notification that routes to `/tasks/[id]`.
-4. Confirm the standalone page shows the same rich sections as the popup.
-5. As SUB, submit/comment/evidence and confirm the page refreshes to reflect latest state.
-6. As DOM, review/approve/reject and confirm standalone page reflects the updated status and feedback.
+## Známé warningy
+- Build dál ukazuje existující Next/Turbopack workspace-root warning kvůli lockfile mimo repo.
+- Build dál ukazuje existující Gallery processing NFT trace warning z `src/lib/gallery/processing.ts`; není způsobený page access změnou.
 
-## Review pass
-- **Blocker:** none
-- **Major:** none
-- **Minor:** submit failure in `TaskDetailContent` currently logs to console only; if desired, this can be upgraded to visible inline error feedback on both page and popup.
-- **Nit:** standalone page shell and popup shell are intentionally slightly different visually, but content parity is now shared.
-
-## Follow-ups
-- Optional: add a lightweight visible error banner for failed SUB submit actions in shared content.
-- Optional: perform browser-level manual parity check for one DOM and one SUB account.
+## Review
+- Blocker: žádný.
+- Major: žádný po typechecku, cíleném ESLintu a buildu.
+- Minor: Access denied kontrola je client-shell guard; datovou bezpečnost musí dál držet RLS/server actions.
+- Nit: `/monitoring` se v auto seznamu objeví až ve chvíli, kdy vznikne skutečná dashboard route.

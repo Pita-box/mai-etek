@@ -2,6 +2,9 @@
 -- for tasks they assigned. SUB users still only read their own rows via
 -- the existing viewer_id = auth.uid() policy.
 
+DROP POLICY IF EXISTS "Assigning DOM can read task view summary"
+  ON public.task_view_summary;
+
 CREATE POLICY "Assigning DOM can read task view summary"
   ON public.task_view_summary
   FOR SELECT

@@ -1,30 +1,39 @@
-'use client';
+"use client";
 
-import { useEffect, useId } from 'react';
-import { X } from 'lucide-react';
-import { Task } from '@/types/task';
-import { useTaskViewTracking } from './useTaskViewTracking';
-import { TaskDetailContent } from './TaskDetailContent';
+import { useEffect, useId } from "react";
+import { X } from "lucide-react";
+import { Task } from "@/types/task";
+import { useTaskViewTracking } from "./useTaskViewTracking";
+import { TaskDetailContent } from "./TaskDetailContent";
 
 type TaskDetailPopupProps = {
   task: Task;
-  role: 'dom' | 'sub';
+  role: "dom" | "sub";
   onClose: () => void;
   onTaskMutated: () => Promise<void>;
 };
 
-export function TaskDetailPopup({ task, role, onClose, onTaskMutated }: TaskDetailPopupProps) {
+export function TaskDetailPopup({
+  task,
+  role,
+  onClose,
+  onTaskMutated,
+}: TaskDetailPopupProps) {
   const titleId = useId();
 
-  useTaskViewTracking({ taskId: task.id, enabled: role === 'sub' });
+  useTaskViewTracking({
+    taskId: task.id,
+    enabled: true,
+    trackViewCount: role === "sub",
+  });
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key === "Escape") onClose();
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
   return (
@@ -45,7 +54,13 @@ export function TaskDetailPopup({ task, role, onClose, onTaskMutated }: TaskDeta
         >
           <X className="h-5 w-5" />
         </button>
-        <TaskDetailContent task={task} role={role} titleId={titleId} layout="popup" onTaskMutated={onTaskMutated} />
+        <TaskDetailContent
+          task={task}
+          role={role}
+          titleId={titleId}
+          layout="popup"
+          onTaskMutated={onTaskMutated}
+        />
       </div>
     </section>
   );

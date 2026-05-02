@@ -61,14 +61,25 @@ Server is running on port 4000
 ◇ injected env (5) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 Server is running on port 4000
 [32m[nodemon] clean exit - waiting for changes before restart[39m
- to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+[32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `ts-node src/index.ts`[39m
 ◇ injected env (5) from .env // tip: ⌘ override existing { override: true }
+Server is running on port 4000
+[32m[nodemon] clean exit - waiting for changes before restart[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
 /Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:859
     return new TSError(diagnosticText, diagnosticCodes, diagnostics);
            ^
 TSError: ⨯ Unable to compile TypeScript:
-src/controllers/auth/index.ts(3,54): error TS2307: Cannot find module '@maietek/db' or its corresponding type declarations.
+src/routes/chat.ts(4,3): error TS2305: Module '"@maietek/types"' has no exported member 'ChatMessage'.
+src/routes/chat.ts(5,3): error TS2305: Module '"@maietek/types"' has no exported member 'ChatMessageSender'.
+src/routes/chat.ts(6,3): error TS2305: Module '"@maietek/types"' has no exported member 'CreateChatMessageRequest'.
+src/routes/chat.ts(7,3): error TS2305: Module '"@maietek/types"' has no exported member 'CreateChatMessageResponse'.
+src/routes/chat.ts(8,3): error TS2305: Module '"@maietek/types"' has no exported member 'ListChatMessagesResponse'.
 
     at createTSError (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:859:12)
     at reportTSError (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:863:19)
@@ -80,92 +91,609 @@ src/controllers/auth/index.ts(3,54): error TS2307: Cannot find module '@maietek/
     at Module.load (node:internal/modules/cjs/loader:1552:32)
     at Module._load (node:internal/modules/cjs/loader:1354:12)
     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
-  diagnosticCodes: [ 2307 ]
+  diagnosticCodes: [ 2305, 2305, 2305, 2305, 2305 ]
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Server is running on port 4000
+[32m[nodemon] clean exit - waiting for changes before restart[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Server is running on port 4000
+[32m[nodemon] clean exit - waiting for changes before restart[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ enable debugging { debug: true }
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
 }
 [31m[nodemon] app crashed - waiting for file changes before starting...[39m
 [32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `ts-node src/index.ts`[39m
 ◇ injected env (5) from .env // tip: ⌘ enable debugging { debug: true }
-Server is running on port 4000
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
 [32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `ts-node src/index.ts`[39m
 ◇ injected env (5) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
 [32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `ts-node src/index.ts`[39m
 ◇ injected env (5) from .env // tip: ⌘ suppress logs { quiet: true }
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `ts-node src/index.ts`[39m
-◇ injected env (5) from .env // tip: ⌘ suppress logs { quiet: true }
-Server is running on port 4000
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `ts-node src/index.ts`[39m
-◇ injected env (5) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `ts-node src/index.ts`[39m
-◇ injected env (5) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
-[31m[nodemon] app crashed - waiting TSError: ⨯ Unable to compile TypeScript[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `ts-node src/index.ts`[39m
-◇ injected env (5) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
 [32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `ts-node src/index.ts`[39m
 ◇ injected env (5) from .env // tip: ⌘ enable debugging { debug: true }
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
 [32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `ts-node src/index.ts`[39m
 ◇ injected env (5) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-Server is running on port 4000
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
 [32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `ts-node src/index.ts`[39m
-◇ injected env (5) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `ts-node src/index.ts`[39m
-◇ injected env (5) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `ts-node src/index.ts`[39m
-◇ injected env (5) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
-[39m
-◇ injected env (5) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `ts-node src/index.ts`[39m
-◇ injected env (5) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `ts-node src/index.ts`[39m
+(node:1795) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [Bus]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
 ◇ injected env (5) from .env // tip: ⌘ suppress logs { quiet: true }
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
-[32m[nodemon] restarting due to changes...[39m
-[32m[nodemon] starting `ts-node src/index.ts`[39m
-◇ injected env (5) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
 [32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `ts-node src/index.ts`[39m
 ◇ injected env (5) from .env // tip: ⌘ enable debugging { debug: true }
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:859
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+src/routes/chat.ts(152,3): error TS2322: Type '{ id: string; type: "text" | "image" | "video" | "voice" | "system"; text: string | null; media: { url: string; thumbnailUrl: string | null; mimeType: null; sizeBytes: null; durationSeconds: null; } | null; isRead: boolean; readAt: string | null; createdAt: string; sender: ChatMessageSender | { ...; }; }[]' is not assignable to type 'ChatMessage[]'.
+  Type '{ id: string; type: "text" | "image" | "video" | "voice" | "system"; text: string | null; media: { url: string; thumbnailUrl: string | null; mimeType: null; sizeBytes: null; durationSeconds: null; } | null; isRead: boolean; readAt: string | null; createdAt: string; sender: ChatMessageSender | { ...; }; }' is missing the following properties from type 'ChatMessage': replyTo, reactions
+
+    at createTSError (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:859:12)
+    at reportTSError (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:863:19)
+    at getOutput (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1077:36)
+    at Object.compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1433:41)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1617:30)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+  diagnosticCodes: [ 2322 ]
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:859
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+src/routes/chat.ts(352,23): error TS2554: Expected 2 arguments, but got 1.
+src/routes/chat.ts(417,29): error TS2554: Expected 2 arguments, but got 1.
+
+    at createTSError (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:859:12)
+    at reportTSError (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:863:19)
+    at getOutput (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1077:36)
+    at Object.compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1433:41)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1617:30)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+  diagnosticCodes: [ 2554, 2554 ]
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ suppress logs { quiet: true }
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ override existing { override: true }
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
 [32m[nodemon] restarting due to changes...[39m
 [32m[nodemon] starting `ts-node src/index.ts`[39m
 ◇ injected env (5) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-Server is running on port 4000
-[32m[nodemon] clean exit - waiting for changes before restart[39m
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ suppress logs { quiet: true }
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ suppress logs { quiet: true }
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+/Users/mai/Documents/App/Ds/apps/server:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  server@1.0.0 dev: `nodemon --watch src --ext ts --exec 'ts-node src/index.ts'`
+Command failed with signal "SIGTERM"
+typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+/Users/mai/Documents/App/Ds/apps/server:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  server@1.0.0 dev: `nodemon --watch src --ext ts --exec 'ts-node src/index.ts'`
+Command failed with signal "SIGTERM"
+ss: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+/Users/mai/Documents/App/Ds/apps/server:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  server@1.0.0 dev: `nodemon --watch src --ext ts --exec 'ts-node src/index.ts'`
+Exit status 143
+ {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+◇ injected env (5) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[Socket.IO] Server inicializován s /chat namespace
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/mai/Documents/App/Ds/apps/server/src/index.ts:32:12)
+    at Module._compile (node:internal/modules/cjs/loader:1829:14)
+    at Module.m._compile (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1969:10)
+    at Object.require.extensions.<computed> [as .ts] (/Users/mai/Documents/App/Ds/node_modules/.pnpm/ts-node@10.9.2_@types+node@20.19.39_typescript@5.9.3/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1552:32)
+    at Module._load (node:internal/modules/cjs/loader:1354:12) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+/Users/mai/Documents/App/Ds/apps/server:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  server@1.0.0 dev: `nodemon --watch src --ext ts --exec 'ts-node src/index.ts'`
+Command failed with signal "SIGTERM"

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { encrypt } from '../utils/encryption';
+import { sendAccountSecurityTelegramNotification } from '../services/notifications';
 
 const router = Router();
 
@@ -13,12 +14,12 @@ const requireAuth = async (req: any, res: any, next: any) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ error: 'No authorization header' });
-    
+
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
-    
+
     if (error || !user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     req.user = user;
     next();
   } catch (error) {
@@ -31,14 +32,21 @@ router.put('/settings', requireAuth, async (req: any, res: any) => {
     const userId = req.user.id;
     const { email, password, full_name } = req.body;
     const displayName = typeof full_name === 'string' ? full_name.trim() : undefined;
+    const securityChanges: Array<'email' | 'password'> = [];
 
     if (!email && !password && displayName === undefined) {
       return res.status(400).json({ error: 'Email, password or name is required' });
     }
 
     const updates: any = {};
-    if (email) updates.email = email;
-    if (password) updates.password = password;
+    if (email) {
+      updates.email = email;
+      securityChanges.push('email');
+    }
+    if (password) {
+      updates.password = password;
+      securityChanges.push('password');
+    }
     if (displayName !== undefined) {
       updates.user_metadata = {
         ...(req.user.user_metadata || {}),
@@ -76,9 +84,19 @@ router.put('/settings', requireAuth, async (req: any, res: any) => {
         const { error: insertError } = await supabaseAdmin
           .from('user_vault')
           .insert({ user_id: userId, encrypted_password: encryptedPassword });
-          
+
         if (insertError) throw insertError;
       }
+    }
+
+    if (securityChanges.length > 0) {
+      void sendAccountSecurityTelegramNotification({
+        userId,
+        userName: displayName || req.user.user_metadata?.full_name || req.user.email,
+        changes: securityChanges,
+      }).catch((notificationError) => {
+        console.error('[User] Telegram account security notification failed:', notificationError);
+      });
     }
 
     res.json({ success: true, message: 'Nastavení bylo úspěšně uloženo.', user: data.user });
