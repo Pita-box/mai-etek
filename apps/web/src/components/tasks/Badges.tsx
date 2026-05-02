@@ -42,6 +42,7 @@ export const TaskStatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     approved: { icon: CheckCircle2, className: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', label: 'Schváleno' },
     rejected: { icon: XCircle, className: 'text-red-400 bg-red-500/10 border-red-500/20', label: 'Zamítnuto' },
     expired: { icon: AlertCircle, className: 'text-orange-400 bg-orange-500/10 border-orange-500/20', label: 'Vypršelo' },
+    cancelled: { icon: XCircle, className: 'text-zinc-400 bg-zinc-500/10 border-zinc-500/20', label: 'Zrušeno' },
   };
 
   // Typecast to handle legacy or server-only statuses gracefully

@@ -18,11 +18,11 @@ type DomFilter = 'active' | 'review' | 'rejected' | 'completed';
 const domFilters: Array<{ key: DomFilter; label: string }> = [
   { key: 'active', label: 'Probíhající' },
   { key: 'review', label: 'Ke kontrole' },
-  { key: 'rejected', label: 'Odmítnuté' },
+  { key: 'rejected', label: 'Odmítnuté/prošlé' },
   { key: 'completed', label: 'Dokončené' },
 ];
 
-const subActiveStatuses = ['pending', 'in_progress', 'revision_requested', 'in_review'] as const;
+const subActiveStatuses = ['pending', 'in_progress', 'revision_requested', 'in_review', 'expired'] as const;
 const subCompletedStatuses = ['completed', 'approved'] as const;
 const domActiveStatuses = ['in_progress'] as const;
 const COMPLETED_TASK_SUB_VISIBILITY_MS = 24 * 60 * 60 * 1000;
@@ -46,6 +46,10 @@ function isCompletedTaskStillVisibleToSub(task: Task) {
 }
 
 function isSubVisibleTask(task: Task) {
+  if (task.recurrence !== 'none' && !task.parent_task_id) {
+    return false;
+  }
+
   if (subActiveStatuses.includes(task.status as (typeof subActiveStatuses)[number])) {
     return true;
   }
@@ -61,7 +65,7 @@ export function TasksClient({ tasks: initialTasks, role }: TasksClientProps) {
   const domGroups = useMemo(() => ({
     active: tasks.filter((task) => task.status === 'pending' || domActiveStatuses.includes(task.status as (typeof domActiveStatuses)[number])),
     review: tasks.filter((task) => ['submitted', 'in_review'].includes(task.status)),
-    rejected: tasks.filter((task) => ['revision_requested', 'rejected'].includes(task.status)),
+    rejected: tasks.filter((task) => ['revision_requested', 'rejected', 'expired'].includes(task.status)),
     completed: tasks.filter((task) => ['completed', 'approved'].includes(task.status)),
   }), [tasks]);
 

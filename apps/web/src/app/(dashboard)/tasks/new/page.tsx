@@ -19,6 +19,8 @@ export default function NewTaskPage() {
   const [points, setPoints] = useState(0);
   const [deadline, setDeadline] = useState('');
   const [recurrence, setRecurrence] = useState<RecurrenceType>('none');
+  const [expiryPenaltyPoints, setExpiryPenaltyPoints] = useState(0);
+  const [expiryPenaltyReason, setExpiryPenaltyReason] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +28,10 @@ export default function NewTaskPage() {
     setError('');
 
     try {
+      if (recurrence !== 'none' && !deadline) {
+        throw new Error('Opakovaný úkol potřebuje termín splnění.');
+      }
+
       const formData = new FormData();
       formData.append('title', title);
       formData.append('description', description);
@@ -33,6 +39,8 @@ export default function NewTaskPage() {
       formData.append('points_reward', points.toString());
       if (deadline) formData.append('deadline', new Date(deadline).toISOString());
       formData.append('recurrence', recurrence);
+      formData.append('expiry_penalty_points', expiryPenaltyPoints.toString());
+      formData.append('expiry_penalty_reason', expiryPenaltyReason);
       
       const result = await createTask(formData);
       if (result && result.error) {
@@ -141,6 +149,34 @@ export default function NewTaskPage() {
                 <option value="weekly">Týdně</option>
                 <option value="monthly">Měsíčně</option>
               </select>
+              {recurrence !== 'none' ? (
+                <p className="mt-2 text-xs text-zinc-500">
+                  Opakované instance se generují podle dne a času termínu.
+                </p>
+              ) : null}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Penalizace při prošlém termínu</label>
+              <input
+                type="number"
+                min="0"
+                value={expiryPenaltyPoints}
+                onChange={(e) => setExpiryPenaltyPoints(parseInt(e.target.value) || 0)}
+                className="w-full bg-black/40 border border-glass-border rounded-lg p-3 text-white focus:outline-none focus:border-primary/50"
+                placeholder="0"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Důvod penalizace</label>
+              <input
+                type="text"
+                value={expiryPenaltyReason}
+                onChange={(e) => setExpiryPenaltyReason(e.target.value)}
+                className="w-full bg-black/40 border border-glass-border rounded-lg p-3 text-white focus:outline-none focus:border-primary/50"
+                placeholder="Volitelné, např. Nedodržení termínu"
+              />
             </div>
           </div>
 

@@ -23,7 +23,8 @@ export function TaskTextEvidence({ task, role, onTaskMutated }: TaskTextEvidence
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const renderedHtml = useMemo(() => richTextToHtml(initialText), [initialText]);
   const hasContent = hasRichTextContent(initialText);
-  const canSave = role === 'sub' && task.status !== 'in_review' && task.status !== 'completed';
+  const isRecurringTemplate = task.recurrence !== 'none' && !task.parent_task_id;
+  const canSave = role === 'sub' && !isRecurringTemplate && !['in_review', 'completed', 'approved', 'rejected', 'expired', 'cancelled'].includes(task.status);
 
   const handleSave = () => {
     if (!value.trim()) {

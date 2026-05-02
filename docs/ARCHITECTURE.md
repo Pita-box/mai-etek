@@ -2048,7 +2048,7 @@ EXTENSION_MAX_BUFFER_SIZE=1000
     - [x] Awarding is idempotent via task row lock, `tasks.xp_awarded_at`, and `public.xp_transactions` source uniqueness.
     - [x] `public.user_stats.total_points` stores lifetime XP; `available_points` stores spendable XP.
     - [x] `public.user_stats.discipline_points` stores kázeňský dluh separately from spendable XP; `available_points` never goes negative because of penalties.
-    - [x] `public.xp_transactions.discipline_delta` records audit rows for manual discipline, rejected-task penalties, future expiry penalties, and negative badge penalties.
+    - [x] `public.xp_transactions.discipline_delta` records audit rows for manual discipline, rejected-task penalties, automatic expiry penalties, and negative badge penalties.
   - [x] Level calculation (100 points per level)
     - [x] Implemented by `public.calculate_user_level(points)` as `floor(total_points / 100) + 1`.
   - [x] Streak tracking (consecutive days with completed tasks)
@@ -2085,9 +2085,23 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [x] Task rejection penalty hook
     - [x] DOM rejection flow has an opt-in `discipline_points` penalty with required reason/fallback to rejection feedback.
     - [x] Rejection without penalty behaves as before.
-    - [x] `task_expiry_penalty` is available as a ledger source type, but automatic expiry charging is still future worker scope.
-  - [ ] Task expiry worker (cron every 60s)
-  - [ ] Recurring task generator (daily cron)
+  - [x] Task expiry worker (cron every 60s)
+    - [x] Implemented by `public.expire_due_tasks(run_limit)` and protected Next route `/api/cron/tasks/expire`.
+    - [x] Expires only `pending`, `in_progress`, and `revision_requested`; `in_review` is intentionally not expired.
+    - [x] Recurring templates are skipped by expiry so their future instances can continue generating.
+    - [x] Each task can define optional `expiry_penalty_points` and `expiry_penalty_reason`; default penalty is `0`.
+    - [x] Expiry updates `tasks.status = expired`, `tasks.expired_at`, `user_stats.tasks_failed`, and resets `current_streak`.
+    - [x] If expiry penalty is positive, it adds `discipline_points` debt through an idempotent `task_expiry_penalty` ledger row.
+    - [x] Expiry creates task activity badge notifications for both DOM and SUB with dedupe keys.
+  - [x] Recurring task generator (daily cron)
+    - [x] Implemented by `public.generate_recurring_tasks(p_run_date, run_limit)` and protected Next route `/api/cron/tasks/recurring`.
+    - [x] Daily/weekly/monthly templates use the Prague-local date and the time from the template deadline.
+    - [x] Templates do not generate instances before their first Prague-local deadline date.
+    - [x] Generator creates new task instances even when an earlier instance is unfinished.
+    - [x] Instances copy title, description, assignee, priority, XP reward, and expiry penalty fields from the template.
+    - [x] Duplicate generation is blocked by the partial unique index `(parent_task_id, recurrence_instance_date)`.
+    - [x] SUB sees generated instances; recurring templates are hidden from the SUB task list and managed by DOM.
+    - [x] Cron routes require `CRON_SECRET` via `Authorization: Bearer <secret>` or `x-cron-secret`.
 
 **Deliverable**: Complete content management and gamification engine.
 

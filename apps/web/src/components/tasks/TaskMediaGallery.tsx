@@ -54,6 +54,7 @@ export function TaskMediaGallery({ task, mediaType, role, onTaskMutated }: TaskM
   const [isRefreshingMissing, startMissingRefreshTransition] = useTransition();
   const Icon = mediaType === 'image' ? ImageIcon : Video;
   const canDeleteMedia = role === 'dom';
+  const isRecurringTemplate = task.recurrence !== 'none' && !task.parent_task_id;
   const legacyMedia = (task.task_evidence || []).filter((item) => item.type === mediaType);
   const media = useMemo(
     () =>
@@ -145,7 +146,7 @@ export function TaskMediaGallery({ task, mediaType, role, onTaskMutated }: TaskM
       )}
       {deleteError ? <p className="mt-3 text-sm text-rose-300">{deleteError}</p> : null}
       {cleanupNotice ? <p className="mt-3 text-sm text-amber-200">{cleanupNotice}</p> : null}
-      {task.status === 'in_progress' || task.status === 'revision_requested' ? (
+      {!isRecurringTemplate && (task.status === 'in_progress' || task.status === 'revision_requested') ? (
         <div className="mt-5">
           <TaskMediaUpload taskId={task.id} mediaType={mediaType} />
         </div>

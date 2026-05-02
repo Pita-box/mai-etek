@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const supabase_js_1 = require("@supabase/supabase-js");
 const encryption_1 = require("../utils/encryption");
+const notifications_1 = require("../services/notifications");
 const router = (0, express_1.Router)();
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -29,14 +30,19 @@ router.put('/settings', requireAuth, async (req, res) => {
         const userId = req.user.id;
         const { email, password, full_name } = req.body;
         const displayName = typeof full_name === 'string' ? full_name.trim() : undefined;
+        const securityChanges = [];
         if (!email && !password && displayName === undefined) {
             return res.status(400).json({ error: 'Email, password or name is required' });
         }
         const updates = {};
-        if (email)
+        if (email) {
             updates.email = email;
-        if (password)
+            securityChanges.push('email');
+        }
+        if (password) {
             updates.password = password;
+            securityChanges.push('password');
+        }
         if (displayName !== undefined) {
             updates.user_metadata = {
                 ...(req.user.user_metadata || {}),
@@ -73,6 +79,15 @@ router.put('/settings', requireAuth, async (req, res) => {
                 if (insertError)
                     throw insertError;
             }
+        }
+        if (securityChanges.length > 0) {
+            void (0, notifications_1.sendAccountSecurityTelegramNotification)({
+                userId,
+                userName: displayName || req.user.user_metadata?.full_name || req.user.email,
+                changes: securityChanges,
+            }).catch((notificationError) => {
+                console.error('[User] Telegram account security notification failed:', notificationError);
+            });
         }
         res.json({ success: true, message: 'Nastavení bylo úspěšně uloženo.', user: data.user });
     }

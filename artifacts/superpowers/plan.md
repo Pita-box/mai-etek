@@ -1,79 +1,184 @@
-# Plan: Automatické stránky a SUB page access v SuperAdmin
+# Plan: Task expiry worker + recurring task generator
 
 ## Goal
-Zavést jeden centrální systém pro dostupnost dashboard stránek pro SUB. DOM v SuperAdmin uvidí automaticky nalezené stránky jako štítky a může je přepnout mezi `Povoleno` a `Nepovoleno`. Navigace i zobrazení stránky se budou řídit stejným nastavením, takže nové budoucí stránky nebude nutné ručně dopisovat do navigace ani SuperAdmin page access UI.
+Dokončit task automation pro Phase 3:
+- automaticky expirovat prošlé úkoly,
+- volitelně přidat per-task `discipline_points` penalizaci při expiraci,
+- generovat recurring instance i když předchozí instance ještě není hotová,
+- spouštět automatiku přes chráněné Next API cron route,
+- zachovat idempotenci na DB úrovni.
+
+## User Decisions
+- Expiry penalty je per-task volitelná, default `0`.
+- Recurring instance se vytváří i při nedokončené předchozí instanci.
+- Cron spouštění bude přes chráněnou Next API route.
+- Expirují stavy `pending`, `in_progress`, `revision_requested`; `in_review` se neexpiruje.
 
 ## Assumptions
-- `/superadmin` zůstane vždy DOM-only a nebude možné ho SUBovi odemknout.
-- Top-level permission platí i pro child routes, např. `/tasks` řídí `/tasks`, `/tasks/[id]`, `/tasks/new`.
-- Nové dashboard stránky jsou defaultně povolené pro SUB, dokud je DOM nevypne.
-- Citlivá data dál chrání RLS/server actions; tento plán řeší viditelnost stránky a navigaci, ne nahrazení databázového zabezpečení.
+- `in_review` znamená, že SUB už úkol odevzdal a čeká na DOM, takže deadline už SUBovi nemá úkol shodit.
+- Recurring template zůstane zatím viditelný v task seznamu, jen bude lépe označený jako opakovaný úkol. Oddělený template manager je pozdější krok.
+- Recurring MVP používá čas z `deadline`; pokud template nemá deadline, generator ho přeskočí a nevyrobí nejasnou instanci.
+- Cron API route bude chráněná přes `CRON_SECRET`; hodnotu je potřeba doplnit do `.env` / deployment env, ale plán nebude zapisovat žádné existující secrets.
+- Datovou bezpečnost a idempotenci drží DB/RPC. API route je pouze spouštěč.
 
 ## Plan
-1. Zavést shared typy a normalizaci app_config
-   - Files: `apps/web/src/types/page-access.ts`, případně `apps/web/src/lib/page-access/config.ts`.
-   - Nový tvar configu: `app_config.page_access[pageKey] = { enabled: boolean }`.
-   - Zachovat kompatibilitu se starým `app_config.modules`, pokud existuje.
-   - Verify: unit-like runtime helper test přes `tsc` a pár ručních případů v kódu.
+1. Ověřit reálné linked Supabase schema
+   - Commands:
+     - `pnpm exec supabase db query --linked "select column_name, data_type from information_schema.columns where table_schema = 'public' and table_name = 'tasks' and column_name in ('parent_task_id','recurrence_config','recurrence_instance_date','expiry_penalty_points','expiry_penalty_reason','expired_at');"`
+     - `pnpm exec supabase db query --linked "select conname, pg_get_constraintdef(oid) from pg_constraint where conrelid = 'public.tasks'::regclass and contype in ('c','u');"`
+   - Goal:
+     - zjistit, které sloupce už reálně existují,
+     - vyhnout se migraci založené jen na starém `database/migrations` návrhu.
+   - Verify: výstup uložit do pracovního kontextu a podle něj upravit migraci.
 
-2. Přidat automatický dashboard page registry
-   - Files: `apps/web/src/lib/page-access/dashboard-pages.ts`.
-   - Server-side helper projde `apps/web/src/app/(dashboard)` a najde top-level dashboard pages.
-   - Z child routes vytvoří parent permission key (`tasks/[id]` -> `tasks`).
-   - Fallback metadata pro známé stránky: český label, href, icon key, pořadí.
-   - Neznámá nová stránka dostane fallback label z route segmentu a default icon.
-   - `/superadmin` bude `systemOnly` a neprojde do SUB navigace.
-   - Verify: helper vrací aktuální stránky: dashboard, tasks, chat, gallery, wishes, rewards, achievements, punishments, settings; monitoring se objeví automaticky až po vytvoření route.
+2. Přidat migraci pro task automation schema
+   - File: nový `supabase/migrations/<timestamp>_task_automation.sql`.
+   - Add/ensure columns:
+     - `tasks.parent_task_id uuid references public.tasks(id) on delete set null`
+     - `tasks.recurrence_config jsonb not null default '{}'::jsonb`
+     - `tasks.recurrence_instance_date date`
+     - `tasks.expiry_penalty_points integer not null default 0 check >= 0`
+     - `tasks.expiry_penalty_reason text`
+     - `tasks.expired_at timestamptz`
+   - Add indexes:
+     - active deadline index for expiry lookup (`deadline`, `status`)
+     - recurring template lookup (`recurrence`, `parent_task_id`)
+     - unique partial index `(parent_task_id, recurrence_instance_date)` where both are not null.
+   - Update status constraint if needed to include `expired`.
+   - Verify: linked migration apply + column/index checks.
 
-3. Upravit Dashboard layout na centrální permission evaluation
-   - Files: `apps/web/src/app/(dashboard)/layout.tsx` a případně nový client shell component.
-   - Layout načte profile + page registry + vypočtené povolené stránky.
-   - Pro SUB ověří aktuální pathname proti page access mapě.
-   - Pokud není povoleno, místo page content zobrazí glass panel s textem `K této stránce nemáš přístup.`
-   - DOM vidí vše kromě běžných RLS omezení.
-   - Verify: SUB s vypnutou stránkou nevidí content ani při přímé URL.
+3. Přidat RPC `public.expire_due_tasks(run_limit integer default 100)`
+   - File: stejná migrace.
+   - Behavior:
+     - vybere due tasks přes `FOR UPDATE SKIP LOCKED`, limitovaný batch,
+     - statusy: `pending`, `in_progress`, `revision_requested`,
+     - `deadline < now()`,
+     - nastaví `status = 'expired'`, `expired_at = now()`, `updated_at = now()`,
+     - upsertne `user_stats`, zvýší `tasks_failed += 1`, nastaví `current_streak = 0`,
+     - pokud `expiry_penalty_points > 0`, přidá `discipline_points` a `xp_transactions` s `source_type = 'task_expiry_penalty'` a `source_id = task.id`,
+     - vytvoří `public.create_activity_notification(...)` pro SUB i DOM.
+   - Idempotence:
+     - update jen pokud status stále aktivní,
+     - ledger `task_expiry_penalty` používá unique source `(user_id, source_type, source_id)`; pokud už existuje, nepřidá se znovu,
+     - notifications použijí dedupe keys `task_expired:<task_id>:sub/dom`.
+   - Verify:
+     - testovací úkol s deadline v minulosti se expiruje přes RPC,
+     - opakované zavolání RPC nezdvojí debt ani notification.
 
-4. Upravit Navigation na registry-driven položky
-   - Files: `apps/web/src/components/shared/Navigation.tsx`.
-   - Odstranit ruční `allNavItems` jako zdroj pravdy.
-   - Navigation dostane list povolených page items z layoutu.
-   - Badge mapping zůstane pro známé page keys (`tasks`, `chat`, `gallery`, `wishes`, `rewards`, `achievements`), neznámé stránky mají count 0.
-   - Verify: SUB navigace ukáže jen povolené pages; DOM navigace ukáže DOM stránky včetně Superadmin.
+4. Přidat RPC `public.generate_recurring_tasks(run_date date default Prague today, run_limit integer default 100)`
+   - File: stejná migrace.
+   - Template selection:
+     - `recurrence != 'none'`
+     - `parent_task_id IS NULL`
+     - `deadline IS NOT NULL`
+     - status není `cancelled` ani `expired`
+   - Frequency:
+     - `daily`: každý `run_date`
+     - `weekly`: jen pokud Prague day-of-week odpovídá template deadline/created_at
+     - `monthly`: jen pokud Prague day-of-month odpovídá template deadline/created_at
+   - Instance insert:
+     - kopíruje title, description, assigned_by, assigned_to, priority, points_reward,
+     - `status = 'in_progress'`,
+     - `recurrence = 'none'`,
+     - `parent_task_id = template.id`,
+     - `recurrence_instance_date = run_date`,
+     - `deadline = run_date + time(template.deadline)` v Europe/Prague,
+     - kopíruje `expiry_penalty_points` a `expiry_penalty_reason`.
+   - Idempotence:
+     - unique partial index `(parent_task_id, recurrence_instance_date)`,
+     - `ON CONFLICT DO NOTHING`.
+   - Notifications:
+     - pro novou instanci vytvořit task badge pro SUB: `Nový opakovaný úkol`.
+   - Verify:
+     - daily template vytvoří jednu instanci pro dnešek,
+     - opakované spuštění pro stejný den nevytvoří duplicitu,
+     - weekly/monthly se vytvoří jen ve správný den.
 
-5. Přestavět SuperAdmin page access UI na štítky
-   - Files: `apps/web/src/app/(dashboard)/superadmin/page.tsx`.
-   - Nahradit checkboxy `Chat / Úkoly / Galerie` za automatický seznam page chips.
-   - Povolené chips: primary button.
-   - Nepovolené chips: destructive button.
-   - Každý chip má ikonu, název a stav `Povoleno`/`Nepovoleno`.
-   - Při kliknutí update `app_config.page_access` přes stávající `useUpdateAppConfig`.
-   - Verify: DOM přepne libovolnou page a po refreshi stav zůstane.
+5. Přidat Next API cron routes
+   - Files:
+     - `apps/web/src/app/api/cron/tasks/expire/route.ts`
+     - `apps/web/src/app/api/cron/tasks/recurring/route.ts`
+     - případně společný helper `apps/web/src/lib/cron/auth.ts`.
+   - Auth:
+     - kontrola `Authorization: Bearer <CRON_SECRET>` nebo `x-cron-secret`.
+     - pokud chybí `CRON_SECRET`, route vrátí 503/konfigurační chybu.
+   - Behavior:
+     - route používá Supabase server/admin client podle existujících možností,
+     - zavolá příslušné RPC,
+     - vrátí JSON `{ success, expired_count/generated_count }`.
+   - Verify:
+     - bez secret 401/403,
+     - se secret spustí RPC.
 
-6. Upravit server route pro app_config update jen minimálně
-   - Files: `apps/server/src/routes/superadmin.ts`, případně bez změny pokud endpoint už akceptuje celý `app_config`.
-   - Endpoint dnes ukládá celý JSON; stačí posílat nový tvar a nemazat ostatní config.
-   - Verify: PATCH uloží `page_access` a zachová ostatní klíče.
+6. Doplnit server actions pro task fields
+   - File: `apps/web/src/actions/tasks.ts`.
+   - `createTask` a `updateTask` budou číst:
+     - `expiry_penalty_points`,
+     - `expiry_penalty_reason`,
+     - `recurrence_config` pokud bude potřeba default/future data.
+   - Normalizace:
+     - penalty body integer >= 0,
+     - reason trim/null,
+     - pokud recurrence != `none` a deadline chybí, vrátit jasnou chybu nebo neumožnit uložit recurring bez deadline.
+   - Verify: tsc + ruční vytvoření tasku s penalty a recurrence.
 
-7. Aktualizovat dokumentaci a artifact
-   - Files: `docs/ARCHITECTURE.md`, `artifacts/superpowers/finish.md`.
-   - Zapsat, že page access je registry-driven, default allow, DOM configurable, Superadmin system-only.
+7. Doplnit Task UI
+   - Files:
+     - `apps/web/src/app/(dashboard)/tasks/new/page.tsx`
+     - `apps/web/src/components/tasks/DomTaskControls.tsx`
+     - `apps/web/src/components/tasks/TaskDetailContent.tsx`
+     - `apps/web/src/components/tasks/TaskCard.tsx`
+     - `apps/web/src/types/task.ts`
+   - New task form:
+     - přidat volitelné `Kázeňská penalizace při prošlém termínu` body, default 0,
+     - důvod penalizace, fallback text podle title,
+     - u recurrence zobrazit krátký hint, že generator používá čas deadline.
+   - DOM edit controls:
+     - umožnit upravit expiry penalty fields,
+     - zachovat recurrence select.
+   - Detail/card:
+     - zobrazit `expired` stav jasně,
+     - u recurring template/instance zobrazit jednoduchý štítek `Opakovaný` / `Instance`.
+   - Verify: UI nevytváří horizontální overflow a hodnoty se ukládají.
+
+8. Dokumentace a artifacts
+   - Files:
+     - `docs/ARCHITECTURE.md`
+     - `artifacts/superpowers/finish.md`
+   - Update:
+     - Phase 3 `Task expiry worker` označit hotovo po implementaci,
+     - `Recurring task generator` označit hotovo po implementaci,
+     - popsat cron route + CRON_SECRET + idempotenci.
    - Verify: `git diff --check`.
 
-8. Kompletní ověření
-   - `pnpm --filter web exec tsc --noEmit`
-   - Targeted ESLint pro upravené soubory
-   - `pnpm --filter web build`
+9. Kompletní ověření
+   - Commands:
+     - `pnpm exec supabase db query --linked --file supabase/migrations/<timestamp>_task_automation.sql`
+     - `pnpm --filter web exec tsc --noEmit`
+     - targeted ESLint pro upravené soubory
+     - `pnpm --filter web build`
+     - `git diff --check -- <upravené soubory>`
    - Manual smoke:
-     - DOM vidí page chips v SuperAdmin.
-     - DOM vypne `Galerie` pro SUB.
-     - SUB po refreshi nevidí `Galerie` v navigaci.
-     - SUB otevře `/gallery` přímo a vidí `K této stránce nemáš přístup.`
-     - DOM znovu povolí `Galerie` a SUB ji opět vidí.
+     - Vytvořit úkol s deadline v minulosti a penalty 0, zavolat expire route, ověřit `expired` + notifications, žádný debt.
+     - Vytvořit úkol s deadline v minulosti a penalty > 0, zavolat expire route, ověřit `discipline_points` + ledger.
+     - Zavolat expire route znovu, ověřit bez duplicit.
+     - Vytvořit daily recurring template s deadline dnes, zavolat recurring route, ověřit jednu instanci.
+     - Zavolat recurring route znovu pro stejný den, ověřit bez duplicity.
 
-## Risks & mitigations
-- Runtime filesystem discovery v Next buildu nemusí být dostupné ve všech deployment modech.
-  - Mitigation: self-hosted projekt + fallback známých routes, build ověření.
-- Starý `app_config.modules` může být nekonzistentní.
-  - Mitigation: normalizace přečte starý tvar, ale nový zápis už používá `page_access`.
-- Nové citlivé stránky budou default allowed.
-  - Mitigation: `/superadmin` je system-only; pro jiné citlivé stránky lze při vytvoření route rovnou v SuperAdmin vypnout bez úprav navigace/SuperAdmin UI.
+## Risks & Mitigations
+- Duplicity při paralelním cron spuštění.
+  - Mitigation: `FOR UPDATE SKIP LOCKED`, partial unique index, `ON CONFLICT DO NOTHING`.
+- Nesprávné timezone u recurring deadlines.
+  - Mitigation: generovat instance podle Prague local date/time.
+- Cron route nebude volaná automaticky.
+  - Mitigation: route bude připravená; deployment musí přidat scheduler volání každých 60s pro expiry a denně pro recurring.
+- Chybějící `CRON_SECRET` v env.
+  - Mitigation: route failne bezpečně a dokumentace řekne, že je potřeba doplnit.
+- Citlivé secrets byly vložené do chatu.
+  - Mitigation: neukládat/neopisovat hodnoty; po práci doporučit rotaci.
+
+## Rollback Plan
+- Pokud selže UI, ponechat migraci/RPC a skrýt nové form fields do opravy.
+- Pokud selže cron route, lze RPC spouštět ručně přes Supabase query do opravy route.
+- Pokud selže recurring generator, vypnout recurring route; expiry worker může fungovat samostatně.
+- DB rollback řešit follow-up migrací, ne mazáním historie tasků/ledgeru.

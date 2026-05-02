@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Award, Calendar, Clock, Eye, Loader2, Send, Timer as TimerIcon } from 'lucide-react';
+import { AlertCircle, Award, Calendar, Clock, Eye, Layers3, Loader2, Repeat2, Send, ShieldAlert, Timer as TimerIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cs } from 'date-fns/locale';
 import { submitTask } from '@/actions/tasks';
@@ -23,9 +23,12 @@ export function TaskDetailContent({ task, role, titleId, layout = 'popup', onTas
   const deadlineDate = task.deadline ? new Date(task.deadline) : null;
   const [activeEvidenceTab, setActiveEvidenceTab] = useState<EvidenceTab>('text');
   const [isSubmitting, startTransition] = useTransition();
-  const canSubmitTask = role === 'sub' && !['submitted', 'in_review', 'completed'].includes(task.status);
-  const showDomApproval = role === 'dom' && ['submitted', 'in_review'].includes(task.status);
   const isPage = layout === 'page';
+  const isRecurringTemplate = task.recurrence !== 'none' && !task.parent_task_id;
+  const isRecurringInstance = Boolean(task.parent_task_id);
+  const expiryPenaltyPoints = task.expiry_penalty_points || 0;
+  const canSubmitTask = role === 'sub' && !isRecurringTemplate && !['submitted', 'in_review', 'completed', 'approved', 'rejected', 'expired', 'cancelled'].includes(task.status);
+  const showDomApproval = role === 'dom' && ['submitted', 'in_review'].includes(task.status);
 
   const handleSubmitTask = () => {
     startTransition(async () => {
@@ -49,6 +52,18 @@ export function TaskDetailContent({ task, role, titleId, layout = 'popup', onTas
               {task.public_task_id ? (
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-zinc-400">
                   ID {task.public_task_id}
+                </span>
+              ) : null}
+              {isRecurringTemplate ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-300/25 bg-rose-500/10 px-3 py-1 text-xs font-medium text-rose-200">
+                  <Repeat2 className="h-3.5 w-3.5" />
+                  Opakovaný
+                </span>
+              ) : null}
+              {isRecurringInstance ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-zinc-300">
+                  <Layers3 className="h-3.5 w-3.5" />
+                  Instance
                 </span>
               ) : null}
             </div>
@@ -106,6 +121,34 @@ export function TaskDetailContent({ task, role, titleId, layout = 'popup', onTas
                   {deadlineDate ? format(deadlineDate, 'PPp', { locale: cs }) : 'Bez termínu'}
                 </dd>
               </div>
+              {expiryPenaltyPoints > 0 ? (
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="flex items-center gap-2 text-zinc-400"><ShieldAlert className="h-4 w-4" /> Penalizace</dt>
+                  <dd className="text-right font-bold text-orange-300">+{expiryPenaltyPoints} dluh</dd>
+                </div>
+              ) : null}
+              {task.recurrence !== 'none' ? (
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="flex items-center gap-2 text-zinc-400"><Repeat2 className="h-4 w-4" /> Opakování</dt>
+                  <dd className="text-right text-white">{task.recurrence}</dd>
+                </div>
+              ) : null}
+              {task.recurrence_instance_date ? (
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="flex items-center gap-2 text-zinc-400"><Layers3 className="h-4 w-4" /> Instance</dt>
+                  <dd className="text-right text-white">
+                    {format(new Date(task.recurrence_instance_date), 'PP', { locale: cs })}
+                  </dd>
+                </div>
+              ) : null}
+              {task.expired_at ? (
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="flex items-center gap-2 text-zinc-400"><AlertCircle className="h-4 w-4" /> Vypršelo</dt>
+                  <dd className="text-right text-white">
+                    {format(new Date(task.expired_at), 'PPp', { locale: cs })}
+                  </dd>
+                </div>
+              ) : null}
               <div className="flex items-center justify-between gap-3">
                 <dt className="flex items-center gap-2 text-zinc-400">
                   <TimerIcon className="h-4 w-4" />

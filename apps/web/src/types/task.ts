@@ -16,6 +16,10 @@ export interface Task {
   recurrence: RecurrenceType;
   recurrence_config: Record<string, unknown> | null;
   parent_task_id: string | null;
+  recurrence_instance_date?: string | null;
+  expiry_penalty_points?: number | null;
+  expiry_penalty_reason?: string | null;
+  expired_at?: string | null;
   rating: number | null;
   dom_feedback: string | null;
   created_at: string;

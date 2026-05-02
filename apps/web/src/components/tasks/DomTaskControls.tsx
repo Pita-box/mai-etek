@@ -97,7 +97,20 @@ export function DomTaskControls({ task }: DomTaskControlsProps) {
                 {(['none', 'daily', 'weekly', 'monthly'] satisfies RecurrenceType[]).map((recurrence) => <option key={recurrence} value={recurrence}>{recurrence}</option>)}
               </select>
             </label>
+            <label className="block text-sm text-zinc-400">
+              Penalizace při prošlém termínu
+              <input name="expiry_penalty_points" type="number" min="0" defaultValue={task.expiry_penalty_points || 0} className="mt-2 w-full rounded-xl border border-white/10 bg-black/35 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+            </label>
+            <label className="block text-sm text-zinc-400">
+              Důvod penalizace
+              <input name="expiry_penalty_reason" defaultValue={task.expiry_penalty_reason || ''} className="mt-2 w-full rounded-xl border border-white/10 bg-black/35 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary" />
+            </label>
           </div>
+          {task.recurrence !== 'none' ? (
+            <p className="text-xs text-zinc-500">
+              Opakované instance se generují podle dne a času termínu. Šablona se při expiraci automaticky nepřepíná na vypršelo.
+            </p>
+          ) : null}
 
           <div className="flex flex-col gap-2 sm:flex-row">
             <button id="task-dom-save" disabled={isPending} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 font-bold text-white disabled:opacity-50">

@@ -35,6 +35,61 @@ function revalidateTaskPaths(task: {
   revalidatePath(getTaskHref(task));
 }
 
+function parseNonNegativeInteger(value: FormDataEntryValue | null) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}
+
+function parseOptionalText(value: FormDataEntryValue | null) {
+  const text = typeof value === "string" ? value.trim() : "";
+  return text || null;
+}
+
+function getTaskAutomationFields(formData: FormData) {
+  const deadline = (formData.get("deadline") as string) || null;
+  const recurrence = (formData.get("recurrence") as string) || "none";
+
+  if (recurrence !== "none" && !deadline) {
+    return {
+      error: "Opakovaný úkol potřebuje termín splnění.",
+      fields: null,
+    };
+  }
+
+  return {
+    error: null,
+    fields: {
+      deadline,
+      recurrence,
+      expiry_penalty_points: parseNonNegativeInteger(
+        formData.get("expiry_penalty_points"),
+      ),
+      expiry_penalty_reason: parseOptionalText(
+        formData.get("expiry_penalty_reason"),
+      ),
+    },
+  };
+}
+
+const taskSubmissionStatuses = new Set([
+  "pending",
+  "in_progress",
+  "revision_requested",
+]);
+
+function canChangeTaskSubmission(status: string | null | undefined) {
+  return taskSubmissionStatuses.has(status || "");
+}
+
+function isRecurringTaskTemplate(task: {
+  recurrence?: string | null;
+  parent_task_id?: string | null;
+}) {
+  return Boolean(
+    task.recurrence && task.recurrence !== "none" && !task.parent_task_id,
+  );
+}
+
 type TaskAttemptRow = {
   id: string;
   task_id: string;
@@ -343,14 +398,19 @@ export async function createTask(formData: FormData) {
     }
   }
 
+  const automation = getTaskAutomationFields(formData);
+  if (automation.error || !automation.fields) {
+    return { error: automation.error || "Úkol se nepodařilo připravit." };
+  }
+
   // TODO: validate input with zod
   const task = {
     title: formData.get("title") as string,
     description: formData.get("description") as string,
     priority: formData.get("priority") as string,
-    points_reward: parseInt(formData.get("points_reward") as string) || 0,
-    deadline: (formData.get("deadline") as string) || null,
-    recurrence: (formData.get("recurrence") as string) || "none",
+    points_reward: parseNonNegativeInteger(formData.get("points_reward")),
+    ...automation.fields,
+    recurrence_config: {},
     status: "in_progress",
     assigned_by,
     assigned_to,
@@ -387,14 +447,18 @@ export async function createTask(formData: FormData) {
 
 export async function updateTask(id: string, formData: FormData) {
   const supabase = await createClient();
+  const automation = getTaskAutomationFields(formData);
+  if (automation.error || !automation.fields) {
+    return { error: automation.error || "Úkol se nepodařilo připravit." };
+  }
+
   // TODO: validate input with zod
   const updates = {
     title: formData.get("title") as string,
     description: formData.get("description") as string,
     priority: formData.get("priority") as string,
-    points_reward: parseInt(formData.get("points_reward") as string) || 0,
-    deadline: (formData.get("deadline") as string) || null,
-    recurrence: (formData.get("recurrence") as string) || "none",
+    points_reward: parseNonNegativeInteger(formData.get("points_reward")),
+    ...automation.fields,
   };
 
   const { data, error } = await supabase
@@ -505,7 +569,9 @@ export async function saveTaskTextEvidence(id: string, text: string) {
 
   const { data: taskRows, error: taskLookupError } = await supabase
     .from("tasks")
-    .select("id, assigned_to, assigned_by, title, public_task_id")
+    .select(
+      "id, assigned_to, assigned_by, title, public_task_id, status, recurrence, parent_task_id",
+    )
     .eq("id", id)
     .limit(1);
 
@@ -521,6 +587,10 @@ export async function saveTaskTextEvidence(id: string, text: string) {
 
   if (task.assigned_to !== session.user.id) {
     return { error: "Unauthorized" };
+  }
+
+  if (!canChangeTaskSubmission(task.status) || isRecurringTaskTemplate(task)) {
+    return { error: "Tento úkol už nejde upravovat." };
   }
 
   const draftAttemptResult = await ensureDraftTaskAttempt(
@@ -599,6 +669,10 @@ export async function submitTask(
 
   if (task.assigned_to !== session.user.id) {
     return { error: "Unauthorized" };
+  }
+
+  if (!canChangeTaskSubmission(task.status) || isRecurringTaskTemplate(task)) {
+    return { error: "Tento úkol už nejde odevzdat." };
   }
 
   const providedText = evidenceData.text?.trim() || "";
@@ -1456,6 +1530,14 @@ export async function uploadTaskMedia(taskId: string, formData: FormData) {
 
   if (taskError || !task) {
     return { error: taskError?.message || "Task not found" };
+  }
+
+  if (![task.assigned_by, task.assigned_to].includes(session.user.id)) {
+    return { error: "Unauthorized" };
+  }
+
+  if (!canChangeTaskSubmission(task.status) || isRecurringTaskTemplate(task)) {
+    return { error: "K tomuto úkolu už nejde nahrávat odevzdání." };
   }
 
   try {
