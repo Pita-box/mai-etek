@@ -1,11 +1,12 @@
-'use client';
+"use client"
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
+import Link from "next/link"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -13,51 +14,51 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { createClient } from '@/utils/supabase/client';
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { createClient } from "@/utils/supabase/client"
 
 const loginSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address' }),
-  password: z.string().min(1, { message: 'Password is required' }),
-});
+  email: z.string().email({ message: "Neplatný e-mail" }),
+  password: z.string().min(1, { message: "Heslo je povinné" }),
+})
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const supabase = createClient();
+  const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const supabase = createClient()
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
-  });
+  })
 
   async function onSubmit(data: LoginFormValues) {
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
 
     try {
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      const { error: authError } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
-      });
+      })
 
       if (authError) {
-        throw new Error(authError.message);
+        throw new Error(authError.message)
       }
 
       // Handle successful login
-      router.push('/dashboard'); 
-    } catch (err: any) {
-      setError(err.message);
+      router.push("/dashboard")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Přihlášení se nepodařilo.")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }
 
@@ -69,13 +70,17 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md space-y-8 p-8 rounded-2xl glass-card glass-card-hover z-10">
         <div className="text-center">
-          <h1 className="text-3xl font-black tracking-tight text-foreground">Vítej zpět</h1>
-          <p className="text-sm text-muted mt-2">Zadej svoje přihlašovací údaje pro přístup</p>
+          <h1 className="text-3xl font-black tracking-tight text-foreground">
+            Vítej zpět
+          </h1>
+          <p className="text-sm text-muted mt-2">
+            Zadej svoje přihlašovací údaje pro přístup
+          </p>
         </div>
 
         {error && (
-          <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-            {error}
+          <div className="rounded-md border border-primary/30 bg-primary/10 p-3 text-sm text-foreground">
+            Špatný email nebo heslo.
           </div>
         )}
 
@@ -88,13 +93,13 @@ export default function LoginPage() {
                 <FormItem>
                   <FormLabel className="text-foreground">Email</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="you@example.com" 
-                      {...field} 
-                      className="bg-input/50 border-border focus-visible:ring-ring text-foreground  rounded-xl h-12"
+                    <Input
+                      placeholder="you@example.com"
+                      {...field}
+                      className="bg-input/50 border-border focus-visible:ring-ring text-foreground  rounded-xl h-12 mt-2"
                     />
                   </FormControl>
-                  <FormMessage className="text-destructive" />
+                  <FormMessage className="text-destructive text-muted" />
                 </FormItem>
               )}
             />
@@ -103,37 +108,47 @@ export default function LoginPage() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">Heslo</FormLabel>
+                  <div className="flex items-center justify-between gap-3">
+                    <FormLabel className="text-foreground">Heslo</FormLabel>
+                    <Button
+                      asChild
+                      variant="link"
+                      className="h-auto p-0 text-xs font-semibold text-primary hover:text-primary/80">
+                      <Link href="/forgot-password">Zapomenuté heslo?</Link>
+                    </Button>
+                  </div>
                   <FormControl>
-                    <Input 
-                      type="password" 
-                      placeholder="••••••••" 
-                      {...field} 
+                    <Input
+                      type="password"
+                      placeholder="••••••••"
+                      {...field}
                       className="bg-input/50 border-border focus-visible:ring-ring text-foreground  rounded-xl h-12"
                     />
                   </FormControl>
-                  <FormMessage className="text-destructive" />
+                  <FormMessage className="text-destructive text-muted" />
                 </FormItem>
               )}
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-[0_0_15px_rgba(255,31,87,0.4)] transition-all duration-400 font-bold h-12 rounded-xl mt-4"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Přihlašování...' : 'Přihlásit se'}
+              disabled={isLoading}>
+              {isLoading ? "Přihlašování..." : "Přihlásit se"}
             </Button>
           </form>
         </Form>
         <div className="text-center mt-6">
           <p className="text-sm text-muted">
-            Nemáš ještě účet?{' '}
-            <Button variant="link" className="text-primary hover:text-primary/80 p-0 h-auto font-semibold" onClick={() => router.push('/register')}>
+            Nemáš ještě účet?{" "}
+            <Button
+              variant="link"
+              className="text-primary hover:text-primary/80 p-0 h-auto font-semibold"
+              onClick={() => router.push("/register")}>
               Zaregistrovat se
             </Button>
           </p>
         </div>
       </div>
     </div>
-  );
+  )
 }

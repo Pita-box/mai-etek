@@ -135,11 +135,17 @@ function getAppUrl() {
   const appUrl = (
     getEnvValue("NEXT_PUBLIC_APP_URL") ||
     getEnvValue("NEXT_PUBLIC_SITE_URL") ||
-    getEnvValue("WEB_URL") ||
-    "http://localhost:3000"
-  ).trim()
+    getEnvValue("WEB_URL")
+  )?.trim()
+
+  if (!appUrl) return null
 
   return appUrl.replace(/\/+$/, "")
+}
+
+function getAppPath(pathname: string) {
+  const appUrl = getAppUrl()
+  return appUrl ? `${appUrl}${pathname}` : pathname
 }
 
 function compactText(value: string | null | undefined, fallback: string) {
@@ -153,8 +159,7 @@ function truncateText(value: string, maxLength: number) {
 }
 
 function getTaskUrl(taskId?: string | null) {
-  const appUrl = getAppUrl()
-  return taskId ? `${appUrl}/tasks/${taskId}` : `${appUrl}/tasks`
+  return getAppPath(taskId ? `/tasks/${taskId}` : "/tasks")
 }
 
 async function sendTelegramMessage(
@@ -208,9 +213,8 @@ async function sendTelegramMessage(
 
 export async function sendNewWishNotification(input: NewWishNotificationInput) {
   const title = compactText(input.title, "Přání")
-  const creator = compactText(input.creatorName, "SUB")
   const description = compactText(input.description, "")
-  const wishUrl = `${getAppUrl()}/wishes`
+  const wishUrl = getAppPath("/wishes")
   const lines = [
     "🙏 Nové přání",
     //`Od: ${creator}`,
@@ -227,7 +231,7 @@ export async function sendWishStatusChangedNotification(
 ) {
   const title = compactText(input.title, "Přání")
   const actor = compactText(input.actorName, "DOM")
-  const wishUrl = `${getAppUrl()}/wishes`
+  const wishUrl = getAppPath("/wishes")
   const lines = [
     "🔁 Změna stavu přání",
     `DOM: ${actor}`,
@@ -243,7 +247,6 @@ export async function sendTaskCommentNotification(
   input: TaskCommentNotificationInput,
 ) {
   const taskTitle = compactText(input.taskTitle, "Úkol")
-  const actor = compactText(input.actorName, "SUB")
   const comment = truncateText(compactText(input.comment, "Komentář"), 700)
   const lines = [
     "💬 Nový komentář u úkolu",
@@ -260,7 +263,6 @@ export async function sendTaskSubmittedNotification(
   input: TaskSubmittedNotificationInput,
 ) {
   const taskTitle = compactText(input.taskTitle, "Úkol")
-  const actor = compactText(input.actorName, "SUB")
   const lines = [
     input.isResubmission
       ? "📝 Úkol znovu odevzdán"

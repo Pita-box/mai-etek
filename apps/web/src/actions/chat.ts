@@ -13,9 +13,9 @@ import type {
 } from '@maietek/types';
 import { createClient } from '@/utils/supabase/server';
 import { uploadChatFileToDrive } from '@/lib/google-drive/chat';
+import { getApiBaseUrl } from '@/lib/api-url';
 import type { ChatMessageItem, SendChatMessageInput } from '@/types/chat';
 
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000/api').replace(/\/$/, '');
 const CHAT_MEDIA_MAX_BYTES = 50 * 1024 * 1024;
 const CHAT_THUMBNAIL_MAX_BYTES = 5 * 1024 * 1024;
 
@@ -27,7 +27,7 @@ async function fetchChatApi<T>(endpoint: string, accessToken: string, options: R
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetch(`${getApiBaseUrl()}${endpoint}`, {
     ...options,
     headers,
     cache: 'no-store',

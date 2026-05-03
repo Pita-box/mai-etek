@@ -1,184 +1,124 @@
-# Plan: Task expiry worker + recurring task generator
+# Plan: Zapomenuté heslo přes Resend
 
 ## Goal
-Dokončit task automation pro Phase 3:
-- automaticky expirovat prošlé úkoly,
-- volitelně přidat per-task `discipline_points` penalizaci při expiraci,
-- generovat recurring instance i když předchozí instance ještě není hotová,
-- spouštět automatiku přes chráněné Next API cron route,
-- zachovat idempotenci na DB úrovni.
-
-## User Decisions
-- Expiry penalty je per-task volitelná, default `0`.
-- Recurring instance se vytváří i při nedokončené předchozí instanci.
-- Cron spouštění bude přes chráněnou Next API route.
-- Expirují stavy `pending`, `in_progress`, `revision_requested`; `in_review` se neexpiruje.
+Přidat kompletní password reset flow:
+- odkaz `Zapomenuté heslo?` na loginu,
+- stránku `/forgot-password`,
+- reset e-mail přes Resend,
+- stránku `/reset-password`,
+- bezpečné nastavení nového hesla přes Express server,
+- synchronizaci `user_vault`.
 
 ## Assumptions
-- `in_review` znamená, že SUB už úkol odevzdal a čeká na DOM, takže deadline už SUBovi nemá úkol shodit.
-- Recurring template zůstane zatím viditelný v task seznamu, jen bude lépe označený jako opakovaný úkol. Oddělený template manager je pozdější krok.
-- Recurring MVP používá čas z `deadline`; pokud template nemá deadline, generator ho přeskočí a nevyrobí nejasnou instanci.
-- Cron API route bude chráněná přes `CRON_SECRET`; hodnotu je potřeba doplnit do `.env` / deployment env, ale plán nebude zapisovat žádné existující secrets.
-- Datovou bezpečnost a idempotenci drží DB/RPC. API route je pouze spouštěč.
+- Reset e-mail bude posílat Express server, ne Next API route, protože Express už má encryption helper pro `user_vault`.
+- Supabase Auth recovery link se vygeneruje přes service role `generateLink`.
+- `EMAIL_FROM` a `RESEND_API_KEY` budou dostupné serveru v runtime.
+- Produkční web URL se vezme z `SITE_URL`, `WEB_URL` nebo fallback `http://localhost:3000`.
 
 ## Plan
-1. Ověřit reálné linked Supabase schema
-   - Commands:
-     - `pnpm exec supabase db query --linked "select column_name, data_type from information_schema.columns where table_schema = 'public' and table_name = 'tasks' and column_name in ('parent_task_id','recurrence_config','recurrence_instance_date','expiry_penalty_points','expiry_penalty_reason','expired_at');"`
-     - `pnpm exec supabase db query --linked "select conname, pg_get_constraintdef(oid) from pg_constraint where conrelid = 'public.tasks'::regclass and contype in ('c','u');"`
-   - Goal:
-     - zjistit, které sloupce už reálně existují,
-     - vyhnout se migraci založené jen na starém `database/migrations` návrhu.
-   - Verify: výstup uložit do pracovního kontextu a podle něj upravit migraci.
-
-2. Přidat migraci pro task automation schema
-   - File: nový `supabase/migrations/<timestamp>_task_automation.sql`.
-   - Add/ensure columns:
-     - `tasks.parent_task_id uuid references public.tasks(id) on delete set null`
-     - `tasks.recurrence_config jsonb not null default '{}'::jsonb`
-     - `tasks.recurrence_instance_date date`
-     - `tasks.expiry_penalty_points integer not null default 0 check >= 0`
-     - `tasks.expiry_penalty_reason text`
-     - `tasks.expired_at timestamptz`
-   - Add indexes:
-     - active deadline index for expiry lookup (`deadline`, `status`)
-     - recurring template lookup (`recurrence`, `parent_task_id`)
-     - unique partial index `(parent_task_id, recurrence_instance_date)` where both are not null.
-   - Update status constraint if needed to include `expired`.
-   - Verify: linked migration apply + column/index checks.
-
-3. Přidat RPC `public.expire_due_tasks(run_limit integer default 100)`
-   - File: stejná migrace.
-   - Behavior:
-     - vybere due tasks přes `FOR UPDATE SKIP LOCKED`, limitovaný batch,
-     - statusy: `pending`, `in_progress`, `revision_requested`,
-     - `deadline < now()`,
-     - nastaví `status = 'expired'`, `expired_at = now()`, `updated_at = now()`,
-     - upsertne `user_stats`, zvýší `tasks_failed += 1`, nastaví `current_streak = 0`,
-     - pokud `expiry_penalty_points > 0`, přidá `discipline_points` a `xp_transactions` s `source_type = 'task_expiry_penalty'` a `source_id = task.id`,
-     - vytvoří `public.create_activity_notification(...)` pro SUB i DOM.
-   - Idempotence:
-     - update jen pokud status stále aktivní,
-     - ledger `task_expiry_penalty` používá unique source `(user_id, source_type, source_id)`; pokud už existuje, nepřidá se znovu,
-     - notifications použijí dedupe keys `task_expired:<task_id>:sub/dom`.
+1. Přidat Resend e-mail helper do serveru
+   - File: `apps/server/src/services/email.ts` nebo podobný.
+   - Použít `fetch` proti Resend API, bez nové dependency.
+   - Načítat:
+     - `RESEND_API_KEY`
+     - `EMAIL_FROM`
+   - Přidat timeout přes `AbortController`.
    - Verify:
-     - testovací úkol s deadline v minulosti se expiruje přes RPC,
-     - opakované zavolání RPC nezdvojí debt ani notification.
+     - TypeScript build serveru.
 
-4. Přidat RPC `public.generate_recurring_tasks(run_date date default Prague today, run_limit integer default 100)`
-   - File: stejná migrace.
-   - Template selection:
-     - `recurrence != 'none'`
-     - `parent_task_id IS NULL`
-     - `deadline IS NOT NULL`
-     - status není `cancelled` ani `expired`
-   - Frequency:
-     - `daily`: každý `run_date`
-     - `weekly`: jen pokud Prague day-of-week odpovídá template deadline/created_at
-     - `monthly`: jen pokud Prague day-of-month odpovídá template deadline/created_at
-   - Instance insert:
-     - kopíruje title, description, assigned_by, assigned_to, priority, points_reward,
-     - `status = 'in_progress'`,
-     - `recurrence = 'none'`,
-     - `parent_task_id = template.id`,
-     - `recurrence_instance_date = run_date`,
-     - `deadline = run_date + time(template.deadline)` v Europe/Prague,
-     - kopíruje `expiry_penalty_points` a `expiry_penalty_reason`.
-   - Idempotence:
-     - unique partial index `(parent_task_id, recurrence_instance_date)`,
-     - `ON CONFLICT DO NOTHING`.
-   - Notifications:
-     - pro novou instanci vytvořit task badge pro SUB: `Nový opakovaný úkol`.
+2. Přidat auth reset controller/server routes
+   - Files:
+     - `apps/server/src/controllers/auth/index.ts`
+     - případně `apps/server/src/routes/auth.ts`
+   - `POST /api/auth/forgot-password`
+     - vstup: `{ email }`
+     - validace přes `zod`
+     - zavolat Supabase Admin `generateLink({ type: "recovery", email, options: { redirectTo } })`
+     - pokud e-mail neexistuje nebo Supabase vrátí bezpečně očekávanou chybu, vrátit stejnou generickou success hlášku
+     - pokud link existuje, poslat e-mail přes Resend
+     - nelogovat link ani secret
+   - `POST /api/auth/reset-password`
+     - vyžaduje `Authorization: Bearer <recovery access token>`
+     - vstup: `{ password }`
+     - ověří token přes `supabaseAdmin.auth.getUser(token)`
+     - změní heslo přes `supabaseAdmin.auth.admin.updateUserById(user.id, { password })`
+     - aktualizuje/insertne `user_vault.encrypted_password`
+     - volitelně pošle existující security Telegram notification pro non-DOM uživatele podle současné logiky
    - Verify:
-     - daily template vytvoří jednu instanci pro dnešek,
-     - opakované spuštění pro stejný den nevytvoří duplicitu,
-     - weekly/monthly se vytvoří jen ve správný den.
+     - server tsc/build.
 
-5. Přidat Next API cron routes
-   - Files:
-     - `apps/web/src/app/api/cron/tasks/expire/route.ts`
-     - `apps/web/src/app/api/cron/tasks/recurring/route.ts`
-     - případně společný helper `apps/web/src/lib/cron/auth.ts`.
-   - Auth:
-     - kontrola `Authorization: Bearer <CRON_SECRET>` nebo `x-cron-secret`.
-     - pokud chybí `CRON_SECRET`, route vrátí 503/konfigurační chybu.
-   - Behavior:
-     - route používá Supabase server/admin client podle existujících možností,
-     - zavolá příslušné RPC,
-     - vrátí JSON `{ success, expired_count/generated_count }`.
+3. Přidat `/forgot-password` stránku
+   - File: `apps/web/src/app/(auth)/forgot-password/page.tsx`
+   - Form:
+     - e-mail input
+     - submit na `POST /api/auth/forgot-password` přes `NEXT_PUBLIC_API_URL`
+     - po submitu vždy zobrazit generickou hlášku: pokud účet existuje, e-mail dorazí
+   - Link zpět na login.
+   - UI style sladit s login/register.
    - Verify:
-     - bez secret 401/403,
-     - se secret spustí RPC.
+     - web tsc/lint.
 
-6. Doplnit server actions pro task fields
-   - File: `apps/web/src/actions/tasks.ts`.
-   - `createTask` a `updateTask` budou číst:
-     - `expiry_penalty_points`,
-     - `expiry_penalty_reason`,
-     - `recurrence_config` pokud bude potřeba default/future data.
-   - Normalizace:
-     - penalty body integer >= 0,
-     - reason trim/null,
-     - pokud recurrence != `none` a deadline chybí, vrátit jasnou chybu nebo neumožnit uložit recurring bez deadline.
-   - Verify: tsc + ruční vytvoření tasku s penalty a recurrence.
+4. Přidat `/reset-password` stránku
+   - File: `apps/web/src/app/(auth)/reset-password/page.tsx`
+   - Client component:
+     - vytvoří Supabase client
+     - počká na recovery session/getSession
+     - form `password`, `confirmPassword`
+     - po submitu zavolá `/api/auth/reset-password` s access tokenem
+     - po úspěchu odhlásí uživatele a přesměruje na `/login`
+   - Chybové stavy:
+     - neplatný/expirující link
+     - hesla se neshodují
+     - příliš krátké heslo
+   - Verify:
+     - web tsc/lint.
 
-7. Doplnit Task UI
-   - Files:
-     - `apps/web/src/app/(dashboard)/tasks/new/page.tsx`
-     - `apps/web/src/components/tasks/DomTaskControls.tsx`
-     - `apps/web/src/components/tasks/TaskDetailContent.tsx`
-     - `apps/web/src/components/tasks/TaskCard.tsx`
-     - `apps/web/src/types/task.ts`
-   - New task form:
-     - přidat volitelné `Kázeňská penalizace při prošlém termínu` body, default 0,
-     - důvod penalizace, fallback text podle title,
-     - u recurrence zobrazit krátký hint, že generator používá čas deadline.
-   - DOM edit controls:
-     - umožnit upravit expiry penalty fields,
-     - zachovat recurrence select.
-   - Detail/card:
-     - zobrazit `expired` stav jasně,
-     - u recurring template/instance zobrazit jednoduchý štítek `Opakovaný` / `Instance`.
-   - Verify: UI nevytváří horizontální overflow a hodnoty se ukládají.
+5. Upravit login UI
+   - File: `apps/web/src/app/(auth)/login/page.tsx`
+   - Přidat odkaz `Zapomenuté heslo?` poblíž password fieldu nebo pod formulářem.
+   - Zachovat existující vzhled.
+   - Přeložit validační texty loginu do češtiny, pokud se souboru budeme dotýkat.
+   - Verify:
+     - targeted lint.
 
-8. Dokumentace a artifacts
-   - Files:
-     - `docs/ARCHITECTURE.md`
-     - `artifacts/superpowers/finish.md`
+6. Dokumentace a artifacts
    - Update:
-     - Phase 3 `Task expiry worker` označit hotovo po implementaci,
-     - `Recurring task generator` označit hotovo po implementaci,
-     - popsat cron route + CRON_SECRET + idempotenci.
-   - Verify: `git diff --check`.
+     - `README.md` krátce zmínit `RESEND_API_KEY`, `EMAIL_FROM`, password reset flow.
+     - `docs/ARCHITECTURE.md` zaznamenat stav Auth / Password reset.
+     - `artifacts/superpowers/finish.md` po implementaci.
+   - Verify:
+     - `git diff --check`.
 
-9. Kompletní ověření
+7. Ověření
    - Commands:
-     - `pnpm exec supabase db query --linked --file supabase/migrations/<timestamp>_task_automation.sql`
+     - `pnpm --filter server build`
      - `pnpm --filter web exec tsc --noEmit`
-     - targeted ESLint pro upravené soubory
-     - `pnpm --filter web build`
+     - targeted ESLint pro upravené web soubory
      - `git diff --check -- <upravené soubory>`
    - Manual smoke:
-     - Vytvořit úkol s deadline v minulosti a penalty 0, zavolat expire route, ověřit `expired` + notifications, žádný debt.
-     - Vytvořit úkol s deadline v minulosti a penalty > 0, zavolat expire route, ověřit `discipline_points` + ledger.
-     - Zavolat expire route znovu, ověřit bez duplicit.
-     - Vytvořit daily recurring template s deadline dnes, zavolat recurring route, ověřit jednu instanci.
-     - Zavolat recurring route znovu pro stejný den, ověřit bez duplicity.
+     - otevřít `/login`, kliknout `Zapomenuté heslo?`
+     - zadat existující e-mail
+     - ověřit doručení Resend e-mailu
+     - otevřít link a nastavit nové heslo
+     - ověřit login novým heslem
+     - ověřit, že staré heslo nefunguje
+     - ověřit, že SuperAdmin reveal používá nové heslo z `user_vault`
 
 ## Risks & Mitigations
-- Duplicity při paralelním cron spuštění.
-  - Mitigation: `FOR UPDATE SKIP LOCKED`, partial unique index, `ON CONFLICT DO NOTHING`.
-- Nesprávné timezone u recurring deadlines.
-  - Mitigation: generovat instance podle Prague local date/time.
-- Cron route nebude volaná automaticky.
-  - Mitigation: route bude připravená; deployment musí přidat scheduler volání každých 60s pro expiry a denně pro recurring.
-- Chybějící `CRON_SECRET` v env.
-  - Mitigation: route failne bezpečně a dokumentace řekne, že je potřeba doplnit.
-- Citlivé secrets byly vložené do chatu.
-  - Mitigation: neukládat/neopisovat hodnoty; po práci doporučit rotaci.
+- Account enumeration.
+  - Vždy vracet generickou success hlášku pro forgot-password.
+- Nesynchronizovaný `user_vault`.
+  - Nové heslo nastavovat přes Express reset route, ne přímo přes Supabase client.
+- E-mail link leak v logu.
+  - Nelogovat `action_link`.
+- Resend config missing.
+  - Server log + bezpečná chyba; UI nevypíše secrets.
+- Recovery session handling.
+  - Reset page musí čekat na Supabase session a zobrazit jasnou chybu pro neplatný/expirující link.
 
-## Rollback Plan
-- Pokud selže UI, ponechat migraci/RPC a skrýt nové form fields do opravy.
-- Pokud selže cron route, lze RPC spouštět ručně přes Supabase query do opravy route.
-- Pokud selže recurring generator, vypnout recurring route; expiry worker může fungovat samostatně.
-- DB rollback řešit follow-up migrací, ne mazáním historie tasků/ledgeru.
+## Success Criteria
+- Uživatel vidí `Zapomenuté heslo?` na loginu.
+- Reset e-mail se odesílá přes Resend.
+- Reset link vede na webovou stránku pro nové heslo.
+- Nové heslo se uloží v Supabase Auth i `user_vault`.
+- Žádné secrets ani reset linky nejsou vypsané v UI/logu/artefaktech.

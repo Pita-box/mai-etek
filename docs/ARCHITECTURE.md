@@ -51,7 +51,7 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 | -------------------- | ------------------------------------------------------------------------------------------------------ |
 | **Registration**     | Invite-only (DOM creates account, sends invite to SUB)                                                 |
 | **Multi-pair**       | Single pair only (1 DOM + 1 SUB)                                                                       |
-| **Auth**             | Email + password                                                                                       |
+| **Auth**             | Email + password + Resend password reset                                                               |
 | **Chat**             | Real-time (WebSocket), full multimedia (text, images, videos, voice)                                   |
 | **Encryption**       | None (simplified implementation)                                                                       |
 | **Tasks**            | Deadline with auto-fail, combined punishments (templates + ad-hoc), full gamification, recurring tasks |
@@ -517,6 +517,8 @@ CREATE TABLE panic_log (
 | ------ | ------------------------- | ---------------------- | ------------------- |
 | `POST` | `/api/auth/register`      | DOM registration       | Public              |
 | `POST` | `/api/auth/login`         | Login (both roles)     | Public              |
+| `POST` | `/api/auth/forgot-password` | Send password reset e-mail | Public          |
+| `POST` | `/api/auth/reset-password` | Set new password from recovery token | Recovery session |
 | `POST` | `/api/auth/invite`        | Generate invite token  | DOM only            |
 | `POST` | `/api/auth/accept-invite` | SUB accepts invitation | Public (with token) |
 | `POST` | `/api/auth/logout`        | Logout                 | Authenticated       |
@@ -1751,6 +1753,7 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 | ------------------ | --------------------------------------------------------- |
 | JWT tokens         | Short-lived access (15 min) + long-lived refresh (7 days) |
 | Password hashing   | bcrypt with salt rounds = 12                              |
+| Password reset     | Supabase recovery link + Resend e-mail; reset writes Supabase Auth and `user_vault` |
 | Role enforcement   | Middleware checks on every protected route                |
 | Invite-only        | SUB can only register via valid, unexpired invite token   |
 | Session management | Redis-backed session store                                |
@@ -1803,6 +1806,13 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [ ] Login / Logout
   - [ ] Invite token generation + acceptance
   - [x] JWT middleware (access + refresh tokens)
+  - [x] Password reset:
+    - [x] Login page has `Zapomenuté heslo?`.
+    - [x] `/forgot-password` sends generic reset confirmation to prevent account enumeration.
+    - [x] Express `POST /api/auth/forgot-password` generates a Supabase recovery link and sends it via Resend.
+    - [x] `/reset-password` accepts the recovery session and posts the new password to Express.
+    - [x] Express `POST /api/auth/reset-password` updates Supabase Auth and synchronizes `user_vault.encrypted_password`.
+    - [x] Account security Telegram notification is reused for non-DOM password resets.
 - [x] Role-based middleware (DOM/SUB)
 - [x] SuperAdmin page access control
   - [x] Dashboard pages are discovered from `apps/web/src/app/(dashboard)` and normalized through a shared page registry.
@@ -2102,6 +2112,15 @@ EXTENSION_MAX_BUFFER_SIZE=1000
     - [x] Duplicate generation is blocked by the partial unique index `(parent_task_id, recurrence_instance_date)`.
     - [x] SUB sees generated instances; recurring templates are hidden from the SUB task list and managed by DOM.
     - [x] Cron routes require `CRON_SECRET` via `Authorization: Bearer <secret>` or `x-cron-secret`.
+    - [x] Local web env is configured for cron route execution; secrets are server-only and not documented.
+    - [x] `scripts/run-task-cron.mjs` can be used by VPS/system cron without storing the secret in the crontab command.
+    - [x] Expiry and recurring RPC behavior was smoke-tested in a rollback transaction; HTTP routes were smoke-tested against a temporary local server.
+    - [x] Production scheduling is documented in `README.md`:
+      - [x] Vercel Cron Jobs via `vercel.json` can call `/api/cron/tasks/expire` and `/api/cron/tasks/recurring`.
+      - [x] Vercel schedules are UTC; recurring should run after Prague midnight.
+      - [x] Vercel automatically sends `Authorization: Bearer <CRON_SECRET>` when `CRON_SECRET` is configured.
+      - [x] VPS/system cron can use `scripts/run-task-cron.mjs`.
+      - [x] Actual automatic execution still depends on configuring the scheduler in the live deployment.
 
 **Deliverable**: Complete content management and gamification engine.
 
@@ -2207,7 +2226,7 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 **Goal**: Production-ready deployment
 
 - [ ] **UI/UX Polish**:
-  - [ ] Dark mode support
+  - [x] Dark mode support (in default the website has Dark theme already)
   - [ ] Loading skeletons
   - [ ] Error boundaries + error pages
   - [ ] Empty states
@@ -2229,7 +2248,7 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [ ] Chrome Extension testing
 
 - [ ] **Deployment**:
-  - [ ] VPS provisioning (Hetzner)
+  - [ ] VPS provisioning (OVH)
   - [ ] Domain + DNS setup
   - [ ] SSL certificates (Let's Encrypt)
   - [ ] Docker production build

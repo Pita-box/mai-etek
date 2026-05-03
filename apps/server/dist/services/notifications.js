@@ -73,8 +73,14 @@ function getAppUrl() {
     const appUrl = (getEnvValue("NEXT_PUBLIC_APP_URL") ||
         getEnvValue("NEXT_PUBLIC_SITE_URL") ||
         getEnvValue("WEB_URL") ||
-        "http://localhost:3000").trim();
+        getEnvValue("SITE_URL"))?.trim();
+    if (!appUrl)
+        return null;
     return appUrl.replace(/\/+$/, "");
+}
+function getAppPath(pathname) {
+    const appUrl = getAppUrl();
+    return appUrl ? `${appUrl}${pathname}` : pathname;
 }
 function getTelegramConfig(channel = "default") {
     const botToken = getEnvValue("TELEGRAM_BOT_TOKEN");
@@ -146,7 +152,7 @@ async function sendTelegramMessage(channel, text) {
 async function sendTelegramEventNotification(input) {
     const channel = input.channel || "default";
     const eventUrl = input.path
-        ? `${getAppUrl()}${input.path.startsWith("/") ? input.path : `/${input.path}`}`
+        ? getAppPath(input.path.startsWith("/") ? input.path : `/${input.path}`)
         : null;
     const lines = [
         input.title,

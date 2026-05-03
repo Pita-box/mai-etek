@@ -3,10 +3,9 @@ import type {
   ChatSocketClientEvents,
   ChatSocketServerEvents,
 } from '@maietek/types';
+import { getSocketBaseUrl } from './api-url';
 
 export type ChatSocket = Socket<ChatSocketServerEvents, ChatSocketClientEvents>;
-
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000';
 
 let chatSocket: ChatSocket | null = null;
 let chatSocketToken: string | null = null;
@@ -36,7 +35,7 @@ export function getChatSocket(token: string): ChatSocket {
   }
 
   chatSocketToken = token;
-  chatSocket = io(`${SOCKET_URL}/chat`, {
+  chatSocket = io(`${getSocketBaseUrl()}/chat`, {
     auth: { token },
     transports: ['websocket', 'polling'],
     reconnection: true,

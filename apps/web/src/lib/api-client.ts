@@ -1,6 +1,5 @@
 import { createClient } from '../utils/supabase/client';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+import { getApiBaseUrl } from './api-url';
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const supabase = createClient();
@@ -14,7 +13,7 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetch(`${getApiBaseUrl()}${endpoint}`, {
     ...options,
     headers,
   });
@@ -24,7 +23,7 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
     try {
       const data = await response.json();
       errorMsg = data.error || errorMsg;
-    } catch (e) {
+    } catch {
       // JSON parse failed
     }
     throw new Error(errorMsg);

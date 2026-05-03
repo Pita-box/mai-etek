@@ -5,4 +5,6 @@ const auth_1 = require("../controllers/auth");
 const router = (0, express_1.Router)();
 router.post('/register', auth_1.register);
 router.post('/login', auth_1.login);
+router.post('/forgot-password', auth_1.forgotPassword);
+router.post('/reset-password', auth_1.resetPassword);
 exports.default = router;

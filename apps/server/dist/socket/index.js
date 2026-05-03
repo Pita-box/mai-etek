@@ -14,6 +14,12 @@ let io = null;
 const userSockets = new Map();
 const lastOnlineByUserId = new Map();
 const supabaseAdmin = (0, db_1.createAdminClient)();
+function getWebOrigin() {
+    return (process.env.WEB_URL ||
+        process.env.SITE_URL ||
+        process.env.NEXT_PUBLIC_APP_URL ||
+        process.env.NEXT_PUBLIC_SITE_URL)?.replace(/\/+$/, "");
+}
 function getIO() {
     if (!io) {
         throw new Error("Socket.IO server ještě není inicializován");
@@ -50,9 +56,10 @@ async function updateLastOnlineAt(userId, value) {
     }
 }
 function initSocketIO(httpServer) {
+    const webOrigin = getWebOrigin();
     io = new socket_io_1.Server(httpServer, {
         cors: {
-            origin: process.env.WEB_URL || "http://localhost:3000",
+            ...(webOrigin ? { origin: webOrigin } : {}),
             methods: ["GET", "POST"],
             credentials: true,
         },
