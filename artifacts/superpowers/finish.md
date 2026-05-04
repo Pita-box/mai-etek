@@ -1,50 +1,52 @@
-# Finish: Zapomenuté heslo přes Resend
+# Finish: Chrome Extension Phase 4 - MMM Scaffold
 
 ## Hotovo
-- Přidaný Resend e-mail helper na serveru bez nové dependency.
-- Přidané Express endpointy:
-  - `POST /api/auth/forgot-password`
-  - `POST /api/auth/reset-password`
-- Reset hesla aktualizuje Supabase Auth i `user_vault.encrypted_password`.
-- DOM účty zůstávají chráněné před security Telegram notifikací podle existující logiky.
-- Přidané web stránky:
-  - `/forgot-password`
-  - `/reset-password`
-- Login obsahuje odkaz `Zapomenuté heslo?` a české validační texty.
-- `README.md` a `docs/ARCHITECTURE.md` popisují aktuální stav password reset flow.
+- Přidaná migrace `supabase/migrations/20260503120000_monitoring_extension_scaffold.sql`:
+  - `monitoring_pairing_codes`,
+  - `monitoring_devices`,
+  - `monitoring_events`,
+  - RLS pro DOM-scoped čtení/správu.
+- Přidané monitoring server actions:
+  - načtení Monitoring dat,
+  - generování 30min jednorázového párovacího kódu,
+  - přejmenování instalace,
+  - zneplatnění konkrétní instalace.
+- Přidané extension API routy:
+  - `POST /api/monitoring/extension/pair`,
+  - `POST /api/monitoring/extension/heartbeat`.
+- Přidaná DOM stránka `/monitoring`:
+  - stav `Aktivní / Neaktivní`,
+  - stav sync,
+  - pairing panel,
+  - seznam instalací,
+  - rename,
+  - `Zneplatnit extension`,
+  - prázdné připravené sekce pro budoucí logy a snímky.
+- Přidaný Chrome Extension scaffold `MMM`:
+  - Manifest V3,
+  - Webpack build,
+  - popup pairing/connected UI,
+  - `chrome.storage.local` session,
+  - background heartbeat přes `chrome.alarms`,
+  - placeholder content script bez capture logiky.
+- Aktualizovaný `README.md` a `docs/ARCHITECTURE.md`.
+
+## Důležitý rozsah
+- Scaffold neimplementuje historii webů, snímky obrazovky, webcam/offscreen recording, monitoring formulářové aktivity, cookies export ani raw input capture.
+- Google Drive `Monitoring/DD.MM.YYYY/...` struktura je připravené rozhodnutí pro další monitoring modul, ne součást scaffold implementace.
 
 ## Ověření
-- `pnpm --filter server build` -> prošlo.
+- `pnpm --filter chrome-extension build` -> prošlo.
 - `pnpm --filter web exec tsc --noEmit` -> prošlo.
-- `pnpm --filter web exec eslint 'src/app/(auth)/login/page.tsx' 'src/app/(auth)/forgot-password/page.tsx' 'src/app/(auth)/reset-password/page.tsx'` -> prošlo.
-- `git diff --check -- README.md docs/ARCHITECTURE.md artifacts/superpowers/finish.md apps/server/src/utils/env.ts apps/server/src/services/email.ts apps/server/src/controllers/auth/index.ts apps/server/src/routes/auth.ts 'apps/web/src/app/(auth)/login/page.tsx' 'apps/web/src/app/(auth)/forgot-password/page.tsx' 'apps/web/src/app/(auth)/reset-password/page.tsx'` -> prošlo.
-- `git diff --check -- apps/server/dist/controllers/auth/index.js apps/server/dist/routes/auth.js` -> prošlo.
-- `rg -n "[[:blank:]]$" <upravené source/doc soubory>` -> bez nálezů.
+- `pnpm --filter web exec eslint 'src/app/(dashboard)/monitoring/page.tsx' 'src/components/monitoring/MonitoringClient.tsx' 'src/actions/monitoring.ts' 'src/app/api/monitoring/extension/pair/route.ts' 'src/app/api/monitoring/extension/heartbeat/route.ts'` -> prošlo.
+- `git diff --check -- <upravené soubory>` -> prošlo.
+- `pnpm exec supabase db query --linked --file supabase/migrations/20260503120000_monitoring_extension_scaffold.sql` -> prošlo, migrace aplikovaná.
+- `rg -n "localhost|keylogger|cookies export|raw input" <runtime source + docs>` -> v runtime source bez nálezů; docs/finish obsahují jen explicitní poznámky o neimplementovaném rozsahu.
 
 ## Manual smoke
-- Otevřít `/login`.
-- Kliknout `Zapomenuté heslo?`.
-- Zadat existující e-mail.
-- Ověřit doručení reset e-mailu.
-- Otevřít reset link, nastavit nové heslo.
-- Ověřit login novým heslem a ověřit, že SuperAdmin reveal používá nové heslo z `user_vault`.
-
----
-
-# Finish: NEXT_PUBLIC_API_URL bez localhost fallbacků
-
-## Hotovo
-- Přidaný společný helper `apps/web/src/lib/api-url.ts`.
-- Register, forgot-password, reset-password, `fetchApi`, chat actions a Socket.IO používají `NEXT_PUBLIC_API_URL`.
-- Odstraněné fallbacky na `http://localhost:4000` z webového source kódu.
-- Telegram odkazy už nepadají na `http://localhost:3000`; bez web URL použijí relativní cestu.
-- Server Socket.IO CORS a serverové Telegram odkazy už nemají localhost fallback.
-- Cron runner už vyžaduje reálnou base URL přes env, místo aby padal na localhost.
-
-## Ověření
-- `rg -n "localhost:4000|http://localhost" apps/web/src apps/web -g '*.ts' -g '*.tsx' -g '*.js' -g '*.mjs' -g '*.json'` -> bez nálezů.
-- `rg -n "http://localhost|localhost:4000" apps packages scripts --glob '!**/dist/**' --glob '!**/.next/**' --glob '!**/node_modules/**'` -> zůstává jen dokumentační odkaz v `apps/web/README.md`.
-- `pnpm --filter server build` -> prošlo.
-- `pnpm --filter web exec tsc --noEmit` -> prošlo.
-- `pnpm --filter web exec eslint 'src/app/(auth)/register/page.tsx' 'src/app/(auth)/forgot-password/page.tsx' 'src/app/(auth)/reset-password/page.tsx' 'src/lib/api-url.ts' 'src/lib/api-client.ts' 'src/lib/socket.ts' 'src/actions/chat.ts' 'src/lib/telegram/notifications.ts'` -> prošlo.
-- `git diff --check -- <upravené web soubory>` -> prošlo.
+- Otevřít `/monitoring` jako DOM.
+- Vygenerovat párovací kód pro SUB.
+- Načíst `apps/chrome-extension/dist` v Chrome jako unpacked extension.
+- Zadat párovací kód v popupu.
+- Ověřit, že se instalace zobrazí na `/monitoring`.
+- Ověřit heartbeat, rename a zneplatnění konkrétní instalace.

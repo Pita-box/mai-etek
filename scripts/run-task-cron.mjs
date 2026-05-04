@@ -5,7 +5,7 @@ import path from "node:path";
 
 const mode = process.argv[2];
 const explicitDate = process.argv[3];
-const allowedModes = new Set(["expire", "recurring"]);
+const allowedModes = new Set(["expire", "monitoring-cleanup", "recurring"]);
 
 function parseEnvFile(filePath) {
   if (!existsSync(filePath)) return {};
@@ -47,7 +47,9 @@ function loadEnv() {
 }
 
 if (!allowedModes.has(mode)) {
-  console.error("Usage: node scripts/run-task-cron.mjs <expire|recurring> [YYYY-MM-DD]");
+  console.error(
+    "Usage: node scripts/run-task-cron.mjs <expire|recurring|monitoring-cleanup> [YYYY-MM-DD]",
+  );
   process.exit(2);
 }
 
@@ -81,7 +83,9 @@ if (!baseUrl) {
 const route =
   mode === "expire"
     ? "/api/cron/tasks/expire"
-    : `/api/cron/tasks/recurring${explicitDate ? `?date=${explicitDate}` : ""}`;
+    : mode === "monitoring-cleanup"
+      ? "/api/cron/monitoring/cleanup"
+      : `/api/cron/tasks/recurring${explicitDate ? `?date=${explicitDate}` : ""}`;
 const url = `${baseUrl}${route}`;
 
 const response = await fetch(url, {

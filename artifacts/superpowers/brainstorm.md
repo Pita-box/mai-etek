@@ -1,158 +1,176 @@
-# Brainstorm: Chrome Extension Phase 4 - Extension Scaffold
+# Brainstorm: Phase 6 - Polish & Deploy
 
 ## Cíl
-Začít Phase 4 podle `docs/ARCHITECTURE.md` a postavit základ Chrome Extension tak, aby šla bezpečně rozšiřovat o monitoring:
-- Manifest V3,
-- build konfigurace,
-- popup UI,
-- přihlášení SUB účtu,
-- ukládání session do `chrome.storage`,
-- API client,
-- základní connection/status heartbeat,
-- safe word toggle jako první viditelný bezpečnostní prvek.
+
+Dovést aplikaci z funkčního stavu do produkčně použitelného stavu podle `docs/ARCHITECTURE.md`:
+
+- sjednocené empty states,
+- toast notifikace pro akce,
+- citlivé a střídmé animace,
+- accessibility audit,
+- performance průchod,
+- základ testů,
+- deploy checklist a produkční provoz.
+
+Phase 5 je přeskočená produktovým rozhodnutím, takže Phase 6 pokračuje přímo po dokončeném Phase 4 monitoring scope.
 
 ## Aktuální stav
-- `apps/chrome-extension` už existuje.
-- Má `package.json` s TypeScript/Webpack dependencies.
-- `src/background`, `src/content`, `src/popup`, `src/shared`, `src/webcam` adresáře existují, ale aktuálně neobsahují zdrojové soubory.
-- `build` script zatím jen vypisuje `Skipping build for now`.
-- Web aplikace už má:
-  - Supabase Auth,
-  - role DOM/SUB,
-  - DOM-only Monitoring stránku v navigaci,
-  - Telegram/Socket.IO infra,
-  - `NEXT_PUBLIC_API_URL` bez localhost fallbacků ve web runtime kódu.
 
-## Doporučený první krok
-Nezačínat hned monitoringem. Nejdřív udělat pevný extension scaffold:
-1. `manifest.json` pro Manifest V3.
-2. Webpack build pro:
-   - background service worker,
-   - popup HTML/TS/CSS,
-   - content script placeholder.
-3. Shared config:
-   - `API_BASE_URL` z build-time env,
-   - žádný hardcoded localhost fallback.
-4. Auth flow:
-   - SUB zadá e-mail/heslo v popupu,
-   - extension zavolá API/Supabase auth endpoint,
-   - uloží access/refresh token do `chrome.storage.local`,
-   - umí logout.
-5. Popup:
-   - login view,
-   - connected/status view,
-   - safe word toggle,
-   - poslední sync/status/chyba.
-6. API client:
-   - automatický bearer token,
-   - JSON error handling,
-   - timeout,
-   - jasné české chybové zprávy.
-7. Background heartbeat:
-   - periodicky ověří přihlášení a uloží `lastSeenAt`,
-   - později se napojí na monitoring sync.
+Hotové v Phase 6:
 
-## Bezpečnostní a produktové hranice
-- Extension musí být viditelná a ovladatelná v popupu.
-- Monitoring nesmí být skrytý nebo maskovaný.
-- Safe word musí mít přednost před synchronizací a budoucím monitoringem.
-- Nejdřív scaffold + auth + status. Až potom samostatně řešit history/screenshot/content script/webcam.
-- Bez `localhost` fallbacků v runtime; pro dev/live musí být explicitní env/config.
-- Tokeny neukládat do plain souborů ani logů; `chrome.storage.local` je minimum pro MVP.
+- Dark mode je výchozí.
+- Loading skeletons jsou doplněné pro dashboard/auth routy a shell.
+- Error boundaries + root `not-found` jsou doplněné.
 
-## Co zatím nedělat
-- Keylogger/content capture.
-- Screenshot capture.
-- Webcam/offscreen recording.
-- Batch sync do databáze.
-- Monitoring dashboard detail.
+Chybí:
 
-Tyto věci přijdou až po ověřeném základu, protože jinak by se špatně ladilo, co selhalo: auth, storage, build, permissions, nebo samotný capture.
+- Empty states.
+- Toast notifications.
+- Animations.
+- Accessibility audit.
+- Performance.
+- Testing.
+- Deployment příprava.
 
-## Návrh architektury extension
-```text
-apps/chrome-extension
-  public/
-    manifest.json
-  src/
-    background/
-      service-worker.ts
-    content/
-      index.ts
-    popup/
-      popup.html
-      popup.ts
-      popup.css
-    shared/
-      api-client.ts
-      auth-storage.ts
-      config.ts
-      types.ts
-  webpack.config.js
-  tsconfig.json
-```
+## Zjištění z codebase
 
-## Manifest permissions pro MVP
-Minimum pro scaffold:
-- `storage`
-- `alarms`
+- Existuje `apps/web/src/components/ui/skeleton.tsx`.
+- Toast knihovna zatím není v `apps/web/package.json`.
+- Framer Motion zatím není v `apps/web/package.json`, i když je v architektuře uvedený jako plán.
+- Playwright je v lockfile, ale ne v `apps/web/package.json` jako běžný script pro web.
+- UI používá shadcn/base-ui styl, glassmorphism, tmavý vzhled a crimson accent.
+- Page-specific design docs existují jen pro:
+  - `design-system/pages/chat.md`
+  - `design-system/pages/achievements.md`
 
-Host permissions:
-- jen explicitní API origin podle configu.
+## Doporučené pořadí
 
-Zatím nepřidávat:
-- `tabs`
-- `activeTab`
-- `scripting`
-- `desktopCapture`
-- `offscreen`
-- `<all_urls>`
+1. Empty states
+   - Vytvořit sdílenou komponentu `EmptyState`.
+   - Nahradit ručně psané prázdné stavy na klíčových stránkách.
+   - Začít dashboard oblastmi, kde jsou seznamy: Chat, Tasks, Wishes, Gallery, Monitoring, Rewards, Achievements, Superadmin.
 
-Tyto permissions přidat až ve chvíli, kdy budeme implementovat konkrétní monitoring modul.
+2. Toast notifications
+   - Vybrat knihovnu nebo použít vlastní minimalistický toast store.
+   - Napojit na úspěšné/chybové akce:
+     - uploady,
+     - smazání,
+     - ukládání nastavení,
+     - task submit/approve/reject,
+     - wishes status,
+     - monitoring delete/revoke/pairing.
 
-## API otázka
-Máme dvě možné cesty:
+3. Animations
+   - Nejdřív mikrointerakce bez těžké animační knihovny, pokud stačí CSS/Tailwind.
+   - Framer Motion přidat jen pokud opravdu potřebujeme layout transitions.
+   - Respektovat `prefers-reduced-motion`.
 
-### Varianta A: Přihlášení přes Express API
-- Extension volá `POST /api/auth/login`.
-- Dostane Supabase session/access token.
-- Použije stejný token pro protected Express monitoring endpointy.
-- Výhoda: drží se existující serverové vrstvy.
+4. Accessibility audit
+   - Focus states.
+   - Dialog/sheet keyboard behavior.
+   - Icon-only buttons mají `aria-label`.
+   - Form labels.
+   - Kontrast.
+   - Mobile navigation.
 
-### Varianta B: Přímé Supabase auth z extension
-- Extension používá `@supabase/supabase-js`.
-- Potřebuje public Supabase env v extension buildu.
-- Výhoda: méně vlastního auth kódu.
-- Nevýhoda: větší bundle a více env hodnot v extension.
+5. Performance
+   - Images: používat lazy loading/proxy thumbnaily.
+   - Heavy stránky rozdělit dynamic importy, kde dávají smysl.
+   - Bundle check.
+   - Query performance pro monitoring/gallery/chat.
 
-Doporučení: Varianta A pro MVP. Máme už Express auth route a extension bude stejně potřebovat Express monitoring API.
+6. Testing
+   - Nejpraktičtější začít Playwright smoke testy:
+     - login,
+     - dashboard navigation,
+     - chat page load,
+     - tasks page load,
+     - gallery page load,
+     - monitoring DOM-only guard.
+   - Unit testy doplnit až pro izolovanou business logiku.
+
+7. Deployment
+   - Rozhodnout platformu.
+   - Nastavit env vars.
+   - Cron jobs.
+   - Google Drive service account.
+   - Telegram bot.
+   - Backup a health checks.
 
 ## Rizika
-- Chrome MV3 service worker se uspává; heartbeat/sync musí počítat s krátkým runtime.
-- Refresh token flow musí být vyřešený, jinak bude extension často odpadávat.
-- Pokud se přidají moc široká permissions hned, bude těžší auditovat, co extension opravdu používá.
-- Build-time env pro extension není totéž co Next env; musíme jasně nastavit vlastní extension config.
-- Monitoring data mohou rychle růst, takže buffer limit a FIFO pravidla budou nutná v další etapě.
 
-## Acceptance criteria pro první implementační plán
-- `pnpm --filter chrome-extension build` reálně vytvoří `dist`.
-- `dist/manifest.json` je validní Manifest V3.
-- Extension jde načíst v Chrome přes `chrome://extensions` jako unpacked.
-- Popup zobrazí login formulář.
-- Po přihlášení se uloží session do `chrome.storage.local`.
-- Popup umí zobrazit přihlášený stav a odhlásit.
-- Safe word toggle je viditelný UI prvek, i kdyby backend endpoint byl v první iteraci jen placeholder/naplánovaný.
-- Žádný runtime `localhost` fallback.
+- Pokud se začne deployem před polish/test smoke, produkční chyby budou drahé na ladění.
+- Toasty mohou snadno zdvojit existující inline message stavy; je potřeba sjednotit pattern.
+- Framer Motion může přidat zbytečnou váhu, pokud půjde jen o drobné hover/fade efekty.
+- Empty states nesmí působit jako landing/marketing bloky; aplikace je operational dashboard.
+- Phase 6 deployment závisí na hostingu, který ještě není jasně potvrzený.
 
-## Otázky před plánem
-1. Má být extension určena jen pro SUB účet, nebo se do ní může přihlásit i DOM pro testování?
-2. Chceš login v extension přes e-mail/heslo, nebo párovací kód vygenerovaný ve webové aplikaci?
-3. Má safe word toggle už v první iteraci měnit stav v databázi, nebo stačí UI + lokální stav a backend napojíme v dalším kroku?
-4. Má se extension buildovat přes Webpack, jak naznačuje package, nebo chceš raději Vite pro jednodušší DX?
+## Acceptance criteria pro Phase 6 plán
+
+- Každá prázdná datová sekce má konzistentní empty state.
+- Mutace ukazují toast úspěchu/chyby a neopírají se jen o `alert`.
+- Error/loading/empty UI drží stejný vizuální jazyk.
+- Základní accessibility audit má konkrétní checklist a opravy.
+- Existuje základní smoke test sada nebo jasná ruční verifikace.
+- Deploy postup má konkrétní cílové prostředí, env checklist, cron checklist a rollback/backup poznámku.
+
+## Otevřené otázky pro DOM
+
+1. Phase 6 chceš dělat jako produkční přípravu na reálný deploy, nebo zatím jen polish v lokálním/dev režimu? **Rozhodnuto: reálný deploy.**
+2. Kde plánuješ deployovat web a server: Vercel + samostatný server pro Express, VPS/Docker, nebo jiné řešení? **Rozhodnuto: nyní Vercel, časem VPS (OVH).**
+3. Empty states mají být čistě utilitární textové panely, nebo mohou mít jemnou ikonografii a krátkou větu s akcí? **Rozhodnuto: jemná ikonografie + krátká akční věta.**
+4. Toasty chceš používat pro všechny akce, nebo jen pro mutace, které dnes nemají žádnou viditelnou zpětnou vazbu? **Rozhodnuto: všude pro mutace.**
+5. Toast pozice: pravý horní roh na desktopu a dole na mobilu, nebo vždy dole? **Rozhodnuto: vždy dole uprostřed.**
+6. Animace chceš minimalistické CSS-only, nebo povolit Framer Motion? **Rozhodnuto: Framer Motion.**
+7. Chceš v Phase 6 nejdřív udělat UI polish napříč celou aplikací, nebo jít stránku po stránce podle důležitosti? **Rozhodnuto: stránku po stránce.**
+8. Které stránky jsou pro polish priorita? **Rozhodnuto: Tasks, Chat, Gallery, Monitoring, Superadmin, Achievements/Rewards, Wishes.**
+9. Testy: chceš začít Playwright E2E smoke testy, nebo unit testy pro business logiku? **Rozhodnuto: unit testy pro business logiku.**
+10. Má být Chrome extension součástí Phase 6 test/deploy checklistu hned, nebo později samostatně? **Rozhodnuto: později samostatně.**
+11. Pro deploy chceš hned řešit HTTPS/doménu, nebo nejdřív staging URL? **Rozhodnuto: subdoména `maietek.maiweb.zip`.**
+12. Zůstává cílové persistentní úložiště všude Google Drive a MinIO už nemá být v deploy checklistu? **Rozhodnuto: persistentní úložiště pouze Google Drive.**
+
+## Rozhodnutí pro plán
+
+- Phase 6 je produkční příprava na reálný deploy, ne jen lokální polish.
+- První cílový hosting je Vercel; budoucí cílová varianta je VPS na OVH.
+- Doména/subdoména: `maietek.maiweb.zip`.
+- Persistentní média a monitoring soubory: pouze Google Drive.
+- UI polish půjde stránku po stránce v pořadí:
+  1. Tasks
+  2. Chat
+  3. Gallery
+  4. Monitoring
+  5. Superadmin
+  6. Achievements/Rewards
+  7. Wishes
+- Empty states: jemná ikonografie + krátká akční věta.
+- Toast notifications: všude pro mutace, pozice vždy dole uprostřed.
+- Animace: povolit Framer Motion, ale používat střídmě a respektovat `prefers-reduced-motion`.
+- Testy: začít unit testy pro business logiku.
+- Chrome extension test/deploy checklist bude samostatný pozdější krok.
 
 ## Doporučení
-Jít cestou:
-- Webpack ponechat, protože dependencies už jsou připravené.
-- Přihlášení přes Express `POST /api/auth/login`.
-- Extension jen pro SUB.
-- Safe word v první implementaci už napojit na backend, pokud existuje vhodný endpoint; pokud ne, přidat malý endpoint jako součást scaffold plánu.
+
+Aktualizované doporučení po rozhodnutích:
+
+1. Vytvořit Phase 6 plán ve dvou proudech:
+   - UI polish po stránkách.
+   - Deploy readiness pro Vercel.
+2. Nejdřív zavést sdílené základy:
+   - `EmptyState`,
+   - toast systém dole uprostřed,
+   - Framer Motion provider/pattern,
+   - unit test setup.
+3. Potom polishovat stránky v dohodnutém pořadí.
+4. Současně připravit deploy checklist pro Vercel a subdoménu `maietek.maiweb.zip`.
+5. Před samotným deployem ověřit aktuální Vercel limity a podporu pro cron/server runtime podle oficiální dokumentace.
+
+## Doplňující otázky před plánem
+
+1. Kam půjde `apps/server` s Express + Socket.IO při první Vercel verzi?
+   - Vercel samotný je ideální pro Next web, ale současný chat používá dloužící Socket.IO server.
+   - Potřebujeme rozhodnout, zda Express server poběží dočasně na jiné službě, nebo ho budeme před deployem migrovat.
+2. Použijeme současný Supabase projekt i pro produkci, nebo vytvoříme nový produkční Supabase projekt?
+3. Chceš před deployem rotovat všechny klíče, které se objevily v `.env` během vývoje?
+4. Resend e-mail: bude `EMAIL_FROM` na ověřené vlastní doméně, nebo zatím zůstane testovací `onboarding@resend.dev`?
+5. Má být první Vercel deploy produkční ostrý, nebo nejdřív preview/staging na stejné subdoméně až po kontrole?

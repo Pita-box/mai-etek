@@ -2,7 +2,7 @@
   "name": "chrome-extension",
   "version": "1.0.0",
   "scripts": {
-    "build": "echo \"Skipping build for now\"",
+    "build": "webpack --mode production",
     "dev": "webpack --mode development --watch"
   },
   "devDependencies": {

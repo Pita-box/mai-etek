@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "MMM",
+  "description": "Autorizované párování a stav monitoring spojení.",
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "MMM"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["storage", "alarms", "tabs", "activeTab"],
+  "host_permissions": ["http://localhost:3000/*", "http://*/*", "https://*/*"],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ]
+}

@@ -7,7 +7,8 @@ export function getApiBaseUrl() {
     throw new Error(missingApiUrlMessage)
   }
 
-  return apiUrl.replace(/\/+$/, "")
+  const normalizedUrl = apiUrl.replace(/\/+$/, "")
+  return normalizedUrl.endsWith("/api") ? normalizedUrl : `${normalizedUrl}/api`
 }
 
 export function getSocketBaseUrl() {

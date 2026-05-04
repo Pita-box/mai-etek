@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MMM</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">MMM</p>
+          <h1>Monitoring spojení</h1>
+        </div>
+        <span id="statusPill" class="pill">Načítám</span>
+      </section>
+
+      <section id="pairingView" class="panel hidden">
+        <label for="pairingCode">Párovací kód</label>
+        <input id="pairingCode" type="text" inputmode="text" autocomplete="off" placeholder="ABCD-1234" />
+        <button id="pairButton" type="button">Spárovat extension</button>
+      </section>
+
+      <section id="connectedView" class="panel hidden">
+        <dl>
+          <div>
+            <dt>Zařízení</dt>
+            <dd id="deviceName">-</dd>
+          </div>
+          <div>
+            <dt>Heartbeat</dt>
+            <dd id="lastHeartbeat">Zatím nikdy</dd>
+          </div>
+          <div>
+            <dt>Sync</dt>
+            <dd id="syncStatus">Připojeno</dd>
+          </div>
+          <div>
+            <dt>Poslední capture</dt>
+            <dd id="lastCapture">Zatím nic</dd>
+          </div>
+        </dl>
+        <button id="heartbeatButton" type="button" class="secondary">Odeslat heartbeat</button>
+      </section>
+
+      <p id="message" class="message" role="status"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

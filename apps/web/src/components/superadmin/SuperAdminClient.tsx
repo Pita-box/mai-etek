@@ -29,6 +29,7 @@ import {
   isPageEnabledForSub,
   setPageAccessEnabled,
 } from "@/lib/page-access/config";
+import { DashboardPageSkeleton } from "@/components/shared/DashboardSkeletons";
 import type {
   DashboardPageIconKey,
   DashboardPageItem,
@@ -111,7 +112,7 @@ export function SuperAdminClient({ pages }: SuperAdminClientProps) {
     }
   };
 
-  if (loading) return <div className="p-8 text-white">Načítání...</div>;
+  if (loading) return <DashboardPageSkeleton />;
 
   if (error) {
     return (

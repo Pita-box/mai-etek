@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/tasks/recurring",
       "schedule": "5 23 * * *"
+    },
+    {
+      "path": "/api/cron/monitoring/cleanup",
+      "schedule": "30 2 * * *"
     }
   ]
 }

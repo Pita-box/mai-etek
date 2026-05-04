@@ -8,6 +8,7 @@ import { ChatPresenceProvider } from "@/components/chat/ChatPresenceProvider";
 import LockScreen from "@/components/LockScreen";
 import Header from "@/components/shared/Header";
 import Navigation from "@/components/shared/Navigation";
+import { DashboardShellSkeleton } from "@/components/shared/DashboardSkeletons";
 import { PageAccessDenied } from "@/components/shared/PageAccessDenied";
 import {
   getVisibleDashboardPages,
@@ -73,11 +74,7 @@ export function DashboardShell({ children, pages }: DashboardShellProps) {
   const fallbackHref = visiblePages[0]?.href || "/dashboard";
 
   if (loading) {
-    return (
-      <div className="center items-center p-4 text-white content-center">
-        Načítám...
-      </div>
-    );
+    return <DashboardShellSkeleton />;
   }
 
   if (profile?.role === "unassigned") {

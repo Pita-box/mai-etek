@@ -25,14 +25,30 @@ Potřebné env proměnné pro server:
 
 Secret hodnoty nepatří do dokumentace ani do logů.
 
+## Chrome Extension MMM
+
+Extension scaffold se builduje z `apps/chrome-extension`:
+
+```bash
+pnpm --filter chrome-extension build
+```
+
+Build vyžaduje explicitní API URL:
+
+- `EXTENSION_API_BASE_URL`, například `http://localhost:3000/api`, nebo
+- `SITE_URL` / `NEXT_PUBLIC_APP_URL`, ze kterého build automaticky použije `/api`
+
+Výstup je v `apps/chrome-extension/dist` a lze ho načíst v Chrome přes `chrome://extensions` jako unpacked extension. Párovací kód generuje DOM na stránce `/monitoring`.
+
 ## Task automation crony
 
 Aplikace má připravené chráněné Next API routy pro automatiku úkolů:
 
 - `/api/cron/tasks/expire` - expiruje prošlé úkoly a volitelně připíše kázeňský dluh.
 - `/api/cron/tasks/recurring` - generuje denní/týdenní/měsíční instance opakovaných úkolů.
+- `/api/cron/monitoring/cleanup` - maže monitoring události starší než 3 měsíce.
 
-Obě routy vyžadují `CRON_SECRET`. V produkčním prostředí musí být nastavené:
+Cron routy vyžadují `CRON_SECRET`. V produkčním prostředí musí být nastavené:
 
 - `CRON_SECRET`
 - `SUPABASE_SERVICE_KEY` nebo `SUPABASE_SERVICE_ROLE_KEY`
@@ -57,6 +73,10 @@ Příklad:
     {
       "path": "/api/cron/tasks/recurring",
       "schedule": "5 23 * * *"
+    },
+    {
+      "path": "/api/cron/monitoring/cleanup",
+      "schedule": "30 2 * * *"
     }
   ]
 }
@@ -77,6 +97,7 @@ Pro vlastní server je připravený runner:
 ```bash
 node scripts/run-task-cron.mjs expire
 node scripts/run-task-cron.mjs recurring
+node scripts/run-task-cron.mjs monitoring-cleanup
 ```
 
 Runner si načte `CRON_SECRET` z env souborů a secret nevkládá přímo do příkazu.
@@ -86,6 +107,7 @@ Příklad crontabu:
 ```cron
 * * * * * cd /cesta/k/projektu && mkdir -p logs && node scripts/run-task-cron.mjs expire >> logs/task-cron.log 2>&1
 5 0 * * * cd /cesta/k/projektu && mkdir -p logs && node scripts/run-task-cron.mjs recurring >> logs/task-cron.log 2>&1
+30 2 * * * cd /cesta/k/projektu && mkdir -p logs && node scripts/run-task-cron.mjs monitoring-cleanup >> logs/task-cron.log 2>&1
 ```
 
 Pro produkční doménu nastav:

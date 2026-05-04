@@ -30,11 +30,11 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 
 ### Platforms
 
-| Platform             | Type                             | Priority          |
-| -------------------- | -------------------------------- | ----------------- |
-| **Web App**          | Next.js PWA, mobile-first        | Phase 1 (primary) |
-| **Chrome Extension** | Manifest V3, monitoring & webcam | Phase 4           |
-| **Android/iOS App**  | React Native (future)            | Future phase      |
+| Platform             | Type                      | Priority          |
+| -------------------- | ------------------------- | ----------------- |
+| **Web App**          | Next.js PWA, mobile-first | Phase 1 (primary) |
+| **Chrome Extension** | Manifest V3 monitoring    | Phase 4           |
+| **Android/iOS App**  | React Native (future)     | Future phase      |
 
 ### User Roles
 
@@ -56,15 +56,15 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 | **Encryption**       | None (simplified implementation)                                                                       |
 | **Tasks**            | Deadline with auto-fail, combined punishments (templates + ad-hoc), full gamification, recurring tasks |
 | **Gallery**          | 500+ GB storage, original + thumbnail, automatic watermark, advanced filters                           |
-| **Chrome Extension** | Live webcam stream + recording, URL + title + screenshot, keylogger (all inputs)                       |
+| **Chrome Extension** | URL + title, clicked elements, screenshots, form activity monitoring                                   |
 | **Notifications**    | Telegram Bot                                                                                           |
-| **Panic Button**     | Yes (irreversible data deletion)                                                                       |
-| **Safe Word**        | Yes (SUB can temporarily halt monitoring)                                                              |
+| **Panic Button**     | Skipped with Phase 5                                                                                   |
+| **Safe Word**        | Removed from scope                                                                                     |
 | **Consent**          | No formal consent system                                                                               |
 | **Hosting**          | Self-hosted VPS                                                                                        |
 | **Timeline**         | No rush, quality over speed                                                                            |
 | **Language**         | Czech language only (Celý projekt výhradně v českém jazyce)                                            |
-| **MVP Scope**        | Full MVP (all features including Chrome Extension)                                                     |
+| **MVP Scope**        | Current MVP through Phase 4 monitoring; Phase 5 live/panic/push features skipped                       |
 
 ---
 
@@ -91,9 +91,9 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
             +----------------+----------------+
             v                v                v
    +--------------+  +--------------+  +------------------+
-   |  REST API    |  |  WebSocket   |  |  WebRTC Signal   |
-   |  (Express)   |  |  Server      |  |  Server (live    |
-   |              |  |  (Socket.IO) |  |  webcam stream)  |
+   |  REST API    |  |  WebSocket   |  |  Next API Routes |
+   |  (Express)   |  |  Server      |  |  (Cron +        |
+   |              |  |  (Socket.IO) |  |  Extension sync) |
    +------+-------+  +------+-------+  +------+-----------+
           |                  |                 |
           v                  v                 v
@@ -108,10 +108,10 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
             +----------------+----------------+
             v                v                v
    +--------------+  +--------------+  +------------------+
-   |  MinIO       |  |  Redis       |  |  Telegram Bot    |
-   |  (Object     |  |  (Cache,     |  |  API             |
-   |  Storage)    |  |  Sessions,   |  |  (Notifications) |
-   |  500+ GB     |  |  Queues)     |  |                  |
+   |  Google      |  |  Redis       |  |  Telegram Bot    |
+   |  Drive       |  |  (Cache,     |  |  API             |
+   |  (Media      |  |  Sessions,   |  |  (Notifications) |
+   |  Storage)    |  |  Queues)     |  |                  |
    +--------------+  +--------------+  +------------------+
                              |
                              v
@@ -130,22 +130,21 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 
 ```
 1. Chat Message Flow:
-   Client -> Socket.IO -> Server -> PostgreSQL + MinIO (media)
+   Client -> Socket.IO -> Server -> PostgreSQL + Google Drive (media)
    Server -> Socket.IO -> Other Client
    Server -> Telegram Bot -> Notification
 
 2. Task Flow:
    DOM creates task -> API -> PostgreSQL -> Socket.IO -> SUB notification
-   SUB submits evidence -> API -> MinIO (media) + PostgreSQL
+   SUB submits evidence -> API -> Google Drive (media) + PostgreSQL
    DOM approves -> API -> Gamification Engine -> PostgreSQL -> Socket.IO + Telegram
 
 3. Monitoring Flow:
-   Chrome Extension -> Batch sync (30s) -> API -> PostgreSQL + MinIO (screenshots)
-   Extension webcam -> WebRTC signaling -> P2P stream to DOM browser
+   Chrome Extension -> Batch sync -> API -> PostgreSQL + Google Drive (screenshots)
 
 4. Media Upload Flow:
-   Client -> API -> MinIO (original) -> BullMQ worker
-   Worker -> Sharp/FFmpeg -> thumbnail + watermark -> MinIO -> PostgreSQL (URLs)
+   Client -> API -> Google Drive (original) -> BullMQ worker
+   Worker -> Sharp/FFmpeg -> thumbnail + watermark -> Google Drive -> PostgreSQL (file ids/metadata)
 ```
 
 ---
@@ -154,24 +153,23 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 
 ### Core Stack
 
-| Layer                | Technology                               | Reason                                                |
-| -------------------- | ---------------------------------------- | ----------------------------------------------------- |
-| **Frontend**         | Next.js 14+ (App Router)                 | SSR, API routes, React ecosystem                      |
-| **UI Framework**     | Tailwind CSS + shadcn/ui                 | Rapid development, mobile-first, beautiful components |
-| **State Management** | Zustand                                  | Lightweight, simple API                               |
-| **Real-time**        | Socket.IO                                | Chat + notifications, reliable reconnection           |
-| **Live Video**       | WebRTC (simple-peer)                     | P2P webcam streaming, low latency                     |
-| **Backend**          | Express.js + TypeScript                  | Flexible, Socket.IO integration, shared language      |
-| **Database**         | Supabase (PostgreSQL 15)                 | Auth, Realtime subscriptions, Row Level Security      |
-| **Object Storage**   | MinIO (self-hosted)                      | S3-compatible, handles 500+ GB of media               |
-| **Cache / Queue**    | Redis 7 + BullMQ                         | Session cache, job queue for media processing         |
-| **Media Processing** | Sharp (images) + FFmpeg (video)          | Thumbnails, watermarks, video transcoding             |
-| **Notifications**    | Telegram Bot API (node-telegram-bot-api) | Instant push notifications                            |
-| **Chrome Extension** | Manifest V3, TypeScript, Webpack         | Monitoring, keylogger, webcam                         |
-| **Monorepo**         | Turborepo + pnpm                         | Shared packages, parallel builds                      |
-| **Containerization** | Docker + Docker Compose                  | Simple VPS deployment                                 |
-| **Reverse Proxy**    | Nginx                                    | SSL termination, rate limiting, static files          |
-| **CI/CD**            | GitHub Actions                           | Auto deploy on push                                   |
+| Layer                | Technology                               | Reason                                                                     |
+| -------------------- | ---------------------------------------- | -------------------------------------------------------------------------- |
+| **Frontend**         | Next.js 14+ (App Router)                 | SSR, API routes, React ecosystem                                           |
+| **UI Framework**     | Tailwind CSS + shadcn/ui                 | Rapid development, mobile-first, beautiful components                      |
+| **State Management** | Zustand                                  | Lightweight, simple API                                                    |
+| **Real-time**        | Socket.IO                                | Chat + notifications, reliable reconnection                                |
+| **Backend**          | Express.js + TypeScript                  | Flexible, Socket.IO integration, shared language                           |
+| **Database**         | Supabase (PostgreSQL 15)                 | Auth, Realtime subscriptions, Row Level Security                           |
+| **Object Storage**   | Google Drive                             | Media storage for chat, gallery, task evidence, and monitoring screenshots |
+| **Cache / Queue**    | Redis 7 + BullMQ                         | Session cache, job queue for media processing                              |
+| **Media Processing** | Sharp (images) + FFmpeg (video)          | Thumbnails, watermarks, video transcoding                                  |
+| **Notifications**    | Telegram Bot API (node-telegram-bot-api) | Instant push notifications                                                 |
+| **Chrome Extension** | Manifest V3, TypeScript, Webpack         | Monitoring, clicked elements, screenshots, form activity                   |
+| **Monorepo**         | Turborepo + pnpm                         | Shared packages, parallel builds                                           |
+| **Containerization** | Docker + Docker Compose                  | Simple VPS deployment                                                      |
+| **Reverse Proxy**    | Nginx                                    | SSL termination, rate limiting, static files                               |
+| **CI/CD**            | GitHub Actions                           | Auto deploy on push                                                        |
 
 ### Key Libraries
 
@@ -185,7 +183,6 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 | Charts (stats) | recharts                               |
 | Icons          | lucide-react                           |
 | Animations     | framer-motion                          |
-| WebRTC         | simple-peer                            |
 | Markdown       | react-markdown (for task descriptions) |
 
 ---
@@ -199,9 +196,8 @@ users 1--* messages
 users 1--* tasks (assigned_by / assigned_to)
 users 1--* media (uploaded_by)
 users 1--* wishes (created_by)
-users 1--* browsing_history
-users 1--* keylog_entries
-users 1--* webcam_recordings
+users 1--* monitoring_devices
+users 1--* monitoring_events
 users 1--1 user_stats
 users 1--* user_achievements
 users 1--* invite_tokens (created_by / used_by)
@@ -231,7 +227,6 @@ CREATE TABLE users (
     display_name    VARCHAR(100),
     avatar_url      TEXT,
     is_active       BOOLEAN DEFAULT true,
-    safe_word_active BOOLEAN DEFAULT false,
     telegram_chat_id BIGINT,
     created_at      TIMESTAMPTZ DEFAULT NOW(),
     updated_at      TIMESTAMPTZ DEFAULT NOW()
@@ -458,51 +453,26 @@ CREATE INDEX idx_browsing_visited ON browsing_history(visited_at DESC);
 CREATE INDEX idx_browsing_url ON browsing_history USING GIN(to_tsvector('simple', url));
 CREATE INDEX idx_browsing_incognito ON browsing_history(is_incognito) WHERE is_incognito = true;
 
-CREATE TABLE keylog_entries (
+CREATE TABLE monitoring_events (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id         UUID REFERENCES users(id) NOT NULL,
-    site_url        TEXT,
-    element_type    VARCHAR(50),     -- 'input', 'textarea', 'search', 'contenteditable'
-    element_name    VARCHAR(100),    -- input name/id attribute
-    content         TEXT NOT NULL,
-    logged_at       TIMESTAMPTZ NOT NULL,
+    device_id       UUID,
+    dom_id          UUID REFERENCES users(id) NOT NULL,
+    sub_id          UUID REFERENCES users(id) NOT NULL,
+    event_type      TEXT NOT NULL,     -- page_visit, element_click, form_activity, page_screenshot
+    occurred_at     TIMESTAMPTZ NOT NULL,
+    metadata        JSONB NOT NULL DEFAULT '{}',
     created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_keylog_user ON keylog_entries(user_id);
-CREATE INDEX idx_keylog_logged ON keylog_entries(logged_at DESC);
-
-CREATE TABLE webcam_recordings (
-    id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id           UUID REFERENCES users(id) NOT NULL,
-    video_url         TEXT NOT NULL,
-    thumbnail_url     TEXT,
-    duration_seconds  INT,
-    file_size         BIGINT,
-    recorded_at       TIMESTAMPTZ NOT NULL,
-    created_at        TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE INDEX idx_webcam_user ON webcam_recordings(user_id);
-CREATE INDEX idx_webcam_recorded ON webcam_recordings(recorded_at DESC);
+CREATE INDEX idx_monitoring_events_sub ON monitoring_events(sub_id);
+CREATE INDEX idx_monitoring_events_type ON monitoring_events(event_type);
+CREATE INDEX idx_monitoring_events_occurred ON monitoring_events(occurred_at DESC);
 
 -- ============================================
--- SAFE WORD & PANIC
+-- PHASE 5 SKIPPED FEATURES
 -- ============================================
-CREATE TABLE safe_word_log (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    activated_by    UUID REFERENCES users(id) NOT NULL,
-    activated_at    TIMESTAMPTZ DEFAULT NOW(),
-    deactivated_at  TIMESTAMPTZ,
-    reason          TEXT
-);
-
-CREATE TABLE panic_log (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    triggered_by    UUID REFERENCES users(id) NOT NULL,
-    data_deleted    JSONB,           -- audit log of what was deleted
-    triggered_at    TIMESTAMPTZ DEFAULT NOW()
-);
+-- Webcam recording, live webcam, safe word, panic button,
+-- and web push are intentionally out of the current scope.
 ```
 
 ---
@@ -513,17 +483,17 @@ CREATE TABLE panic_log (
 
 #### Authentication
 
-| Method | Endpoint                  | Description            | Access              |
-| ------ | ------------------------- | ---------------------- | ------------------- |
-| `POST` | `/api/auth/register`      | DOM registration       | Public              |
-| `POST` | `/api/auth/login`         | Login (both roles)     | Public              |
-| `POST` | `/api/auth/forgot-password` | Send password reset e-mail | Public          |
-| `POST` | `/api/auth/reset-password` | Set new password from recovery token | Recovery session |
-| `POST` | `/api/auth/invite`        | Generate invite token  | DOM only            |
-| `POST` | `/api/auth/accept-invite` | SUB accepts invitation | Public (with token) |
-| `POST` | `/api/auth/logout`        | Logout                 | Authenticated       |
-| `GET`  | `/api/auth/me`            | Current user profile   | Authenticated       |
-| `POST` | `/api/auth/refresh`       | Refresh JWT token      | Authenticated       |
+| Method | Endpoint                    | Description                          | Access              |
+| ------ | --------------------------- | ------------------------------------ | ------------------- |
+| `POST` | `/api/auth/register`        | DOM registration                     | Public              |
+| `POST` | `/api/auth/login`           | Login (both roles)                   | Public              |
+| `POST` | `/api/auth/forgot-password` | Send password reset e-mail           | Public              |
+| `POST` | `/api/auth/reset-password`  | Set new password from recovery token | Recovery session    |
+| `POST` | `/api/auth/invite`          | Generate invite token                | DOM only            |
+| `POST` | `/api/auth/accept-invite`   | SUB accepts invitation               | Public (with token) |
+| `POST` | `/api/auth/logout`          | Logout                               | Authenticated       |
+| `GET`  | `/api/auth/me`              | Current user profile                 | Authenticated       |
+| `POST` | `/api/auth/refresh`         | Refresh JWT token                    | Authenticated       |
 
 #### Chat
 
@@ -608,22 +578,16 @@ CREATE TABLE panic_log (
 
 #### Monitoring
 
-| Method | Endpoint                     | Description                             | Access               |
-| ------ | ---------------------------- | --------------------------------------- | -------------------- |
-| `GET`  | `/api/monitoring/history`    | Browser history (paginated, filterable) | DOM only             |
-| `GET`  | `/api/monitoring/keylogs`    | Keylog entries (paginated, filterable)  | DOM only             |
-| `GET`  | `/api/monitoring/recordings` | Webcam recordings                       | DOM only             |
-| `POST` | `/api/monitoring/sync`       | Chrome Extension batch sync endpoint    | SUB only (extension) |
-| `GET`  | `/api/monitoring/status`     | Extension connection status             | Authenticated        |
+| Method | Endpoint                        | Description                             | Access               |
+| ------ | ------------------------------- | --------------------------------------- | -------------------- |
+| `GET`  | `/api/monitoring/history`       | Browser history (paginated, filterable) | DOM only             |
+| `GET`  | `/api/monitoring/form-activity` | Form activity (paginated, filterable)   | DOM only             |
+| `POST` | `/api/monitoring/sync`          | Chrome Extension batch sync endpoint    | SUB only (extension) |
+| `GET`  | `/api/monitoring/status`        | Extension connection status             | Authenticated        |
 
-#### Safe Word & Panic
+#### Phase 5 Skipped APIs
 
-| Method | Endpoint                    | Description                | Access        |
-| ------ | --------------------------- | -------------------------- | ------------- |
-| `POST` | `/api/safe-word/activate`   | Activate safe word         | SUB only      |
-| `POST` | `/api/safe-word/deactivate` | Deactivate safe word       | Both (mutual) |
-| `GET`  | `/api/safe-word/status`     | Current safe word status   | Authenticated |
-| `POST` | `/api/panic/trigger`        | Irreversible data deletion | Authenticated |
+Safe word, panic button, web push, webcam recording, and live webcam APIs are not part of the current scope.
 
 #### Settings
 
@@ -660,19 +624,7 @@ Server -> Client:
 
 #### Monitoring Namespace: `/monitoring`
 
-```
-Client -> Server (WebRTC Signaling):
-  webcam:stream:start     -- SUB initiates stream
-  webcam:stream:offer     { sdp: RTCSessionDescription }
-  webcam:stream:answer    { sdp: RTCSessionDescription }
-  webcam:stream:ice       { candidate: RTCIceCandidate }
-  webcam:stream:stop      -- Stop streaming
-
-Server -> Client:
-  webcam:stream:request   -- DOM requests live view from SUB
-  webcam:stream:ended     -- Stream ended
-  monitoring:status       { isActive: boolean, safeWordActive: boolean }
-```
+Monitoring events are synced through HTTP API routes. WebRTC/live webcam and safe word socket events are intentionally out of scope.
 
 #### Notifications Namespace: `/notifications`
 
@@ -688,8 +640,6 @@ Server -> Client:
   reward:claimed          { reward: Reward, claimedBy: string }
   reward:approved         { rewardClaim: RewardClaim }
   wish:status-changed     { wish: Wish }
-  safe-word:activated     { activatedBy: string }
-  safe-word:deactivated   { }
   user:online             { userId: string }
   user:offline            { userId: string }
 ```
@@ -746,7 +696,7 @@ chrome-extension/
 │   │   └── alarm-handler.ts       # Periodic tasks via chrome.alarms
 │   │
 │   ├── content/
-│   │   ├── keylogger.ts           # Intercepts all input events
+│   │   ├── form-activity.ts       # Transparent form activity monitoring
 │   │   │                          # - input, textarea, contenteditable
 │   │   │                          # - search bars, forms
 │   │   │                          # - Captures: value, element type, site URL
@@ -754,21 +704,9 @@ chrome-extension/
 │   │                              # - Triggered on page load
 │   │                              # - Compressed to JPEG before upload
 │   │
-│   ├── webcam/
-│   │   ├── capture.ts             # MediaRecorder API for recording
-│   │   │                          # - Chunks uploaded periodically
-│   │   │                          # - Auto-generates thumbnails
-│   │   ├── stream.ts              # WebRTC peer connection for live view
-│   │   │                          # - Receives signal from server
-│   │   │                          # - Creates offer/answer/ICE
-│   │   └── offscreen.html         # Offscreen document for camera access
-│   │                              # (Manifest V3 requires offscreen doc for
-│   │                              #  persistent media access)
-│   │
 │   ├── popup/
 │   │   ├── popup.html             # Extension popup UI
-│   │   ├── popup.ts               # Shows: connection status, safe word toggle,
-│   │   │                          #         monitoring stats, login form
+│   │   ├── popup.ts               # Shows connection/sync status and pairing UI
 │   │   └── popup.css
 │   │
 │   └── shared/
@@ -790,35 +728,15 @@ chrome-extension/
    -> Stored in chrome.storage.local buffer
    -> Batch synced every 30s via POST /api/monitoring/sync
 
-2. Keylogging:
-   User types in any input field
-   -> content-script captures: value, element type/name, site URL
-   -> Debounced (waits 2s after last keystroke)
+2. Form Activity Monitoring:
+   User changes a form field
+   -> content-script captures: capped value preview, element metadata, site URL
+   -> Sensitive field values are redacted
    -> Stored in chrome.storage.local buffer
    -> Batch synced every 30s
 
-3. Webcam Recording:
-   Service worker starts offscreen document
-   -> getUserMedia({video: true})
-   -> MediaRecorder captures in 30s chunks
-   -> Each chunk uploaded to MinIO via API
-   -> Metadata stored in PostgreSQL
-
-4. Live Stream (WebRTC):
-   DOM clicks "Live View" in web app
-   -> Server sends webcam:stream:request to SUB's extension
-   -> Extension opens offscreen document
-   -> getUserMedia + RTCPeerConnection
-   -> SDP offer sent via WebSocket signaling
-   -> P2P stream established
-   -> DOM sees real-time video in browser
-
-5. Safe Word:
-   SUB activates safe word (popup or web app)
-   -> Extension immediately stops ALL monitoring
-   -> Clears local buffer (unsent data deleted)
-   -> Notifies server -> Telegram notification to DOM
-   -> Monitoring resumes only when both parties agree
+3. Skipped Phase 5 extension features:
+   Skipped by product decision and intentionally out of current scope.
 ```
 
 ---
@@ -962,66 +880,9 @@ PROCEDURE generate_recurring_tasks():
                 SEND telegram notification
 ```
 
-### 9.4 Panic Button
+### 9.4 Phase 5 Skipped Logic
 
-```
-PROCEDURE trigger_panic(triggered_by_user_id):
-    -- Log what will be deleted (for audit)
-    deletion_summary = {
-        messages: COUNT(*) FROM messages,
-        media: COUNT(*) FROM media,
-        tasks: COUNT(*) FROM tasks,
-        evidence: COUNT(*) FROM task_evidence,
-        browsing: COUNT(*) FROM browsing_history,
-        keylogs: COUNT(*) FROM keylog_entries,
-        recordings: COUNT(*) FROM webcam_recordings,
-        wishes: COUNT(*) FROM wishes,
-        triggered_at: NOW()
-    }
-
-    BEGIN TRANSACTION
-        -- Collect MinIO object keys before deletion
-        media_keys = SELECT original_url, thumbnail_url, watermarked_url FROM media
-        evidence_keys = SELECT content FROM task_evidence WHERE type != 'text'
-        screenshot_keys = SELECT screenshot_url FROM browsing_history
-        recording_keys = SELECT video_url, thumbnail_url FROM webcam_recordings
-        chat_media_keys = SELECT media_url, media_thumbnail_url FROM messages
-
-        -- Delete all data tables
-        TRUNCATE messages CASCADE
-        TRUNCATE task_evidence CASCADE
-        TRUNCATE tasks CASCADE
-        TRUNCATE punishments CASCADE
-        TRUNCATE media CASCADE
-        TRUNCATE albums CASCADE
-        TRUNCATE wishes CASCADE
-        TRUNCATE browsing_history CASCADE
-        TRUNCATE keylog_entries CASCADE
-        TRUNCATE webcam_recordings CASCADE
-        TRUNCATE user_achievements CASCADE
-        TRUNCATE reward_claims CASCADE
-
-        -- Reset stats
-        UPDATE user_stats SET
-            total_points = 0, level = 1,
-            tasks_completed = 0, tasks_failed = 0,
-            current_streak = 0, longest_streak = 0
-
-        -- Log panic event
-        INSERT INTO panic_log (triggered_by, data_deleted)
-        VALUES (triggered_by_user_id, deletion_summary)
-    COMMIT
-
-    -- Async: Delete all files from MinIO
-    QUEUE BullMQ job 'panic:cleanup' with all collected keys
-
-    -- Notify
-    EMIT socket 'panic:triggered' to all connected clients
-    SEND telegram "PANIC BUTTON ACTIVATED - All data has been deleted"
-
-    -- Disconnect all WebSocket clients
-    FORCE disconnect all socket connections
-```
+Panic button, safe word, web push, webcam recording, and live webcam logic are skipped with Phase 5 by product decision.
 
 ### 9.5 Media Upload Pipeline
 
@@ -1031,20 +892,21 @@ PROCEDURE upload_media(file, album_id, tags, category):
     validate_mime_type(file)        -- Allow: image/*, video/*
     validate_file_size(file)        -- Max: 500MB for video, 50MB for image
 
-    -- 2. Upload original to MinIO
-    key = generate_key(file)       -- e.g. "media/2024/01/uuid.jpg"
-    original_url = minio.upload(key, file)
+    -- 2. Upload original to Google Drive
+    drive_folder = resolve_drive_folder(module, context)
+    original_file_id = google_drive.upload(drive_folder, file)
 
     -- 3. Queue background processing
     job_id = BullMQ.add('media:process', {
         media_id: new_media_id,
-        original_key: key,
+        original_file_id: original_file_id,
+        drive_folder: drive_folder,
         type: file.type.startsWith('image') ? 'image' : 'video'
     })
 
-    -- 4. Insert record (thumbnail/watermark URLs added later by worker)
+    -- 4. Insert record (thumbnail/watermark file ids added later by worker)
     INSERT INTO media (
-        album_id, uploaded_by, type, original_url,
+        album_id, uploaded_by, type, original_file_id,
         file_size, mime_type, tags, category
     )
 
@@ -1056,7 +918,7 @@ WORKER media:process(job):
         thumbnail = sharp(original)
             .resize(400, 400, { fit: 'cover' })
             .jpeg({ quality: 80 })
-        thumbnail_url = minio.upload(thumbnail_key, thumbnail)
+        thumbnail_file_id = google_drive.upload(drive_folder, thumbnail)
 
         -- Generate watermarked version
         watermarked = sharp(original)
@@ -1065,13 +927,13 @@ WORKER media:process(job):
                 gravity: 'southeast',
                 opacity: 0.5
             }])
-        watermarked_url = minio.upload(watermarked_key, watermarked)
+        watermarked_file_id = google_drive.upload(drive_folder, watermarked)
 
         -- Extract metadata (EXIF)
         metadata = sharp(original).metadata()
 
         UPDATE media SET
-            thumbnail_url, watermarked_url,
+            thumbnail_file_id, watermarked_file_id,
             width: metadata.width,
             height: metadata.height,
             metadata: metadata
@@ -1080,7 +942,7 @@ WORKER media:process(job):
     ELSE IF job.type == 'video':
         -- Generate thumbnail from first frame
         thumbnail = ffmpeg.screenshot(original, { timestamp: '00:00:01' })
-        thumbnail_url = minio.upload(thumbnail_key, thumbnail)
+        thumbnail_file_id = google_drive.upload(drive_folder, thumbnail)
 
         -- Get video info
         info = ffmpeg.probe(original)
@@ -1088,10 +950,10 @@ WORKER media:process(job):
         -- Add watermark to video
         watermarked = ffmpeg(original)
             .drawtext({ text: 'DS App', position: 'bottom-right' })
-        watermarked_url = minio.upload(watermarked_key, watermarked)
+        watermarked_file_id = google_drive.upload(drive_folder, watermarked)
 
         UPDATE media SET
-            thumbnail_url, watermarked_url,
+            thumbnail_file_id, watermarked_file_id,
             width: info.width,
             height: info.height,
             duration_seconds: info.duration
@@ -1104,10 +966,6 @@ WORKER media:process(job):
 PROCEDURE sync_monitoring_data():
     -- Runs every 30 seconds via chrome.alarms
 
-    IF safe_word_active:
-        clear_all_buffers()
-        RETURN
-
     -- Collect buffered data
     buffer = chrome.storage.local.get('monitoring_buffer')
 
@@ -1116,7 +974,7 @@ PROCEDURE sync_monitoring_data():
 
     payload = {
         history: buffer.history,        -- [{url, title, isIncognito, visitedAt}]
-        keylogs: buffer.keylogs,        -- [{siteUrl, elementType, content, loggedAt}]
+        formActivity: buffer.formActivity,
         screenshots: buffer.screenshots  -- [{url, imageBase64, capturedAt}]
     }
 
@@ -1183,12 +1041,10 @@ domsub-app/
 │   │   │   │   │   │   ├── page.tsx      # Overview
 │   │   │   │   │   │   ├── history/
 │   │   │   │   │   │   │   └── page.tsx
-│   │   │   │   │   │   ├── keylogs/
+│   │   │   │   │   │   ├── form-activity/
 │   │   │   │   │   │   │   └── page.tsx
-│   │   │   │   │   │   ├── recordings/
-│   │   │   │   │   │   │   └── page.tsx
-│   │   │   │   │   │   └── live/
-│   │   │   │   │   │       └── page.tsx  # Live webcam view
+│   │   │   │   │   │   └── screenshots/
+│   │   │   │   │   │       └── page.tsx
 │   │   │   │   │   ├── rewards/
 │   │   │   │   │   │   └── page.tsx
 │   │   │   │   │   ├── achievements/
@@ -1209,8 +1065,6 @@ domsub-app/
 │   │   │   │   │   ├── gamification/
 │   │   │   │   │   ├── rewards/
 │   │   │   │   │   ├── punishments/
-│   │   │   │   │   ├── safe-word/
-│   │   │   │   │   ├── panic/
 │   │   │   │   │   └── settings/
 │   │   │   │   │
 │   │   │   │   ├── layout.tsx            # Root layout
@@ -1259,9 +1113,8 @@ domsub-app/
 │   │   │   │   │   └── RewardCard.tsx
 │   │   │   │   ├── monitoring/
 │   │   │   │   │   ├── HistoryTimeline.tsx
-│   │   │   │   │   ├── KeylogViewer.tsx
-│   │   │   │   │   ├── RecordingPlayer.tsx
-│   │   │   │   │   ├── LiveWebcam.tsx
+│   │   │   │   │   ├── FormActivityTimeline.tsx
+│   │   │   │   │   ├── ScreenshotTimeline.tsx
 │   │   │   │   │   └── MonitoringDashboard.tsx
 │   │   │   │   ├── punishments/
 │   │   │   │   │   ├── PunishmentCard.tsx
@@ -1270,8 +1123,6 @@ domsub-app/
 │   │   │   │   └── shared/
 │   │   │   │       ├── Navigation.tsx    # Bottom nav (mobile) + sidebar (desktop)
 │   │   │   │       ├── Header.tsx
-│   │   │   │       ├── SafeWordBanner.tsx
-│   │   │   │       ├── PanicButton.tsx
 │   │   │   │       ├── RoleBadge.tsx
 │   │   │   │       ├── EmptyState.tsx
 │   │   │   │       ├── LoadingSpinner.tsx
@@ -1285,7 +1136,6 @@ domsub-app/
 │   │   │   │   ├── useMedia.ts
 │   │   │   │   ├── useGamification.ts
 │   │   │   │   ├── useMonitoring.ts
-│   │   │   │   ├── useWebRTC.ts
 │   │   │   │   ├── useTelegram.ts
 │   │   │   │   └── useInfiniteScroll.ts
 │   │   │   │
@@ -1296,7 +1146,7 @@ domsub-app/
 │   │   │   │   │   └── middleware.ts      # Auth middleware
 │   │   │   │   ├── socket.ts             # Socket.IO client singleton
 │   │   │   │   ├── api.ts                # Axios/fetch API client
-│   │   │   │   ├── minio.ts              # MinIO client (server-side)
+│   │   │   │   ├── google-drive.ts       # Google Drive media client
 │   │   │   │   ├── telegram.ts           # Telegram Bot client
 │   │   │   │   ├── validators.ts         # Zod schemas
 │   │   │   │   └── utils.ts              # Shared utilities
@@ -1340,7 +1190,7 @@ domsub-app/
 │   │   │   │   ├── env.ts                # Environment variables
 │   │   │   │   ├── supabase.ts           # Supabase admin client
 │   │   │   │   ├── redis.ts              # Redis client
-│   │   │   │   ├── minio.ts              # MinIO client
+│   │   │   │   ├── google-drive.ts       # Google Drive media client
 │   │   │   │   └── telegram.ts           # Telegram bot setup
 │   │   │   │
 │   │   │   ├── routes/
@@ -1353,8 +1203,6 @@ domsub-app/
 │   │   │   │   ├── gamification.routes.ts
 │   │   │   │   ├── reward.routes.ts
 │   │   │   │   ├── punishment.routes.ts
-│   │   │   │   ├── safe-word.routes.ts
-│   │   │   │   ├── panic.routes.ts
 │   │   │   │   └── settings.routes.ts
 │   │   │   │
 │   │   │   ├── middleware/
@@ -1374,8 +1222,7 @@ domsub-app/
 │   │   │   │   ├── punishment.service.ts
 │   │   │   │   ├── wish.service.ts
 │   │   │   │   ├── reward.service.ts
-│   │   │   │   ├── telegram.service.ts
-│   │   │   │   └── panic.service.ts
+│   │   │   │   └── telegram.service.ts
 │   │   │   │
 │   │   │   ├── workers/                  # BullMQ workers
 │   │   │   │   ├── thumbnail.worker.ts   # Generate image thumbnails
@@ -1383,14 +1230,12 @@ domsub-app/
 │   │   │   │   ├── video.worker.ts       # Video transcoding + thumbnails
 │   │   │   │   ├── screenshot.worker.ts  # Process page screenshots
 │   │   │   │   ├── task-expiry.worker.ts # Check & expire tasks
-│   │   │   │   ├── recurring.worker.ts   # Generate recurring tasks
-│   │   │   │   └── panic.worker.ts       # Async cleanup (MinIO files)
+│   │   │   │   └── recurring.worker.ts   # Generate recurring tasks
 │   │   │   │
 │   │   │   ├── socket/
 │   │   │   │   ├── index.ts              # Socket.IO server setup
 │   │   │   │   ├── chat.handler.ts       # Chat events
 │   │   │   │   ├── monitoring.handler.ts # Monitoring events
-│   │   │   │   ├── webrtc.handler.ts     # WebRTC signaling
 │   │   │   │   └── notification.handler.ts
 │   │   │   │
 │   │   │   └── utils/
@@ -1412,13 +1257,8 @@ domsub-app/
 │       │   │   └── alarm-handler.ts      # Periodic tasks
 │       │   │
 │       │   ├── content/
-│       │   │   ├── keylogger.ts          # All input interception
+│       │   │   ├── form-activity.ts      # Transparent form activity monitoring
 │       │   │   └── screenshot.ts         # Page screenshot capture
-│       │   │
-│       │   ├── webcam/
-│       │   │   ├── capture.ts            # MediaRecorder for recording
-│       │   │   ├── stream.ts             # WebRTC live streaming
-│       │   │   └── offscreen.html        # Offscreen doc for camera
 │       │   │
 │       │   ├── popup/
 │       │   │   ├── popup.html
@@ -1548,16 +1388,13 @@ services:
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
       - REDIS_URL=redis://redis:6379
-      - MINIO_ENDPOINT=minio
-      - MINIO_PORT=9000
-      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - GOOGLE_DRIVE_CLIENT_EMAIL=${GOOGLE_DRIVE_CLIENT_EMAIL}
+      - GOOGLE_DRIVE_PRIVATE_KEY=${GOOGLE_DRIVE_PRIVATE_KEY}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - supabase-db
       - redis
-      - minio
     restart: always
 
   # ── PostgreSQL (Supabase) ────────────────────
@@ -1596,20 +1433,6 @@ services:
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     restart: always
 
-  # ── MinIO Object Storage ─────────────────────
-  minio:
-    image: minio/minio:latest
-    ports:
-      - "9000:9000" # API
-      - "9001:9001" # Console
-    volumes:
-      - minio-data:/data
-    environment:
-      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
-      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
-    command: server /data --console-address ":9001"
-    restart: always
-
   # ── SSL Certificate (Let's Encrypt) ──────────
   certbot:
     image: certbot/certbot
@@ -1621,7 +1444,6 @@ services:
 volumes:
   pgdata:
   redis-data:
-  minio-data:
   certbot-data:
 ```
 
@@ -1716,12 +1538,9 @@ JWT_REFRESH_EXPIRY=7d
 # ── Redis ──────────────────────────────────
 REDIS_URL=redis://redis:6379
 
-# ── MinIO ──────────────────────────────────
-MINIO_ENDPOINT=minio
-MINIO_PORT=9000
-MINIO_ACCESS_KEY=your_minio_access_key
-MINIO_SECRET_KEY=your_minio_secret_key
-MINIO_BUCKET=domsub-media
+# ── Google Drive ───────────────────────────
+GOOGLE_DRIVE_CLIENT_EMAIL=service-account@example.iam.gserviceaccount.com
+GOOGLE_DRIVE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 
 # ── Telegram ───────────────────────────────
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token
@@ -1749,14 +1568,14 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 
 ### Authentication & Authorization
 
-| Measure            | Implementation                                            |
-| ------------------ | --------------------------------------------------------- |
-| JWT tokens         | Short-lived access (15 min) + long-lived refresh (7 days) |
-| Password hashing   | bcrypt with salt rounds = 12                              |
+| Measure            | Implementation                                                                      |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| JWT tokens         | Short-lived access (15 min) + long-lived refresh (7 days)                           |
+| Password hashing   | bcrypt with salt rounds = 12                                                        |
 | Password reset     | Supabase recovery link + Resend e-mail; reset writes Supabase Auth and `user_vault` |
-| Role enforcement   | Middleware checks on every protected route                |
-| Invite-only        | SUB can only register via valid, unexpired invite token   |
-| Session management | Redis-backed session store                                |
+| Role enforcement   | Middleware checks on every protected route                                          |
+| Invite-only        | SUB can only register via valid, unexpired invite token                             |
+| Session management | Redis-backed session store                                                          |
 
 ### Network Security
 
@@ -1770,13 +1589,11 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 
 ### Data Protection
 
-| Measure                | Implementation                                              |
-| ---------------------- | ----------------------------------------------------------- |
-| File upload validation | MIME type check, file size limits, magic bytes verification |
-| Safe Word              | Immediately halts all monitoring, clears extension buffers  |
-| Panic Button           | Irreversible deletion of all data (DB + MinIO)              |
-| Media access           | Signed URLs with expiration for MinIO objects               |
-| API authentication     | All monitoring endpoints require valid JWT                  |
+| Measure                | Implementation                                                |
+| ---------------------- | ------------------------------------------------------------- |
+| File upload validation | MIME type check, file size limits, magic bytes verification   |
+| Media access           | Authenticated/proxied access for protected Google Drive media |
+| API authentication     | All monitoring endpoints require valid JWT                    |
 
 ### Chrome Extension Security
 
@@ -1785,7 +1602,6 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 | Data buffering    | Data stored locally until synced, never in plain text URL params |
 | HTTPS only        | All API communication over HTTPS                                 |
 | Token storage     | JWT stored in `chrome.storage.local` (encrypted by Chrome)       |
-| Safe Word respect | Extension immediately stops all collection when activated        |
 | Incognito consent | User must explicitly enable extension in incognito settings      |
 
 ---
@@ -1799,7 +1615,7 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 - [x] Initialize Turborepo monorepo with pnpm
 - [x] Setup Next.js app (App Router, Tailwind, shadcn/ui)
 - [x] Setup Express.js server (TypeScript, Socket.IO)
-- [x] Docker Compose (PostgreSQL, Redis, MinIO)
+- [x] Docker Compose (PostgreSQL, Redis); persistent media uses Google Drive
 - [x] Database schema + migrations
 - [x] Auth system:
   - [ ] DOM registration
@@ -2130,94 +1946,93 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 
 **Goal**: Full monitoring extension
 
-- [ ] **Extension Scaffold**:
-  - [ ] Manifest V3 setup
-  - [ ] Webpack build configuration
-  - [ ] Popup UI (login, status, safe word toggle)
-  - [ ] Authentication (store JWT in chrome.storage)
-  - [ ] API client with error handling
+- [x] **Extension Scaffold**:
+  - [x] Manifest V3 setup for `MMM`.
+  - [x] Webpack build configuration produces loadable `apps/chrome-extension/dist`.
+  - [x] Popup UI for one-time pairing code, paired status, sync status, and manual heartbeat.
+  - [x] Pairing/session storage uses `chrome.storage.local`.
+  - [x] API client has timeout and Czech error handling.
+  - [x] Runtime API URL is explicit through extension build env (`EXTENSION_API_BASE_URL`) or web app URL (`SITE_URL` / `NEXT_PUBLIC_APP_URL` + `/api`), with no code fallback to localhost.
+  - [x] Background service worker uses `chrome.alarms` for HTTP heartbeat every 5 minutes.
+  - [x] Extension requests `tabs` for visited-web tracking, `activeTab` for visible-tab screenshots, and a content script for clicked-element/form monitoring; broader capture permissions (`scripting`, `offscreen`, `desktopCapture`) are intentionally deferred.
+  - [x] Content script captures clicked element metadata/HTML snippets for AJAX-style navigation where the browser URL does not change.
+  - [x] Pairing data model:
+    - [x] `public.monitoring_pairing_codes` stores DOM-generated one-time 30-minute code hashes for a selected SUB and the active display code for the Monitoring page.
+    - [x] `public.monitoring_devices` stores paired installation metadata, token hashes, heartbeat timestamps, sync status, pending item count, and revoke state.
+    - [x] `public.monitoring_events` is a scaffold metadata table for future monitoring modules.
+    - [x] DOM can have multiple paired installations per SUB.
+    - [x] DOM can revoke a specific installation.
+    - [x] Device tokens are never stored in plaintext; active pairing code plaintext is stored only so DOM can re-open Monitoring and see the current code.
 
-- [ ] **Browser History Tracking**:
-  - [ ] Tab navigation monitoring (chrome.tabs API)
-  - [ ] URL + title + timestamp capture
-  - [ ] Incognito detection (chrome.windows.INCOGNITO)
-  - [ ] Duration tracking (time spent per page)
-  - [ ] Buffer in chrome.storage.local
+- [x] **Browser History Tracking**:
+  - [x] Tab navigation monitoring (`chrome.tabs` API)
+  - [x] URL + title + timestamp capture
+  - [x] Incognito flag capture from tab metadata
+  - [x] Duration tracking for active page sessions
+  - [x] Buffer in `chrome.storage.local`
+  - [x] Clicked element monitoring:
+    - [x] Content script records clicked element tag, text, href, current page URL, title, timestamp, and capped HTML snippet.
+    - [x] Sync stores `element_click` records in `public.monitoring_events`.
 
-- [ ] **Page Screenshots**:
-  - [ ] Capture visible tab on page load (chrome.tabs.captureVisibleTab)
-  - [ ] JPEG compression (quality 70%)
-  - [ ] Associated with browsing history entry
-  - [ ] Buffer before sync
+- [x] **Page Screenshots**:
+  - [x] Capture visible tab on page load (`chrome.tabs.captureVisibleTab`) after a short delay.
+  - [x] JPEG compression (quality 70%).
+  - [x] Screenshot events are associated with browsing history entries through `page_visit_event_id`.
+  - [x] Screenshot data is buffered in `chrome.storage.local` before sync.
+  - [x] Sync uploads screenshot JPEG files to Google Drive under `Monitoring/DD.MM.YYYY` and stores only metadata/file ids in `public.monitoring_events`.
+  - [x] Monitoring dashboard has a screenshot viewer with thumbnail loading, max 9 initial items, `Načíst další`, and protected `/api/monitoring/media/[fileId]` proxy.
 
-- [ ] **Keylogger**:
-  - [ ] Content script: input/textarea/contenteditable listeners
-  - [ ] Capture: value, element type/name, site URL
-  - [ ] Debounce (2s after last keystroke)
-  - [ ] Buffer in chrome.storage.local
+- [x] **Form Activity Monitoring**:
+  - [x] Content script listens to `input`, `textarea`, `select`, and `contenteditable` changes.
+  - [x] Capture stores site URL, title, timestamp, field type/name/label, capped HTML snippet, and capped value preview.
+  - [x] Sensitive fields such as password/email/tel/token/file inputs are redacted instead of storing raw values.
+  - [x] Events are captured on `change`/`blur` and Enter submit intent with duplicate suppression, not as per-keystroke logging.
+  - [x] Buffer in `chrome.storage.local`.
 
-- [ ] **Webcam Recording**:
-  - [ ] Offscreen document for persistent camera access
-  - [ ] MediaRecorder API (30s chunks)
-  - [ ] Auto-generate thumbnail from first frame
-  - [ ] Upload chunks to MinIO via API
-  - [ ] Recording controls in popup
+- [x] **Webcam Recording**:
+  - [x] Skipped by product decision; webcam monitoring is not part of the current scope.
+  - [x] Offscreen document, MediaRecorder chunks, thumbnails, upload, and popup recording controls are intentionally deferred.
 
-- [ ] **Batch Sync**:
-  - [ ] chrome.alarms for periodic sync (every 30s)
-  - [ ] POST /api/monitoring/sync with buffered data
-  - [ ] Exponential backoff on failure
-  - [ ] Buffer size limit (1000 entries, FIFO)
-  - [ ] Safe Word: stop sync + clear buffer
+- [x] **Batch Sync**:
+  - [x] chrome.alarms for scaffold heartbeat (every 5 minutes)
+  - [x] chrome.alarms plus tab/click triggers for periodic/near-real-time monitoring sync
+  - [x] `POST /api/monitoring/extension/sync` with buffered page-visit, clicked-element, form-activity, and screenshot data
+  - [x] Exponential backoff on sync failure persists in `chrome.storage.local` (15s -> 30s -> 60s -> 2m -> 5m max).
+  - [x] Offline buffer in `chrome.storage.local` with pending-item status, FIFO cap at 1000 events / ~8 MB, and sync batches capped at 100 events / ~2.5 MB.
+  - [x] Retention cleanup route `/api/cron/monitoring/cleanup` deletes monitoring events older than 3 months.
 
 - [ ] **Web App - Monitoring Dashboard (DOM)**:
   - [x] Monitoring is DOM-only in current web navigation; SUB does not see the `/monitoring` item.
-  - [ ] Add server-side DOM-only route guard when the `/monitoring` dashboard page is implemented.
-  - [ ] Browsing history timeline
-  - [ ] History search + filters
-  - [ ] Screenshot viewer
-  - [ ] Keylog viewer with search
-  - [ ] Recording list + player
-  - [ ] Extension connection status indicator
+  - [x] `/monitoring` page implemented with DOM-only server action guard.
+  - [x] DOM can generate one-time 30-minute pairing codes for selected SUB accounts.
+  - [x] DOM always sees the current active unused pairing code; generating a new code revokes the previous active code.
+  - [x] DOM sees extension state `Aktivní / Neaktivní`, sync state, last heartbeat, last seen, extension version, pending items, and installation count.
+  - [x] `Aktivní` uses a 10-minute window from the latest heartbeat.
+  - [x] DOM can rename installations; default is `Zařízení 1`.
+  - [x] DOM can revoke a concrete extension installation.
+  - [x] Browsing history/click timeline with date grouping and client-side pagination.
+  - [x] Form activity timeline with date grouping, client-side pagination, redacted-value display, HTML snippets, and manual deletion.
+  - [x] Screenshot viewer with date grouping, protected Google Drive thumbnail proxy, 9-item incremental loading, original open-on-click, and manual deletion.
+  - [x] DOM can manually delete individual monitoring timeline events from the database.
+  - [x] History search + filters
+  - [x] Form activity search + filters
+  - [x] Recording list + player skipped because webcam monitoring is out of current scope.
+  - [x] Extension connection status indicator
 
-**Deliverable**: Working Chrome Extension with full monitoring capabilities.
+**Deliverable**: Working Chrome Extension with browsing, click, form activity, screenshot monitoring, and webcam monitoring intentionally skipped. This phase is skipped and build later in future.
 
 ---
 
-### Phase 5: Live Features (Week 10-12)
+### Phase 5: Live Features (Skipped)
 
-**Goal**: Live webcam, panic button, polish
+**Goal**: Skipped by product decision.
 
-- [ ] **WebRTC Live Webcam**:
-  - [ ] WebRTC signaling server (Socket.IO)
-  - [ ] Extension: WebRTC peer connection setup
-  - [ ] Extension: getUserMedia + addTrack
-  - [ ] Web app: DOM live view page with video element
-  - [ ] Connection status indicator
-  - [ ] Start/stop controls
-  - [ ] Fallback to snapshot mode if WebRTC fails
+- [ ] **WebRTC Live Webcam** skipped; live webcam monitoring is not part of the current scope.
+- [ ] **Panic Button** skipped with Phase 5.
+- [ ] **Safe Word Enhancements** removed from scope.
+- [ ] **Push Notifications (Web)** skipped with Phase 5; Telegram remains the notification channel.
 
-- [ ] **Panic Button**:
-  - [ ] UI confirmation dialog (double confirmation)
-  - [ ] Server-side cascade deletion (DB + MinIO)
-  - [ ] Async MinIO cleanup worker
-  - [ ] Audit log (panic_log table)
-  - [ ] Telegram notification
-  - [ ] Force disconnect all clients
-
-- [ ] **Safe Word Enhancements**:
-  - [ ] Visual banner when active (both users see it)
-  - [ ] Log history (safe_word_log)
-  - [ ] Mutual deactivation (both must agree)
-  - [ ] Telegram notifications on activate/deactivate
-
-- [ ] **Push Notifications** (Web):
-  - [ ] Service Worker registration
-  - [ ] Web Push API setup
-  - [ ] Notification permission request
-  - [ ] Fallback to Telegram if push denied
-
-**Deliverable**: Real-time monitoring, safety mechanisms, web push.
+**Deliverable**: No Phase 5 deliverable. Continue directly to Phase 6 polish and deploy work. This phase is skipped and build later in future.
 
 ---
 
@@ -2227,8 +2042,8 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 
 - [ ] **UI/UX Polish**:
   - [x] Dark mode support (in default the website has Dark theme already)
-  - [ ] Loading skeletons
-  - [ ] Error boundaries + error pages
+  - [x] Loading skeletons
+  - [x] Error boundaries + error pages
   - [ ] Empty states
   - [ ] Toast notifications
   - [ ] Animations (Framer Motion)
@@ -2253,7 +2068,7 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [ ] SSL certificates (Let's Encrypt)
   - [ ] Docker production build
   - [ ] Nginx configuration
-  - [ ] MinIO bucket setup
+  - [ ] Google Drive service account + folder access setup
   - [ ] Telegram bot webhook
   - [ ] GitHub Actions CI/CD pipeline
   - [ ] Monitoring (health checks)
