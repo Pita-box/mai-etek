@@ -256,6 +256,30 @@
   - `chrome-extension` Vitest unit.
 - Detailní poznámky jsou v `artifacts/superpowers/debug_phase6_testing_completion.md`.
 
+### Batch 16: Deployment readiness - scripts, env template and docs
+
+- `apps/server` má produkční `start` script (`node dist/index.js`).
+- Root `package.json` má runtime aliasy:
+  - `pnpm start:server`,
+  - `pnpm start:web`.
+- `.env.example` byl převedený na produkční šablonu pro `maietek.maiweb.zip` bez reálných secret hodnot.
+- Produkční env šablona je rozdělená podle runtime:
+  - web,
+  - Express API / Socket.IO server,
+  - cron,
+  - Google Drive,
+  - Telegram,
+  - Chrome extension build.
+- Založený `docs/DEPLOYMENT.md` s:
+  - cílovým OVH runtime,
+  - správným `NEXT_PUBLIC_API_URL=https://api.maietek.maiweb.zip/api`,
+  - web/server env rozdělením,
+  - build/start příkazy,
+  - cron runnerem,
+  - smoke checklistem,
+  - rotací klíčů před ostrou produkcí.
+- README už neobsahuje demo heslo a odkazuje na `docs/DEPLOYMENT.md`.
+
 ## Ověření
 
 - `pnpm --filter web exec tsc --noEmit` -> prošlo.
@@ -299,6 +323,11 @@
 - `pnpm test` -> prošlo, Turbo 7/7 tasks successful.
 - `git diff --check -- supabase/migrations/20260504190522_phase6_query_indexes.sql` -> prošlo.
 - `git diff --check -- <upravené soubory>` -> prošlo.
+- `node -e 'JSON.parse(...)'` pro root a server `package.json` -> prošlo.
+- `pnpm --filter server build` -> prošlo po doplnění produkčního `start` scriptu.
+- `pnpm --filter web build` -> prošlo po deploy-readiness dokumentaci/env změnách.
+- `rg -n "SuperSecretPassword|1Hummer|eyJ|MINIO|localhost:4000|TELEGRAM_BOT_TOKEN=.*:" .env.example README.md docs/DEPLOYMENT.md artifacts/superpowers/finish.md` -> žádné výsledky.
+- `git diff --check -- package.json apps/server/package.json .env.example README.md docs/DEPLOYMENT.md artifacts/superpowers/finish.md` -> prošlo.
 
 ## Poznámky
 

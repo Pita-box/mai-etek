@@ -8,6 +8,8 @@
     "build": "turbo run build",
     "predev": "node scripts/ensure-pnpm.js",
     "dev": "turbo run dev",
+    "start:server": "pnpm --filter server start",
+    "start:web": "pnpm --filter web start",
     "prelint": "node scripts/ensure-pnpm.js",
     "lint": "turbo run lint",
     "pretest": "node scripts/ensure-pnpm.js",
