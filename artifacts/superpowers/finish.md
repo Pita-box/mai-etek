@@ -272,13 +272,32 @@
   - Chrome extension build.
 - Založený `docs/DEPLOYMENT.md` s:
   - cílovým OVH runtime,
-  - správným `NEXT_PUBLIC_API_URL=https://api.maietek.maiweb.zip/api`,
+  - správným `NEXT_PUBLIC_API_URL=https://maietek.maiweb.zip/api` pro multi-app VPS režim,
   - web/server env rozdělením,
   - build/start příkazy,
   - cron runnerem,
   - smoke checklistem,
   - rotací klíčů před ostrou produkcí.
 - README už neobsahuje demo heslo a odkazuje na `docs/DEPLOYMENT.md`.
+
+### Batch 17: Deployment readiness - Docker Compose and Nginx
+
+- Přidaný `.dockerignore`, aby Docker build context netahal lokální env soubory, build artefakty ani cache.
+- Přidaný `docker/Dockerfile.web` pro produkční Next.js runtime.
+- Přidaný `docker/Dockerfile.server` pro produkční Express + Socket.IO runtime.
+- Přidaný `docker-compose.prod.yml`:
+  - `web`,
+  - `server`,
+  - `redis`.
+- Web image dostává `NEXT_PUBLIC_*` hodnoty i jako Docker build args, aby Next klientský bundle nevznikl s prázdnou API/Supabase URL.
+- Produkční compose záměrně neobsahuje MinIO ani lokální PostgreSQL.
+- Produkční compose záměrně neobsahuje vlastní Nginx na `80/443`, protože VPS bude hostovat více webappek za jedním sdíleným reverse proxy.
+- Přidaný `docker/nginx/maietek.shared-host.conf`:
+  - `maietek.maiweb.zip` proxyuje web na `127.0.0.1:3100`,
+  - Express API routy proxyuje na `127.0.0.1:4100`,
+  - Socket.IO upgrade hlavičky jsou nastavené,
+  - `/api/chat/media/*` zůstává na Next webu, aby fungoval chat media proxy.
+- `docs/DEPLOYMENT.md` doplněný o Docker Compose, DNS a SSL sekci.
 
 ## Ověření
 
@@ -326,8 +345,17 @@
 - `node -e 'JSON.parse(...)'` pro root a server `package.json` -> prošlo.
 - `pnpm --filter server build` -> prošlo po doplnění produkčního `start` scriptu.
 - `pnpm --filter web build` -> prošlo po deploy-readiness dokumentaci/env změnách.
-- `rg -n "SuperSecretPassword|1Hummer|eyJ|MINIO|localhost:4000|TELEGRAM_BOT_TOKEN=.*:" .env.example README.md docs/DEPLOYMENT.md artifacts/superpowers/finish.md` -> žádné výsledky.
+- Produkční secret/pattern scan pro `.env.example`, README a deployment docs -> žádné výsledky.
 - `git diff --check -- package.json apps/server/package.json .env.example README.md docs/DEPLOYMENT.md artifacts/superpowers/finish.md` -> prošlo.
+- `ruby -e 'require "yaml"; YAML.load_file("docker-compose.prod.yml")'` -> prošlo.
+- Produkční secret/pattern scan pro Docker/Nginx/deployment soubory -> žádné výsledky.
+- `git diff --check -- .dockerignore docker/Dockerfile.web docker/Dockerfile.server docker-compose.prod.yml docker/nginx/maietek.shared-host.conf docs/DEPLOYMENT.md artifacts/superpowers/finish.md` -> prošlo.
+- `pnpm --filter server build` -> prošlo po Docker/Nginx změnách.
+- `pnpm --filter web build` -> prošlo po Docker/Nginx změnách.
+- `ruby` YAML kontrola pro multi-app/shared-host `docker-compose.prod.yml` s očekávanými services `redis`, `server`, `web` -> prošlo.
+- `pnpm --filter server build` -> prošlo po přepnutí na multi-app VPS/shared-proxy deploy model.
+- `pnpm --filter web build` -> prošlo po přepnutí na multi-app VPS/shared-proxy deploy model.
+- `docker compose -f docker-compose.prod.yml config` nebylo možné spustit lokálně, protože Docker CLI není v tomto prostředí nainstalované.
 
 ## Poznámky
 
