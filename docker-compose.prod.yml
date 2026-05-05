@@ -1,0 +1,96 @@
+name: maietek-prod
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.web
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://maietek.maiweb.zip/api}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://maietek.maiweb.zip}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://maietek.maiweb.zip}
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      SITE_URL: ${SITE_URL:-https://maietek.maiweb.zip}
+      WEB_URL: ${WEB_URL:-https://maietek.maiweb.zip}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://maietek.maiweb.zip}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://maietek.maiweb.zip}
+      TASK_CRON_BASE_URL: ${TASK_CRON_BASE_URL:-https://maietek.maiweb.zip}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://maietek.maiweb.zip/api}
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      CRON_SECRET: ${CRON_SECRET:-}
+      GOOGLE_DRIVE_ROOT_FOLDER_ID: ${GOOGLE_DRIVE_ROOT_FOLDER_ID:-}
+      GOOGLE_DRIVE_OAUTH_CLIENT_ID: ${GOOGLE_DRIVE_OAUTH_CLIENT_ID:-}
+      GOOGLE_DRIVE_OAUTH_CLIENT_SECRET: ${GOOGLE_DRIVE_OAUTH_CLIENT_SECRET:-}
+      GOOGLE_DRIVE_OAUTH_REFRESH_TOKEN: ${GOOGLE_DRIVE_OAUTH_REFRESH_TOKEN:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      TELEGRAM_DOM_CHAT_ID: ${TELEGRAM_DOM_CHAT_ID:-}
+      TELEGRAM_TASKS_CHAT_ID: ${TELEGRAM_TASKS_CHAT_ID:-}
+      TELEGRAM_WISHES_CHAT_ID: ${TELEGRAM_WISHES_CHAT_ID:-}
+      TELEGRAM_MONITORING_CHAT_ID: ${TELEGRAM_MONITORING_CHAT_ID:-}
+      TELEGRAM_SECURITY_CHAT_ID: ${TELEGRAM_SECURITY_CHAT_ID:-}
+      TELEGRAM_PRESENCE_CHAT_ID: ${TELEGRAM_PRESENCE_CHAT_ID:-}
+    expose:
+      - "3000"
+    ports:
+      - "127.0.0.1:3100:3000"
+    restart: unless-stopped
+
+  server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.server
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      WEB_URL: ${WEB_URL:-https://maietek.maiweb.zip}
+      SITE_URL: ${SITE_URL:-https://maietek.maiweb.zip}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://maietek.maiweb.zip}
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      JWT_SECRET: ${JWT_SECRET:-}
+      JWT_ACCESS_EXPIRY: ${JWT_ACCESS_EXPIRY:-15m}
+      JWT_REFRESH_EXPIRY: ${JWT_REFRESH_EXPIRY:-7d}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-onboarding@resend.dev}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      TELEGRAM_DOM_CHAT_ID: ${TELEGRAM_DOM_CHAT_ID:-}
+      TELEGRAM_TASKS_CHAT_ID: ${TELEGRAM_TASKS_CHAT_ID:-}
+      TELEGRAM_WISHES_CHAT_ID: ${TELEGRAM_WISHES_CHAT_ID:-}
+      TELEGRAM_MONITORING_CHAT_ID: ${TELEGRAM_MONITORING_CHAT_ID:-}
+      TELEGRAM_SECURITY_CHAT_ID: ${TELEGRAM_SECURITY_CHAT_ID:-}
+      TELEGRAM_PRESENCE_CHAT_ID: ${TELEGRAM_PRESENCE_CHAT_ID:-}
+    expose:
+      - "4000"
+    ports:
+      - "127.0.0.1:4100:4000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+volumes:
+  redis-data:

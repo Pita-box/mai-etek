@@ -5,19 +5,19 @@ Tento dokument popisuje prvni produkcni cil pro Phase 6. Realny deploy se nespou
 ## Cilovy runtime
 
 - Web: `https://maietek.maiweb.zip`
-- API a Socket.IO: `https://api.maietek.maiweb.zip`
+- API a Socket.IO: pod stejnou subdomenou `https://maietek.maiweb.zip/api` a `https://maietek.maiweb.zip/socket.io`
 - Databaze a auth: soucasny Supabase cloud projekt
 - Media: Google Drive pres OAuth refresh token
 - Cache: Redis pouze pro volitelne serverove cache
-- Reverse proxy a SSL: OVH VPS + Nginx + Let's Encrypt
+- Reverse proxy a SSL: jeden sdileny Nginx na OVH VPS pro vice aplikaci + Let's Encrypt / Cloudflare
 
 `NEXT_PUBLIC_API_URL` musi ukazovat na Express + Socket.IO server:
 
 ```env
-NEXT_PUBLIC_API_URL=https://api.maietek.maiweb.zip/api
+NEXT_PUBLIC_API_URL=https://maietek.maiweb.zip/api
 ```
 
-Tato URL neni webova domena. Chat bude fungovat az ve chvili, kdy `api.maietek.maiweb.zip` existuje v DNS, vede na `apps/server` a proxy podporuje Socket.IO upgrade.
+Chat funguje pres stejnou subdomenu jen tehdy, kdyz sdileny reverse proxy smeruje pouze Express cesty na `apps/server` a nenecha spolknout Next API routy pro media a cron.
 
 ## Env rozdeleni
 
@@ -28,7 +28,7 @@ Tato URL neni webova domena. Chat bude fungovat az ve chvili, kdy `api.maietek.m
 ```env
 NODE_ENV=production
 SITE_URL=https://maietek.maiweb.zip
-NEXT_PUBLIC_API_URL=https://api.maietek.maiweb.zip/api
+NEXT_PUBLIC_API_URL=https://maietek.maiweb.zip/api
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase-anon-key>
 SUPABASE_SERVICE_KEY=<supabase-service-role-key>
@@ -98,6 +98,62 @@ pnpm start:server
 pnpm start:web
 ```
 
+## Docker Compose
+
+Produkci lze spustit pres samostatny compose soubor:
+
+```bash
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up -d
+```
+
+Soubor `docker-compose.prod.yml` obsahuje:
+
+- `web` - Next.js runtime dostupny na `127.0.0.1:3100`,
+- `server` - Express + Socket.IO runtime dostupny na `127.0.0.1:4100`,
+- `redis` - volitelna cache pro serverove API,
+- bez vlastniho Nginx reverse proxy kontejneru.
+
+Produkce zamerne neobsahuje MinIO ani lokalni PostgreSQL. Databaze zustava v Supabase cloudu a media zustavaji v Google Drive.
+
+Env hodnoty se predavaji pres shell environment nebo `.env` soubor na serveru. Jako vychozi seznam slouzi `.env.example`; skutecne hodnoty nepatri do repozitare.
+
+`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SUPABASE_URL` a `NEXT_PUBLIC_SUPABASE_ANON_KEY` se predavaji i jako Docker build args pro `web`, protoze Next.js je potrebuje uz pri buildu klienta.
+
+## DNS a SSL
+
+DNS:
+
+- `maietek.maiweb.zip` smeruje na verejnou IPv4/IPv6 adresu OVH VPS,
+- Cloudflare muze zustat v rezimu `Proxied`,
+- SSL/TLS mod v Cloudflare ma byt `Full (strict)`.
+
+Ukazkova konfigurace pro sdileny host Nginx je v `docker/nginx/maietek.shared-host.conf`.
+
+Konfigurace ocekava Let's Encrypt certifikat v:
+
+```text
+/etc/letsencrypt/live/maietek.maiweb.zip/fullchain.pem
+/etc/letsencrypt/live/maietek.maiweb.zip/privkey.pem
+```
+
+Po vydani nebo obnoveni certifikatu restartuj sdileny host Nginx:
+
+```bash
+sudo systemctl reload nginx
+```
+
+Sdileny host Nginx musi routovat:
+
+- `/socket.io/` -> `127.0.0.1:4100`
+- `/api/auth/*` -> `127.0.0.1:4100`
+- `/api/superadmin/*` -> `127.0.0.1:4100`
+- `/api/user/*` -> `127.0.0.1:4100`
+- `/api/chat/messages*` -> `127.0.0.1:4100`
+- vse ostatni -> `127.0.0.1:3100`
+
+Toto rozdeleni je dulezite, protoze Next app ma vlastni `/api/*` routy pro media proxy a cron endpointy. Hlavne neposilat cele `/api/chat/*` do Expressu, protoze `/api/chat/media/*` patri Next media proxy.
+
 ## Cron
 
 Cron routy jsou na web runtime a chrani je `CRON_SECRET`. Secret se nacita z env, nepatri primo do crontabu.
@@ -119,7 +175,7 @@ CRON_SECRET=<strong-random-cron-secret>
 
 ```bash
 curl -I https://maietek.maiweb.zip
-curl https://api.maietek.maiweb.zip/health
+curl https://maietek.maiweb.zip/health
 node scripts/run-task-cron.mjs expire
 ```
 
