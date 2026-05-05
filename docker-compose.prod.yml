@@ -11,6 +11,7 @@ services:
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
         NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://maietek.maiweb.zip}
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://maietek.maiweb.zip}
+        NODE_OPTIONS: ${WEB_BUILD_NODE_OPTIONS:---max-old-space-size=3072}
     environment:
       NODE_ENV: production
       PORT: 3000

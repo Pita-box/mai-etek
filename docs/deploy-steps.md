@@ -142,6 +142,7 @@ NEXT_PUBLIC_API_URL=https://maietek.maiweb.zip/api
 NEXT_PUBLIC_APP_URL=https://maietek.maiweb.zip
 NEXT_PUBLIC_SITE_URL=https://maietek.maiweb.zip
 TASK_CRON_BASE_URL=https://maietek.maiweb.zip
+WEB_BUILD_NODE_OPTIONS=--max-old-space-size=3072
 
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
@@ -189,6 +190,30 @@ Pokud Docker build spadne na `Cannot find module '/app/scripts/ensure-pnpm.js'`,
 ```bash
 git pull
 docker compose -f docker-compose.prod.yml build --no-cache
+docker compose -f docker-compose.prod.yml up -d
+```
+
+Pokud Docker build spadne na `JavaScript heap out of memory` pri `pnpm --filter web build`, zvys build heap a pripadne pridej swap:
+
+```bash
+free -h
+fallocate -l 4G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo '/swapfile none swap sw 0 0' >> /etc/fstab
+```
+
+Pak nastav v `.env` napr.:
+
+```env
+WEB_BUILD_NODE_OPTIONS=--max-old-space-size=4096
+```
+
+A rebuildni web:
+
+```bash
+docker compose -f docker-compose.prod.yml build --no-cache web
 docker compose -f docker-compose.prod.yml up -d
 ```
 
