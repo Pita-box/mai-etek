@@ -9,6 +9,7 @@ import {
 } from "@/lib/gallery/media-limits";
 import { processGalleryMedia } from "@/lib/gallery/processing";
 import { uploadGalleryFileToDrive } from "@/lib/google-drive/gallery";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { createClient } from "@/utils/supabase/server";
 import type {
   GalleryMedia,
@@ -396,7 +397,8 @@ export async function bulkDeleteGalleryMedia(mediaIds: string[]) {
     return { error: "Vyber alespoň jedno médium." };
   }
 
-  const { error } = await supabase
+  const supabaseAdmin = createAdminClient();
+  const { error } = await supabaseAdmin
     .from("gallery_media")
     .update({ deleted_at: new Date().toISOString() })
     .in("id", ids)

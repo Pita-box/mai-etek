@@ -1,0 +1,82 @@
+Step 1 kill port 3333 for sure:
+lsof -ti :3333 | xargs kill
+
+Když by xargs kill hlásil chybu, použij silnější variantu:
+lsof -ti :3333 | xargs kill -9
+
+Step 2 - open root folder in terminal:
+cd /Users/mai/Documents/App/Ds/apps/web
+
+DOTENV_CONFIG_PATH=.env.local pnpm exec node -r dotenv/config <<'NODE'
+const http = require("node:http");
+const { execFile } = require("node:child_process");
+const { google } = require("googleapis");
+
+const redirectUri = "http://localhost:3333/oauth2callback";
+const required = [
+  "GOOGLE_DRIVE_ROOT_FOLDER_ID",
+  "GOOGLE_DRIVE_OAUTH_CLIENT_ID",
+  "GOOGLE_DRIVE_OAUTH_CLIENT_SECRET",
+];
+
+const missing = required.filter((key) => !process.env[key]);
+if (missing.length) {
+  console.error("Missing env:", missing.join(", "));
+  process.exit(1);
+}
+
+const auth = new google.auth.OAuth2(
+  process.env.GOOGLE_DRIVE_OAUTH_CLIENT_ID,
+  process.env.GOOGLE_DRIVE_OAUTH_CLIENT_SECRET,
+  redirectUri
+);
+
+const url = auth.generateAuthUrl({
+  access_type: "offline",
+  prompt: "consent",
+  scope: ["https://www.googleapis.com/auth/drive"],
+});
+
+const server = http.createServer(async (req, res) => {
+  const parsed = new URL(req.url, redirectUri);
+  const code = parsed.searchParams.get("code");
+
+  if (!code) {
+    res.end("Missing OAuth code.");
+    return;
+  }
+
+  try {
+    const { tokens } = await auth.getToken(code);
+
+    if (!tokens.refresh_token) {
+      throw new Error("Google nevratil refresh_token. Zrus pristup aplikace v Google Account > Security > Third-party access a spust command znovu.");
+    }
+
+    auth.setCredentials({ refresh_token: tokens.refresh_token });
+    await auth.getAccessToken();
+
+    const drive = google.drive({ version: "v3", auth });
+    const folder = await drive.files.get({
+      fileId: process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID,
+      fields: "id,name,mimeType",
+      supportsAllDrives: true,
+    });
+
+    console.log("\nGOOGLE_DRIVE_OAUTH_REFRESH_TOKEN=" + tokens.refresh_token);
+    console.log("\nOK: OAuth funguje, root folder:", folder.data.name);
+    res.end("OK, refresh token je vypsany v terminalu.");
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    res.end("OAuth error, mrkni do terminalu.");
+  } finally {
+    server.close();
+  }
+});
+
+server.listen(3333, () => {
+  console.log("Oteviram Google consent URL...");
+  console.log(url);
+  execFile("open", [url]);
+});
+NODE
