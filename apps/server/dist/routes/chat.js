@@ -4,12 +4,18 @@ const express_1 = require("express");
 const db_1 = require("@maietek/db");
 const notifications_1 = require("../services/notifications");
 const auth_1 = require("../utils/auth");
+const redis_cache_1 = require("../utils/redis-cache");
+const chat_search_cache_1 = require("../utils/chat-search-cache");
 const socket_1 = require("../socket");
 const router = (0, express_1.Router)();
 const supabaseAdmin = (0, db_1.createAdminClient)();
 const MESSAGE_SELECT = "id, sender_id, type, content, media_url, media_thumbnail_url, reply_to_message_id, is_read, read_at, created_at";
 const SEARCH_BATCH_SIZE = 500;
 const SEARCH_RESULT_LIMIT = 50;
+const SEARCH_CACHE_TTL_SECONDS = 30;
+async function invalidateSearchCacheForParticipants(participantIds) {
+    await Promise.all(Array.from(new Set(participantIds)).map((participantId) => (0, redis_cache_1.deleteCacheByPattern)((0, chat_search_cache_1.getSearchCacheInvalidationPattern)(participantId))));
+}
 function normalizeDisplayName(fullName) {
     return typeof fullName === "string" && fullName.trim()
         ? fullName.trim()
@@ -311,6 +317,12 @@ router.get("/messages/search", async (req, res) => {
         if (participantError) {
             return res.status(500).json({ error: participantError });
         }
+        const cacheKey = (0, chat_search_cache_1.getSearchCacheKey)(auth.user.id, normalizedQuery, participantIds);
+        const cachedResponse = await (0, redis_cache_1.getCachedJson)(cacheKey);
+        if (cachedResponse) {
+            res.setHeader("X-Cache", "HIT");
+            return res.json(cachedResponse);
+        }
         const matchedRows = [];
         let offset = 0;
         while (matchedRows.length < SEARCH_RESULT_LIMIT) {
@@ -341,6 +353,8 @@ router.get("/messages/search", async (req, res) => {
         const response = {
             messages: await mapMessages(matchedRows.reverse(), auth.user.id, participantIds),
         };
+        await (0, redis_cache_1.setCachedJson)(cacheKey, response, SEARCH_CACHE_TTL_SECONDS);
+        res.setHeader("X-Cache", "MISS");
         return res.json(response);
     }
     catch (error) {
@@ -450,6 +464,7 @@ router.post("/messages", async (req, res) => {
         }
         const [message] = await mapMessages([data], auth.user.id, participantIds);
         const response = { message };
+        await invalidateSearchCacheForParticipants(participantIds);
         // Broadcast nové zprávy přes Socket.IO
         try {
             const io = (0, socket_1.getIO)();
@@ -534,6 +549,7 @@ router.post("/messages/:id/reactions/heart", async (req, res) => {
             }
         }
         const reaction = await getHeartReactionSummary(messageId, auth.user.id);
+        await invalidateSearchCacheForParticipants(participantIds);
         try {
             const io = (0, socket_1.getIO)();
             io.of("/chat").emit("message:reaction", {
@@ -590,6 +606,7 @@ router.delete("/messages/:id", async (req, res) => {
             return res.status(404).json({ error: "Zpráva nebyla nalezena" });
         }
         // Broadcast smazání přes Socket.IO
+        await invalidateSearchCacheForParticipants(participantIds);
         try {
             const io = (0, socket_1.getIO)();
             io.of("/chat").emit("message:deleted", { messageId });
@@ -638,6 +655,7 @@ router.post("/messages/:id/read", async (req, res) => {
             return res.status(404).json({ error: "Zpráva nebyla nalezena" });
         }
         // Broadcast read receipt přes Socket.IO
+        await invalidateSearchCacheForParticipants(participantIds);
         try {
             const io = (0, socket_1.getIO)();
             io.of("/chat").emit("message:read", { messageId, readAt });

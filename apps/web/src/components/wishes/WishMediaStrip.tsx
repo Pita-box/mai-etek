@@ -1,9 +1,11 @@
 "use client";
 
 import { ExternalLink, Image as ImageIcon, Play, Trash2, Video } from "lucide-react";
+import Image from "next/image";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteWishMedia } from "@/actions/wishes";
+import { useToast } from "@/components/shared/useToast";
 import { formatWishMediaBytes } from "@/lib/wishes/media-limits";
 import type { WishMedia } from "@/types/wish";
 import { WishMediaLightbox } from "./WishMediaLightbox";
@@ -33,10 +35,12 @@ function WishMediaPreview({ item, onOpen }: WishMediaPreviewProps) {
     >
       <div className="relative aspect-video bg-black/50">
         {showImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={thumbUrl}
             alt={item.original_filename}
+            fill
+            sizes="(min-width: 1280px) 33vw, (min-width: 640px) 50vw, 100vw"
+            unoptimized
             className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
             loading="lazy"
             onError={() => setHasThumbnailError(true)}
@@ -61,15 +65,26 @@ function WishMediaPreview({ item, onOpen }: WishMediaPreviewProps) {
 
 export function WishMediaStrip({ media, canDelete = false }: WishMediaStripProps) {
   const router = useRouter();
+  const toast = useToast();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
   if (media.length === 0) return null;
 
   const removeMedia = (mediaId: string) => {
+    if (!window.confirm("Opravdu chceš odebrat toto médium z přání?")) {
+      return;
+    }
+
     startTransition(async () => {
       const result = await deleteWishMedia(mediaId);
-      if (!result?.error) router.refresh();
+      if (result?.error) {
+        toast.error("Médium se nepodařilo odebrat.", result.error);
+        return;
+      }
+
+      toast.success("Médium bylo odebráno.");
+      router.refresh();
     });
   };
 

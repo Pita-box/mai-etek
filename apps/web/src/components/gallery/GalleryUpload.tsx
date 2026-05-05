@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { uploadGalleryMedia } from "@/actions/gallery";
+import { useToast } from "@/components/shared/useToast";
 import {
   formatGalleryMediaBytes,
   GALLERY_MEDIA_BATCH_MAX_BYTES,
@@ -67,6 +68,7 @@ function getFileError(file: File) {
 export const GalleryUpload = forwardRef<GalleryUploadHandle>(
   function GalleryUpload(_props, ref) {
     const router = useRouter();
+    const toast = useToast();
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [files, setFiles] = useState<QueuedFile[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -111,7 +113,9 @@ export const GalleryUpload = forwardRef<GalleryUploadHandle>(
       () => ({
         enqueueFiles(nextFiles: File[]) {
           if (isUploading) {
-            setError("Počkej, až doběhne aktuální nahrávání.");
+            const message = "Počkej, až doběhne aktuální nahrávání.";
+            setError(message);
+            toast.info("Nahrávání už běží.", message);
             return;
           }
 
@@ -119,14 +123,16 @@ export const GalleryUpload = forwardRef<GalleryUploadHandle>(
         },
         openFilePicker() {
           if (isUploading) {
-            setError("Počkej, až doběhne aktuální nahrávání.");
+            const message = "Počkej, až doběhne aktuální nahrávání.";
+            setError(message);
+            toast.info("Nahrávání už běží.", message);
             return;
           }
 
           inputRef.current?.click();
         },
       }),
-      [appendFiles, isUploading],
+      [appendFiles, isUploading, toast],
     );
 
     const selectFiles = (event: ChangeEvent<HTMLInputElement>) => {
@@ -149,8 +155,16 @@ export const GalleryUpload = forwardRef<GalleryUploadHandle>(
 
     const submit = async () => {
       if (!canUpload) {
-        if (batchTooLarge) setError(getGalleryMediaBatchSizeError());
-        if (hasInvalidFiles) setError("Některé soubory nesplňují požadavky.");
+        if (batchTooLarge) {
+          const message = getGalleryMediaBatchSizeError();
+          setError(message);
+          toast.error("Nahrávání se nedá spustit.", message);
+        }
+        if (hasInvalidFiles) {
+          const message = "Některé soubory nesplňují požadavky.";
+          setError(message);
+          toast.error("Nahrávání se nedá spustit.", message);
+        }
         return;
       }
 
@@ -203,16 +217,19 @@ export const GalleryUpload = forwardRef<GalleryUploadHandle>(
         setFiles((current) =>
           current.filter((entry) => entry.status === "error"),
         );
-        setSuccess(
+        const message =
           uploadedCount === 1
             ? "Médium bylo nahráno."
-            : `${uploadedCount} médií bylo nahráno.`,
-        );
+            : `${uploadedCount} médií bylo nahráno.`;
+        setSuccess(message);
+        toast.success(message);
         router.refresh();
       }
 
       if (uploadedCount < files.length) {
-        setError("Některá média se nepodařilo nahrát.");
+        const message = "Některá média se nepodařilo nahrát.";
+        setError(message);
+        toast.error("Nahrávání nebylo kompletní.", message);
       }
     };
 

@@ -1,5 +1,7 @@
 import { getAchievementsData } from "@/actions/gamification";
 import { AchievementsClient } from "@/components/achievements/AchievementsClient";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { AlertTriangle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -9,12 +11,12 @@ export default async function AchievementsPage() {
   if (result.error || !result.data) {
     return (
       <div className="mx-auto max-w-5xl p-6">
-        <div
-          role="alert"
-          className="rounded-3xl border border-rose-400/20 bg-rose-500/10 p-6 text-rose-100"
-        >
-          Nepodařilo se načíst achievements: {result.error}
-        </div>
+        <EmptyState
+          variant="danger"
+          icon={AlertTriangle}
+          title="Úspěchy se nepodařilo načíst."
+          description={result.error || "Zkus stránku načíst znovu."}
+        />
       </div>
     );
   }

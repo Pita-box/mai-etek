@@ -1,9 +1,18 @@
 'use client';
 
 import { useEffect } from 'react';
-import { ChevronLeft, ChevronRight, ExternalLink, X } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { ChevronLeft, ChevronRight, ExternalLink, Loader2, X } from 'lucide-react';
 import { TaskMedia } from '@/types/task';
-import { TaskVideoPlayer } from './TaskVideoPlayer';
+
+const TaskVideoPlayer = dynamic(() => import('./TaskVideoPlayer').then((mod) => mod.TaskVideoPlayer), {
+  ssr: false,
+  loading: () => (
+    <div className="flex min-h-[240px] items-center justify-center rounded-[1.75rem] border border-white/10 bg-black">
+      <Loader2 className="h-5 w-5 animate-spin text-primary" aria-hidden="true" />
+    </div>
+  ),
+});
 
 type TaskMediaLightboxProps = {
   media: TaskMedia[];

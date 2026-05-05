@@ -2,64 +2,42 @@
 > web@0.1.0 build /Users/mai/Documents/App/Ds/apps/web
 > next build
 
-⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
- We detected multiple lockfiles and selected the directory of /Users/mai/package-lock.json as the root directory.
- To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
-   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
- Detected additional lockfiles: 
-   * /Users/mai/Documents/App/Ds/pnpm-workspace.yaml
-
-▲ Next.js 16.2.4 (Turbopack)
+[1m[38;2;173;127;168m▲ Next.js 16.2.4[39m[22m (Turbopack)
 - Environments: .env.local
 - Experiments (use with caution):
   · serverActions
 
-  Creating an optimized production build ...
-Turbopack build encountered 1 warnings:
-./Documents/App/Ds/apps/web/next.config.ts
-Encountered unexpected file in NFT list
-A file was traced that indicates that the whole project was traced unintentionally. Somewhere in the import trace below, there are:
-- filesystem operations (like path.join, path.resolve or fs.readFile), or
-- very dynamic requires (like require('./' + foo)).
-To resolve this, you can
-- remove them if possible, or
-- only use them in development, or
-- make sure they are statically scoped to some subfolder: path.join(process.cwd(), 'data', bar), or
-- add ignore comments: path.join(/*turbopackIgnore: true*/ process.cwd(), bar)
+[37m[1m [22m[39m Creating an optimized production build ...
+[32m[1m✓[22m[39m Compiled successfully in 16.8s
+[?25l[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[?25h[?25l[37m[1m [22m[39m Finished TypeScript in 15.1s  [36m.[39m[2K[1G[?25h[37m[1m [22m[39m Finished TypeScript in 15.1s    [32m[1m✓[22m[39m Finished TypeScript in 15.1s 
+[?25l[37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m...[39m[2K[1G[?25h[37m[1m [22m[39m Collecting page data using 7 workers in 2.8s    [32m[1m✓[22m[39m Collecting page data using 7 workers in 2.8s 
+[?25l[37m[1m [22m[39m Generating static pages using 7 workers (0/13)  [36m[    ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 7 workers (0/13)  [36m[=   ][39m[2K[1G[?25h[32m[1m✓[22m[39m Generating static pages using 7 workers (13/13) in 392ms
+[?25l[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[?25h[37m[1m [22m[39m Finalizing page optimization in 12ms    [32m[1m✓[22m[39m Finalizing page optimization in 12ms 
 
-Import trace:
-  Server Component:
-    ./Documents/App/Ds/apps/web/next.config.ts
-    ./Documents/App/Ds/apps/web/src/lib/gallery/processing.ts
-    ./Documents/App/Ds/apps/web/src/actions/gallery.ts
-    ./Documents/App/Ds/apps/web/src/app/(dashboard)/gallery/page.tsx
-
-
-✓ Compiled successfully in 29.7s
-  Running TypeScript ...
-  Finished TypeScript in 17.1s ...
-  Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/11) ...
-  Generating static pages using 7 workers (2/11) 
-  Generating static pages using 7 workers (5/11) 
-  Generating static pages using 7 workers (8/11) 
-✓ Generating static pages using 7 workers (11/11) in 372ms
-  Finalizing page optimization ...
-
-Route (app)
+[4mRoute (app)[24m
 ┌ ○ /
 ├ ○ /_not-found
 ├ ƒ /achievements
-├ ƒ /api/chat/media/[fileId]
+├ ƒ /api/cron/monitoring/cleanup
+├ ƒ /api/cron/tasks/expire
+├ ƒ /api/cron/tasks/recurring
 ├ ƒ /api/gallery/media/[mediaId]
+├ ƒ /api/chat/media/[fileId]
+├ ƒ /api/monitoring/extension/heartbeat
+├ ƒ /api/monitoring/extension/pair
+├ ƒ /api/monitoring/extension/sync
+├ ƒ /api/monitoring/media/[fileId]
 ├ ƒ /api/tasks/media/[mediaId]
 ├ ƒ /api/wishes/media/[mediaId]
-├ ƒ /chat
 ├ ƒ /dashboard
+├ ○ /forgot-password
 ├ ƒ /gallery
+├ ƒ /chat
 ├ ○ /login
+├ ƒ /monitoring
 ├ ƒ /punishments
 ├ ○ /register
+├ ○ /reset-password
 ├ ƒ /rewards
 ├ ○ /settings
 ├ ○ /superadmin
@@ -72,3 +50,4 @@ Route (app)
 ○  (Static)   prerendered as static content
 ƒ  (Dynamic)  server-rendered on demand
 
+[?25h

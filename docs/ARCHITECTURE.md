@@ -2045,22 +2045,69 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [x] Loading skeletons
   - [x] Error boundaries + error pages
   - [ ] Empty states
+    - [x] Shared `EmptyState` component foundation with compact/default variants
+    - [ ] Apply shared empty states page by page
+      - [x] Tasks list/filter empty state
+      - [x] Chat empty conversation/search empty state
+      - [x] Gallery empty library/filter empty state
+      - [x] Monitoring device/timeline/form-activity/screenshot empty states
+      - [x] Superadmin unassigned/SUB-account empty states and load error state
+      - [x] Achievements/Rewards active/catalog/history/discipline/claims empty states and load error states
+      - [x] Wishes empty list/filter empty state and load error state
   - [ ] Toast notifications
+    - [x] Global bottom-center `ToastProvider` + `useToast` foundation
+    - [ ] Wire to all mutation flows page by page
+      - [x] Tasks create/update/delete/submit/approve/reject/evidence/media/comment mutations
+      - [x] Chat send/upload/delete/reaction/load-more error and delete success feedback
+      - [x] Gallery upload/favourite/bulk favourite/bulk delete feedback
+      - [x] Monitoring pairing/rename/revoke/delete device and delete timeline event feedback
+      - [x] Superadmin assign/reveal failure/page-access update feedback
+      - [x] Achievements/Rewards create/update/delete/assign/remove/discipline/claim/review feedback
+      - [x] Wishes create/update/delete/status/note/media upload/media delete feedback
   - [ ] Animations (Framer Motion)
+    - [x] `framer-motion` dependency + shared motion helpers
+    - [x] Reduced-motion aware toast and empty-state entrance motion
+    - [ ] Apply restrained page/list animations page by page
+      - [x] Tasks list card entrance animation
+      - [x] Achievements/Rewards card entrance animation
+      - [x] Wishes card entrance animation
   - [ ] Accessibility audit (aria labels, keyboard nav)
+    - [x] Tasks comment/star icon-button labels touched during polish pass
+    - [x] Chat delete/reply/reaction/attachment icon-button labels touched during polish pass
+    - [x] Gallery empty CTA and existing gallery icon-button labels verified/touched during polish pass
+    - [x] Monitoring destructive actions keep confirmation dialogs and timeline external links use safe new-tab attributes
+    - [x] Superadmin password reveal controls have explicit aria labels
+    - [x] Achievements/Rewards destructive actions keep confirmation dialogs and form controls use visible labels
+    - [x] Wishes media delete now requires confirmation and existing icon-only media controls keep aria labels
 
 - [ ] **Performance**:
   - [ ] Image optimization (next/image, lazy loading)
-  - [ ] Code splitting (dynamic imports)
+    - [x] Gallery, task evidence, and wish media thumbnails use `next/image` with stable containers, `sizes`, lazy loading, and `unoptimized` for auth-protected API media routes.
+    - [ ] Full media/lightbox images stay on direct browser requests until authenticated image optimization is designed.
+  - [x] Gallery upload processing no longer triggers the Turbopack/NFT whole-project trace warning during `next build`.
+  - [x] Code splitting (dynamic imports)
+    - [x] Task media lightbox lazy-loads `TaskVideoPlayer` with `next/dynamic`, moving `video.js` out of the initial `/tasks` and `/tasks/[id]` route chunks.
   - [ ] API response caching (Redis)
-  - [ ] Database query optimization (EXPLAIN ANALYZE)
-  - [ ] Bundle size analysis
+    - [x] Server chat search endpoint uses optional Redis response caching with a 30s TTL and invalidation on chat mutations.
+    - [ ] Realtime chat feed and unread/read-state endpoints are intentionally not cached.
+  - [x] Database query optimization (EXPLAIN ANALYZE)
+    - [x] Phase 6 EXPLAIN pass covered task feed, DOM/SUB profile lookup, and task media lookup.
+    - [x] Added `20260504190522_phase6_query_indexes.sql` with profile, task feed, task media, and active task comment indexes.
+    - [x] Remote migration history was reconciled and `supabase db push --dry-run --yes` reports the remote database is up to date.
+  - [x] Bundle size analysis
+    - [x] `next experimental-analyze --output` identified `video.js` in the large task route chunks; follow-up build confirms it now lives in a separate lazy client chunk.
 
-- [ ] **Testing**:
-  - [ ] Unit tests (Vitest)
-  - [ ] API integration tests
-  - [ ] E2E tests (Playwright)
-  - [ ] Chrome Extension testing
+- [x] **Testing**:
+  - [x] Unit tests (Vitest)
+    - [x] Server unit coverage for chat search cache key determinism, viewer/query separation, and invalidation pattern generation.
+    - [x] Web unit coverage for task id/public id helper behavior.
+  - [x] API integration tests
+    - [x] Server chat route integration coverage for search cache `HIT`/`MISS` and search cache invalidation after message creation.
+  - [x] E2E tests (Playwright)
+    - [x] Login page smoke covers form render, forgot-password link, and empty-credential validation against production `next start`.
+  - [x] Chrome Extension testing
+    - [x] Vitest coverage for extension sync backoff and local event buffer behavior with mocked `chrome.storage.local`.
+  - [x] Root `pnpm test` runs the Phase 6 test stack through Turbo.
 
 - [ ] **Deployment**:
   - [ ] VPS provisioning (OVH)

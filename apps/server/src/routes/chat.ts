@@ -17,6 +17,15 @@ import type {
   ToggleChatReactionResponse,
 } from "@maietek/types";
 import { getAuthenticatedUserFromAuthorizationHeader } from "../utils/auth";
+import {
+  deleteCacheByPattern,
+  getCachedJson,
+  setCachedJson,
+} from "../utils/redis-cache";
+import {
+  getSearchCacheInvalidationPattern,
+  getSearchCacheKey,
+} from "../utils/chat-search-cache";
 import { getIO, isUserOnline } from "../socket";
 
 const router = Router();
@@ -53,6 +62,15 @@ const MESSAGE_SELECT =
   "id, sender_id, type, content, media_url, media_thumbnail_url, reply_to_message_id, is_read, read_at, created_at";
 const SEARCH_BATCH_SIZE = 500;
 const SEARCH_RESULT_LIMIT = 50;
+const SEARCH_CACHE_TTL_SECONDS = 30;
+
+async function invalidateSearchCacheForParticipants(participantIds: string[]) {
+  await Promise.all(
+    Array.from(new Set(participantIds)).map((participantId) =>
+      deleteCacheByPattern(getSearchCacheInvalidationPattern(participantId)),
+    ),
+  );
+}
 
 function normalizeDisplayName(fullName: string | null | undefined) {
   return typeof fullName === "string" && fullName.trim()
@@ -466,6 +484,19 @@ router.get("/messages/search", async (req, res) => {
       return res.status(500).json({ error: participantError });
     }
 
+    const cacheKey = getSearchCacheKey(
+      auth.user.id,
+      normalizedQuery,
+      participantIds,
+    );
+    const cachedResponse =
+      await getCachedJson<SearchChatMessagesResponse>(cacheKey);
+
+    if (cachedResponse) {
+      res.setHeader("X-Cache", "HIT");
+      return res.json(cachedResponse);
+    }
+
     const matchedRows: MessageRow[] = [];
     let offset = 0;
 
@@ -503,6 +534,9 @@ router.get("/messages/search", async (req, res) => {
         participantIds,
       ),
     };
+
+    await setCachedJson(cacheKey, response, SEARCH_CACHE_TTL_SECONDS);
+    res.setHeader("X-Cache", "MISS");
 
     return res.json(response);
   } catch (error) {
@@ -645,6 +679,7 @@ router.post("/messages", async (req, res) => {
       participantIds,
     );
     const response: CreateChatMessageResponse = { message };
+    await invalidateSearchCacheForParticipants(participantIds);
 
     // Broadcast nové zprávy přes Socket.IO
     try {
@@ -762,6 +797,7 @@ router.post("/messages/:id/reactions/heart", async (req, res) => {
     }
 
     const reaction = await getHeartReactionSummary(messageId, auth.user.id);
+    await invalidateSearchCacheForParticipants(participantIds);
 
     try {
       const io = getIO();
@@ -832,6 +868,8 @@ router.delete("/messages/:id", async (req, res) => {
     }
 
     // Broadcast smazání přes Socket.IO
+    await invalidateSearchCacheForParticipants(participantIds);
+
     try {
       const io = getIO();
       io.of("/chat").emit("message:deleted", { messageId });
@@ -892,6 +930,8 @@ router.post("/messages/:id/read", async (req, res) => {
     }
 
     // Broadcast read receipt přes Socket.IO
+    await invalidateSearchCacheForParticipants(participantIds);
+
     try {
       const io = getIO();
       io.of("/chat").emit("message:read", { messageId, readAt });

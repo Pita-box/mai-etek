@@ -3,10 +3,12 @@
 import { useState, useTransition } from 'react';
 import { Loader2, Save, Trash2 } from 'lucide-react';
 import { deleteTask, updateTask } from '@/actions/tasks';
+import { useToast } from '@/components/shared/useToast';
 import { RecurrenceType, Task, TaskPriority } from '@/types/task';
 
 type DomTaskControlsProps = {
   task: Task;
+  onTaskMutated: () => Promise<void>;
 };
 
 function toLocalInputValue(value: string | null) {
@@ -16,7 +18,8 @@ function toLocalInputValue(value: string | null) {
   return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 }
 
-export function DomTaskControls({ task }: DomTaskControlsProps) {
+export function DomTaskControls({ task, onTaskMutated }: DomTaskControlsProps) {
+  const toast = useToast();
   const [expanded, setExpanded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -34,9 +37,12 @@ export function DomTaskControls({ task }: DomTaskControlsProps) {
       const result = await updateTask(task.id, formData);
       if (result?.error) {
         setError(result.error);
+        toast.error('Úkol se nepodařilo uložit.', result.error);
         return;
       }
       setSuccess('Úkol byl uložen.');
+      toast.success('Úkol byl uložen.');
+      await onTaskMutated();
     });
   };
 
@@ -48,9 +54,13 @@ export function DomTaskControls({ task }: DomTaskControlsProps) {
       const result = await deleteTask(task.id);
       if (result?.error) {
         setError(result.error);
+        toast.error('Úkol se nepodařilo zrušit.', result.error);
         return;
       }
-      setSuccess(result?.cancelled ? 'Úkol byl zrušen.' : 'Úkol byl smazán.');
+      const message = result?.cancelled ? 'Úkol byl zrušen.' : 'Úkol byl smazán.';
+      setSuccess(message);
+      toast.success(message);
+      await onTaskMutated();
     });
   };
 
@@ -113,11 +123,11 @@ export function DomTaskControls({ task }: DomTaskControlsProps) {
           ) : null}
 
           <div className="flex flex-col gap-2 sm:flex-row">
-            <button id="task-dom-save" disabled={isPending} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 font-bold text-white disabled:opacity-50">
+            <button id="task-dom-save" type="submit" disabled={isPending} className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50">
               {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               Uložit
             </button>
-            <button id="task-dom-cancel" type="button" disabled={isPending} onClick={cancel} className="flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-4 py-3 font-bold text-slate-300 disabled:opacity-50">
+            <button id="task-dom-cancel" type="button" disabled={isPending} onClick={cancel} className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-300 px-4 py-3 font-bold text-slate-300 disabled:cursor-not-allowed disabled:opacity-50">
               <Trash2 className="h-4 w-4" />
               Zrušit/smazat
             </button>

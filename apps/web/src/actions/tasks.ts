@@ -13,7 +13,6 @@ import {
   TASK_MEDIA_MAX_BYTES,
 } from "@/lib/tasks/media-limits";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 function isMissingRelationError(
   error: { code?: string; message?: string } | null,
@@ -442,7 +441,7 @@ export async function createTask(formData: FormData) {
   });
 
   revalidatePath("/tasks");
-  redirect("/tasks");
+  return { data };
 }
 
 export async function updateTask(id: string, formData: FormData) {

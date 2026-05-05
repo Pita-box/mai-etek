@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Loader2, Plus } from 'lucide-react';
+import { ClipboardList, Loader2, Plus } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { EmptyState } from '@/components/shared/EmptyState';
 import { Task } from '@/types/task';
 import { TaskCard } from './TaskCard';
 import { TaskDetailPopup } from './TaskDetailPopup';
@@ -87,7 +89,7 @@ export function TasksClient({ tasks: initialTasks, role }: TasksClientProps) {
           <Link
             id="tasks-create-task-link"
             href="/tasks/new"
-            className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3 font-bold text-white shadow-[0_0_30px_rgba(var(--primary-rgb),0.25)] transition hover:bg-primary/90"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3 font-bold text-white shadow-[0_0_30px_rgba(191,23,65,0.25)] transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/60"
           >
             <Plus className="w-5 h-5" />
             Vytvořit úkol
@@ -121,7 +123,14 @@ export function TasksClient({ tasks: initialTasks, role }: TasksClientProps) {
         tasks={visibleTasks}
         role={role}
         onOpen={(task) => setSelectedTaskId(task.id)}
-        empty={role === 'dom' ? 'V tomto filtru zatím nejsou žádné úkoly.' : 'Nemáš žádné aktivní úkoly. Užij si klid.'}
+        emptyTitle={role === 'dom' ? 'Žádný úkol v tomto filtru' : 'Zatím nemáš žádné aktivní úkoly'}
+        emptyDescription={
+          role === 'dom'
+            ? 'Žádný úkol neodpovídá aktuálnímu stavu.'
+            : 'Jakmile ti DOM zadá nový úkol, objeví se tady.'
+        }
+        emptyActionHref={role === 'dom' ? '/tasks/new' : undefined}
+        emptyActionLabel={role === 'dom' ? 'Vytvořit úkol' : undefined}
       />
 
       {selectedTask ? (
@@ -134,15 +143,17 @@ export function TasksClient({ tasks: initialTasks, role }: TasksClientProps) {
         />
       ) : null}
 
-      {isRealtimeSyncing ? (
-        <div
-          className="fixed bottom-5 right-5 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-cyan-300/20 bg-black/70 text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,0.18)] backdrop-blur-xl"
-          aria-label="Probíhá živá synchronizace"
-          role="status"
-        >
-          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-        </div>
-      ) : null}
+      <div
+        className={`pointer-events-none fixed bottom-5 right-5 z-[60] flex h-10 w-10 items-center justify-center rounded-full border border-cyan-300/20 bg-black/70 text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,0.18)] backdrop-blur-xl transition-opacity duration-150 ${
+          isRealtimeSyncing ? 'opacity-100' : 'opacity-0'
+        }`}
+        aria-hidden="true"
+      >
+        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+      </div>
+      <span className="sr-only" role="status" aria-live="polite">
+        {isRealtimeSyncing ? 'Probíhá živá synchronizace' : ''}
+      </span>
     </div>
   );
 }
@@ -153,10 +164,24 @@ type TaskSectionProps = {
   tasks: Task[];
   role: 'dom' | 'sub';
   onOpen: (task: Task) => void;
-  empty?: string;
+  emptyTitle: string;
+  emptyDescription: string;
+  emptyActionHref?: string;
+  emptyActionLabel?: string;
 };
 
-function TaskSection({ title, tone, tasks, role, onOpen, empty }: TaskSectionProps) {
+function TaskSection({
+  title,
+  tone,
+  tasks,
+  role,
+  onOpen,
+  emptyTitle,
+  emptyDescription,
+  emptyActionHref,
+  emptyActionLabel,
+}: TaskSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
   const dotClass = {
     blue: 'bg-blue-500',
     purple: 'bg-purple-500',
@@ -172,13 +197,28 @@ function TaskSection({ title, tone, tasks, role, onOpen, empty }: TaskSectionPro
       </h2>
       {tasks.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {tasks.map((task) => <TaskCard key={task.id} task={task} role={role} onOpen={onOpen} />)}
+          {tasks.map((task, index) => (
+            <motion.div
+              key={task.id}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: Math.min(index * 0.025, 0.18), ease: 'easeOut' }}
+            >
+              <TaskCard task={task} role={role} onOpen={onOpen} />
+            </motion.div>
+          ))}
         </div>
-      ) : empty ? (
-        <div className="text-center py-12 bg-glass-panel border border-glass-border rounded-xl">
-          <p className="text-gray-400">{empty}</p>
-        </div>
-      ) : null}
+      ) : (
+        <EmptyState
+          icon={ClipboardList}
+          title={emptyTitle}
+          description={emptyDescription}
+          actionHref={emptyActionHref}
+          actionLabel={emptyActionLabel}
+          variant="compact"
+          className="min-h-44"
+        />
+      )}
     </section>
   );
 }

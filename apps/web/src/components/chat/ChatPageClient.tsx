@@ -3,6 +3,7 @@
 import { useEffect, useCallback, useMemo, useRef, useState } from 'react';
 import { sendChatMessage, getChatMessages, deleteChatMessage, markMessageAsRead, toggleChatMessageHeart, searchChatMessages } from '@/actions/chat';
 import { ChatPanel } from '@/components/chat/ChatPanel';
+import { useToast } from '@/components/shared/useToast';
 import { useSocket } from '@/hooks/useSocket';
 import { useChatStore } from '@/stores/chatStore';
 import { useChatNotificationsStore } from '@/stores/chatNotificationsStore';
@@ -41,6 +42,7 @@ export function ChatPageClient({
   initialHasMore = false,
   initialNextCursor = null,
 }: ChatPageClientProps) {
+  const toast = useToast();
   const { socket, isConnected } = useSocket();
   const viewerIdRef = useRef(viewerId);
   const onlineUserIdsRef = useRef(new Set<string>());
@@ -89,7 +91,7 @@ export function ChatPageClient({
   }, [setPartnerOnline]);
 
   const partner = useMemo(() => {
-    const participant = participants.find((item) => item.id !== viewerIdRef.current);
+    const participant = participants.find((item) => item.id !== viewerId);
 
     if (participant) {
       return participant;
@@ -108,7 +110,7 @@ export function ChatPageClient({
       isOnline: isPartnerOnline,
       lastOnlineAt: partnerMessage.sender.lastOnlineAt ?? null,
     };
-  }, [participants, messages, isPartnerOnline]);
+  }, [participants, messages, isPartnerOnline, viewerId]);
 
   const markVisibleMessagesAsRead = useCallback(() => {
     if (
@@ -228,8 +230,10 @@ export function ChatPageClient({
   useEffect(() => {
     if (!isSearchOpen) {
       searchRequestIdRef.current += 1;
-      setIsSearching(false);
-      return;
+      const resetSearchingTimeout = window.setTimeout(() => {
+        setIsSearching(false);
+      }, 0);
+      return () => window.clearTimeout(resetSearchingTimeout);
     }
 
     const query = searchQuery.trim();
@@ -237,14 +241,18 @@ export function ChatPageClient({
     searchRequestIdRef.current = requestId;
 
     if (query.length < 3) {
-      setSearchResults([]);
-      setSearchError(null);
-      setIsSearching(false);
-      return;
+      const resetSearchTimeout = window.setTimeout(() => {
+        setSearchResults([]);
+        setSearchError(null);
+        setIsSearching(false);
+      }, 0);
+      return () => window.clearTimeout(resetSearchTimeout);
     }
 
-    setIsSearching(true);
-    setSearchError(null);
+    const searchingStateTimeout = window.setTimeout(() => {
+      setIsSearching(true);
+      setSearchError(null);
+    }, 0);
 
     const timeout = window.setTimeout(() => {
       searchChatMessages(query)
@@ -271,7 +279,10 @@ export function ChatPageClient({
         });
     }, 250);
 
-    return () => window.clearTimeout(timeout);
+    return () => {
+      window.clearTimeout(searchingStateTimeout);
+      window.clearTimeout(timeout);
+    };
   }, [isSearchOpen, searchQuery]);
 
   // Socket.IO event subscriptions
@@ -418,19 +429,30 @@ export function ChatPageClient({
   const handleDeleteMessage = useCallback(async (messageId: string) => {
     // Optimisticky schováme zprávu (pokud chyba, necháme tak, nebo lépe: mažeme po úspěchu)
     const result = await deleteChatMessage(messageId);
+    if (result?.error) {
+      toast.error('Zprávu se nepodařilo smazat.', result.error);
+      return;
+    }
+
     if (!result?.error) {
       removeMessage(messageId);
       setSearchResults((currentResults) => currentResults.filter((message) => message.id !== messageId));
+      toast.success('Zpráva byla smazána.');
     }
-  }, [removeMessage]);
+  }, [removeMessage, toast]);
 
   const handleToggleHeart = useCallback(async (messageId: string) => {
     const result = await toggleChatMessageHeart(messageId);
+    if ('error' in result && result.error) {
+      toast.error('Reakci se nepodařilo uložit.', result.error);
+      return;
+    }
+
     if (result && 'reaction' in result) {
       updateMessageReaction(messageId, result.reaction);
       updateSearchResultReaction(messageId, result.reaction);
     }
-  }, [updateMessageReaction, updateSearchResultReaction]);
+  }, [toast, updateMessageReaction, updateSearchResultReaction]);
 
   // Načtení starších zpráv (paginace)
   const handleLoadMore = useCallback(async () => {
@@ -438,10 +460,15 @@ export function ChatPageClient({
     if (!nextCursor) return;
 
     const result = await getChatMessages({ before: nextCursor, limit: 30 });
+    if (result.error) {
+      toast.error('Starší zprávy se nepodařilo načíst.', result.error);
+      return;
+    }
+
     if (result.messages.length > 0) {
       prependMessages(result.messages, result.hasMore, result.nextCursor ?? null);
     }
-  }, [prependMessages]);
+  }, [prependMessages, toast]);
 
   return (
     <ChatPanel

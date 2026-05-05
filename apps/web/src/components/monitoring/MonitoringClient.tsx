@@ -25,6 +25,8 @@ import {
   renameMonitoringDevice,
   revokeMonitoringDevice,
 } from "@/actions/monitoring"
+import { EmptyState } from "@/components/shared/EmptyState"
+import { useToast } from "@/components/shared/useToast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type {
@@ -358,13 +360,19 @@ function VisitedWebTimeline({
 
       <div className="mt-5 grid min-w-0 gap-3">
         {visits.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-5 text-sm text-zinc-500">
-            Zatím nejsou synchronizované žádné navštívené weby.
-          </div>
+          <EmptyState
+            variant="compact"
+            icon={Activity}
+            title="Zatím nejsou synchronizované žádné záznamy."
+            description="Jakmile MMM odešle návštěvy nebo kliknutí, objeví se tady."
+          />
         ) : filteredVisits.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-5 text-sm text-zinc-500">
-            Žádný záznam neodpovídá aktuálním filtrům.
-          </div>
+          <EmptyState
+            variant="compact"
+            icon={Search}
+            title="Žádný záznam neodpovídá aktuálním filtrům."
+            description="Uprav hledání, typ záznamu nebo režim prohlížení."
+          />
         ) : (
           visitGroups.map((group) => (
             <div key={group.date} className="min-w-0">
@@ -651,13 +659,19 @@ function FormActivityTimeline({
 
       <div className="mt-5 grid min-w-0 gap-3">
         {activities.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-5 text-sm text-zinc-500">
-            Zatím nejsou synchronizované žádné formulářové události.
-          </div>
+          <EmptyState
+            variant="compact"
+            icon={FileText}
+            title="Zatím nejsou synchronizované žádné formulářové události."
+            description="Záznamy z polí se zobrazí po další aktivitě spárované instalace."
+          />
         ) : filteredActivities.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-5 text-sm text-zinc-500">
-            Žádná formulářová událost neodpovídá aktuálním filtrům.
-          </div>
+          <EmptyState
+            variant="compact"
+            icon={Search}
+            title="Žádná formulářová událost neodpovídá aktuálním filtrům."
+            description="Zkus jiné hledání, typ akce, režim nebo viditelnost hodnot."
+          />
         ) : (
           activityGroups.map((group) => (
             <div key={group.date} className="min-w-0">
@@ -799,9 +813,12 @@ function ScreenshotTimeline({
 
       <div className="mt-5 grid min-w-0 gap-4">
         {screenshots.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-5 text-sm text-zinc-500">
-            Zatím nejsou synchronizované žádné snímky.
-          </div>
+          <EmptyState
+            variant="compact"
+            icon={ImageIcon}
+            title="Zatím nejsou synchronizované žádné snímky."
+            description="Nové snímky aktivního tabu se po synchronizaci zobrazí v této sekci."
+          />
         ) : (
           screenshotGroups.map((group) => (
             <div key={group.date} className="min-w-0">
@@ -907,6 +924,7 @@ function ScreenshotTimeline({
 
 export function MonitoringClient({ data }: MonitoringClientProps) {
   const router = useRouter()
+  const toast = useToast()
   const initialActivePairingCode = data.pairingCodes.find(isPendingPairingCode)
   const [selectedSubId, setSelectedSubId] = useState(
     initialActivePairingCode?.subId || data.subAccounts[0]?.id || "",
@@ -953,11 +971,14 @@ export function MonitoringClient({ data }: MonitoringClientProps) {
       const result = await createMonitoringPairingCode(formData)
       if (result?.error) {
         setError(result.error)
+        toast.error("Párovací kód se nepodařilo vytvořit.", result.error)
         return
       }
 
       if (!result?.code || !result.expiresAt) {
-        setError("Párovací kód se nepodařilo zobrazit.")
+        const failureMessage = "Párovací kód se nepodařilo zobrazit."
+        setError(failureMessage)
+        toast.error("Párovací kód se nepodařilo vytvořit.", failureMessage)
         return
       }
 
@@ -966,6 +987,7 @@ export function MonitoringClient({ data }: MonitoringClientProps) {
         expiresAt: result.expiresAt,
       })
       setMessage("Párovací kód byl vytvořen.")
+      toast.success("Párovací kód byl vygenerován.")
       router.refresh()
     })
   }
@@ -979,10 +1001,12 @@ export function MonitoringClient({ data }: MonitoringClientProps) {
       const result = await renameMonitoringDevice(formData)
       if (result?.error) {
         setError(result.error)
+        toast.error("Název zařízení se nepodařilo uložit.", result.error)
         return
       }
 
       setMessage("Název zařízení byl uložen.")
+      toast.success("Název zařízení byl uložen.")
       router.refresh()
     })
   }
@@ -1001,10 +1025,12 @@ export function MonitoringClient({ data }: MonitoringClientProps) {
       const result = await revokeMonitoringDevice(formData)
       if (result?.error) {
         setError(result.error)
+        toast.error("Extension se nepodařilo zneplatnit.", result.error)
         return
       }
 
       setMessage("Extension instalace byla zneplatněna.")
+      toast.success("Extension instalace byla zneplatněna.")
       router.refresh()
     })
   }
@@ -1023,10 +1049,12 @@ export function MonitoringClient({ data }: MonitoringClientProps) {
       const result = await deleteMonitoringDevice(formData)
       if (result?.error) {
         setError(result.error)
+        toast.error("Instalaci se nepodařilo odebrat.", result.error)
         return
       }
 
       setMessage("Zneplatněná instalace byla odebrána.")
+      toast.success("Zneplatněná instalace byla odebrána.")
       router.refresh()
     })
   }
@@ -1045,10 +1073,12 @@ export function MonitoringClient({ data }: MonitoringClientProps) {
       const result = await deleteMonitoringEvent(formData)
       if (result?.error) {
         setError(result.error)
+        toast.error("Monitoring položku se nepodařilo smazat.", result.error)
         return
       }
 
       setMessage("Monitoring položka byla smazána.")
+      toast.success("Monitoring položka byla smazána.")
       router.refresh()
     })
   }
@@ -1199,9 +1229,12 @@ export function MonitoringClient({ data }: MonitoringClientProps) {
 
         <div className="mt-5 grid gap-4">
           {data.devices.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-5 text-sm text-zinc-500">
-              Zatím není spárovaná žádná instalace.
-            </div>
+            <EmptyState
+              variant="compact"
+              icon={Radio}
+              title="Zatím není spárovaná žádná instalace MMM."
+              description="Vygeneruj párovací kód pro vybraný SUB účet a připoj konkrétní instalaci."
+            />
           ) : (
             data.devices.map((device) => (
               <div

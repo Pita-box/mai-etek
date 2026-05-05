@@ -5,6 +5,7 @@ import { ArrowUp, Loader2, Mic, Paperclip, Reply, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { uploadChatMedia } from '@/actions/chat';
+import { useToast } from '@/components/shared/useToast';
 import { MediaPreview } from './MediaPreview';
 import { VoiceRecorder } from './VoiceRecorder';
 import type { ChatSocket } from '@/lib/socket';
@@ -229,6 +230,7 @@ async function createVideoThumbnail(videoFile: File, fileName: string) {
 }
 
 export function ChatComposer({ onSendMessage, replyToMessage = null, onCancelReply, socket }: ChatComposerProps) {
+  const toast = useToast();
   const [message, setMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -323,7 +325,9 @@ export function ChatComposer({ onSendMessage, replyToMessage = null, onCancelRep
     if (!selectedFile) return;
 
     if (selectedFile.size > 50 * 1024 * 1024) {
-      setError('Soubor je příliš velký (max 50 MB)');
+      const message = 'Soubor je příliš velký (max 50 MB).';
+      setError(message);
+      toast.error('Přílohu nejde přidat.', message);
       return;
     }
 
@@ -380,6 +384,7 @@ export function ChatComposer({ onSendMessage, replyToMessage = null, onCancelRep
         );
         if (result) {
           setError(result);
+          toast.error('Zprávu se nepodařilo odeslat.', result);
           setIsUploading(false);
           return;
         }
@@ -390,7 +395,9 @@ export function ChatComposer({ onSendMessage, replyToMessage = null, onCancelRep
         setIsUploading(false);
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Chyba při odesílání');
+      const message = err instanceof Error ? err.message : 'Chyba při odesílání';
+      setError(message);
+      toast.error('Zprávu se nepodařilo odeslat.', message);
       setIsUploading(false);
     }
   };

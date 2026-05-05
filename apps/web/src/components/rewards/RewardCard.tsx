@@ -45,7 +45,7 @@ export function RewardCard({
             <span
               className={`rounded-full border px-3 py-1 text-xs font-semibold ${
                 reward.isActive
-                  ? "border-emerald-400/20 bg-emerald-500/10 text-emerald-200"
+                  ? "border-primary/25 bg-primary/10 text-primary"
                   : "border-white/10 bg-white/5 text-zinc-400"
               }`}>
               {reward.isActive ? "Aktivní" : "Vypnuto"}

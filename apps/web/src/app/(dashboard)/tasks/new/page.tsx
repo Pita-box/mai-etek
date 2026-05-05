@@ -6,9 +6,11 @@ import { createTask } from '@/actions/tasks';
 import { TaskPriority, RecurrenceType } from '@/types/task';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useToast } from '@/components/shared/useToast';
 
 export default function NewTaskPage() {
   const router = useRouter();
+  const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -46,17 +48,18 @@ export default function NewTaskPage() {
       if (result && result.error) {
         throw new Error(result.error);
       }
-      
-      // router.push and refresh are handled in createTask redirect, but just in case it doesn't redirect due to error:
-      if (!result?.error) {
-         router.push('/tasks');
-         router.refresh();
-      }
+
+      toast.success('Úkol byl vytvořen.');
+      router.push('/tasks');
+      router.refresh();
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
+        toast.error('Úkol se nepodařilo vytvořit.', err.message);
       } else {
-        setError('Nepodařilo se vytvořit úkol. Ujistěte se, že ID suba je platné.');
+        const message = 'Nepodařilo se vytvořit úkol. Ujistěte se, že ID suba je platné.';
+        setError(message);
+        toast.error('Úkol se nepodařilo vytvořit.', message);
       }
     } finally {
       setIsSubmitting(false);
@@ -184,7 +187,7 @@ export default function NewTaskPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 bg-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
               Uložit a zadat úkol

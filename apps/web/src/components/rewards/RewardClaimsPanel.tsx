@@ -4,16 +4,20 @@ import { useState } from "react";
 import {
   CheckCircle2,
   Clock3,
+  Gift,
   Loader2,
   RotateCcw,
   XCircle,
 } from "lucide-react";
+import { EmptyState } from "@/components/shared/EmptyState";
 import type { RewardClaim, RewardClaimStatus } from "@/types/gamification";
 
 type RewardClaimsPanelProps = {
   claims: RewardClaim[];
   role: "dom" | "sub";
   isPending?: boolean;
+  emptyTitle?: string;
+  emptyDescription?: string;
   onReview?: (
     claimId: string,
     nextStatus: Extract<RewardClaimStatus, "approved" | "rejected">,
@@ -58,15 +62,19 @@ export function RewardClaimsPanel({
   claims,
   role,
   isPending = false,
+  emptyTitle = "Zatím tu nejsou žádné claimy odměn.",
+  emptyDescription = "Žádosti o odměny se zobrazí v této sekci.",
   onReview,
 }: RewardClaimsPanelProps) {
   const [notes, setNotes] = useState<Record<string, string>>({});
 
   if (claims.length === 0) {
     return (
-      <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.03] px-5 py-10 text-center text-sm text-zinc-400">
-        Zatím tu nejsou žádné claimy odměn.
-      </div>
+      <EmptyState
+        icon={Gift}
+        title={emptyTitle}
+        description={emptyDescription}
+      />
     );
   }
 

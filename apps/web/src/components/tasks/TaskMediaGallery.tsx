@@ -2,7 +2,9 @@
 
 import { SyntheticEvent, useMemo, useState, useTransition } from 'react';
 import { ExternalLink, Image as ImageIcon, Loader2, Trash2, Video } from 'lucide-react';
+import Image from 'next/image';
 import { deleteTaskMedia } from '@/actions/tasks';
+import { useToast } from '@/components/shared/useToast';
 import { Task, TaskMedia } from '@/types/task';
 import { TaskMediaLightbox } from './TaskMediaLightbox';
 import { TaskMediaUpload } from './TaskMediaUpload';
@@ -31,8 +33,16 @@ function TaskMediaThumbnail({ item, onMissing }: TaskMediaThumbnailProps) {
   return (
     <div className="relative mb-3 h-32 overflow-hidden rounded-xl bg-black/50 text-zinc-500 ring-1 ring-white/10">
       {item.media_type === 'image' ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt={item.original_filename} onError={handleLoadError} className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
+        <Image
+          src={src}
+          alt={item.original_filename}
+          fill
+          sizes="(min-width: 640px) 50vw, 100vw"
+          unoptimized
+          loading="lazy"
+          onError={handleLoadError}
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+        />
       ) : (
         <video src={src} muted playsInline preload="metadata" onError={handleLoadError} className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
       )}
@@ -45,6 +55,7 @@ function TaskMediaThumbnail({ item, onMissing }: TaskMediaThumbnailProps) {
 }
 
 export function TaskMediaGallery({ task, mediaType, role, onTaskMutated }: TaskMediaGalleryProps) {
+  const toast = useToast();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [hiddenMediaIds, setHiddenMediaIds] = useState<Set<string>>(() => new Set());
@@ -72,6 +83,7 @@ export function TaskMediaGallery({ task, mediaType, role, onTaskMutated }: TaskM
       const result = await deleteTaskMedia(mediaId);
       if (result?.error) {
         setDeleteError(result.error);
+        toast.error('Médium se nepodařilo smazat.', result.error);
         setDeletingId(null);
         return;
       }
@@ -79,6 +91,7 @@ export function TaskMediaGallery({ task, mediaType, role, onTaskMutated }: TaskM
       setHiddenMediaIds((current) => new Set(current).add(mediaId));
       setActiveIndex(null);
       await onTaskMutated();
+      toast.success('Médium bylo smazáno z evidence.');
       setDeletingId(null);
     });
   };
@@ -89,6 +102,7 @@ export function TaskMediaGallery({ task, mediaType, role, onTaskMutated }: TaskM
     setHiddenMediaIds((current) => new Set(current).add(mediaId));
     setActiveIndex(null);
     setCleanupNotice('Soubor už na Google Drive neexistuje a byl odebrán z evidence.');
+    toast.info('Soubor už na Google Drive neexistuje.');
     startMissingRefreshTransition(async () => {
       await onTaskMutated();
     });
@@ -148,7 +162,7 @@ export function TaskMediaGallery({ task, mediaType, role, onTaskMutated }: TaskM
       {cleanupNotice ? <p className="mt-3 text-sm text-amber-200">{cleanupNotice}</p> : null}
       {!isRecurringTemplate && (task.status === 'in_progress' || task.status === 'revision_requested') ? (
         <div className="mt-5">
-          <TaskMediaUpload taskId={task.id} mediaType={mediaType} />
+          <TaskMediaUpload taskId={task.id} mediaType={mediaType} onUploaded={onTaskMutated} />
         </div>
       ) : null}
 

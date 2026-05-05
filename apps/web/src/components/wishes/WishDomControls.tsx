@@ -4,6 +4,7 @@ import { FormEvent, useState, useTransition } from "react";
 import { CheckCircle2, Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { setWishStatus, upsertWishDomNote } from "@/actions/wishes";
+import { useToast } from "@/components/shared/useToast";
 import type { Wish, WishStatus } from "@/types/wish";
 
 type WishDomControlsProps = {
@@ -29,6 +30,7 @@ function getInitialStatusValue(status: WishStatus): StatusSelectValue {
 
 export function WishDomControls({ wish }: WishDomControlsProps) {
   const router = useRouter();
+  const toast = useToast();
   const [selectedStatus, setSelectedStatus] = useState<StatusSelectValue>(
     getInitialStatusValue(wish.status),
   );
@@ -49,8 +51,10 @@ export function WishDomControls({ wish }: WishDomControlsProps) {
       const result = await setWishStatus(wish.id, selectedStatus);
       if (result?.error) {
         setStatusError(result.error);
+        toast.error("Stav přání se nepodařilo uložit.", result.error);
         return;
       }
+      toast.success("Stav přání byl uložen.");
       router.refresh();
     });
   };
@@ -65,9 +69,11 @@ export function WishDomControls({ wish }: WishDomControlsProps) {
       const result = await upsertWishDomNote(wish.id, formData);
       if (result?.error) {
         setNoteError(result.error);
+        toast.error("Poznámku se nepodařilo uložit.", result.error);
         return;
       }
       setNoteSuccess(true);
+      toast.success("Poznámka byla uložena.");
       router.refresh();
     });
   };

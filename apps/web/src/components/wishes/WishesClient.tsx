@@ -1,9 +1,13 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { Heart, Loader2, Plus } from "lucide-react";
+import { Heart, Plus, Search } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { createWish } from "@/actions/wishes";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { useToast } from "@/components/shared/useToast";
+import { fadeInUp } from "@/lib/motion";
 import type { Wish, WishStatus, WishViewerRole } from "@/types/wish";
 import { WishCard } from "./WishCard";
 import { WishFilters } from "./WishFilters";
@@ -16,6 +20,8 @@ type WishesClientProps = {
 
 export function WishesClient({ wishes, role }: WishesClientProps) {
   const router = useRouter();
+  const toast = useToast();
+  const prefersReducedMotion = useReducedMotion();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<WishStatus | "all">("all");
   const [formKey, setFormKey] = useState(0);
@@ -41,9 +47,11 @@ export function WishesClient({ wishes, role }: WishesClientProps) {
       const result = await createWish(formData);
       if (result?.error) {
         setError(result.error);
+        toast.error("Přání se nepodařilo vytvořit.", result.error);
         return;
       }
       setFormKey((current) => current + 1);
+      toast.success("Přání bylo vytvořeno.");
       router.refresh();
     });
   };
@@ -101,12 +109,40 @@ export function WishesClient({ wishes, role }: WishesClientProps) {
 
       <section className="space-y-4">
         {filteredWishes.length > 0 ? (
-          filteredWishes.map((wish) => <WishCard key={wish.id} wish={wish} role={role} />)
+          filteredWishes.map((wish) => (
+            <motion.div
+              key={wish.id}
+              initial={prefersReducedMotion ? false : "hidden"}
+              animate="visible"
+              variants={fadeInUp}
+            >
+              <WishCard wish={wish} role={role} />
+            </motion.div>
+          ))
         ) : (
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center text-zinc-400">
-            {isPending ? <Loader2 className="mx-auto mb-3 h-5 w-5 animate-spin text-primary" /> : null}
-            Žádná přání k zobrazení.
-          </div>
+          <EmptyState
+            icon={search || status !== "all" ? Search : Heart}
+            title={
+              wishes.length === 0
+                ? role === "sub"
+                  ? "Zatím nejsou přidaná žádná přání."
+                  : "SUB zatím nepřidal žádná přání."
+                : "Žádné přání neodpovídá aktuálním filtrům."
+            }
+            description={
+              wishes.length === 0
+                ? role === "sub"
+                  ? "Až odešleš první přání, zobrazí se v seznamu pod formulářem."
+                  : "Nová přání od SUBa se zobrazí tady."
+                : "Uprav hledání nebo filtr stavu."
+            }
+            actionLabel={role === "sub" && wishes.length === 0 ? "Přidat přání" : undefined}
+            onAction={
+              role === "sub" && wishes.length === 0
+                ? () => document.querySelector<HTMLInputElement>('input[name="title"]')?.focus()
+                : undefined
+            }
+          />
         )}
       </section>
     </div>

@@ -2,8 +2,10 @@
 
 import { MouseEvent, useState, useTransition } from "react";
 import { Check, Heart, Image as ImageIcon, Play, Video } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { setGalleryFavorite } from "@/actions/gallery";
+import { useToast } from "@/components/shared/useToast";
 import type { GalleryMedia, GalleryViewerRole } from "@/types/gallery";
 
 type GalleryMediaCardProps = {
@@ -22,6 +24,7 @@ export function GalleryMediaCard({
   onToggleSelected,
 }: GalleryMediaCardProps) {
   const router = useRouter();
+  const toast = useToast();
   const [hasThumbnailError, setHasThumbnailError] = useState(false);
   const [isPending, startTransition] = useTransition();
   const isVideo = item.media_type === "video";
@@ -37,7 +40,17 @@ export function GalleryMediaCard({
     event.stopPropagation();
     startTransition(async () => {
       const result = await setGalleryFavorite(item.id, !item.is_favorite);
-      if (!result?.error) router.refresh();
+      if (result?.error) {
+        toast.error("Favourite se nepodařilo uložit.", result.error);
+        return;
+      }
+
+      toast.success(
+        item.is_favorite
+          ? "Médium bylo odebráno z Favourite."
+          : "Médium bylo přidané do Favourite.",
+      );
+      router.refresh();
     });
   };
 
@@ -60,10 +73,12 @@ export function GalleryMediaCard({
       >
         <div className="relative bg-black/50" style={{ aspectRatio }}>
           {!hasThumbnailError ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={thumbUrl}
               alt={item.original_filename}
+              fill
+              sizes="(min-width: 1536px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+              unoptimized
               loading="lazy"
               className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
               onError={() => setHasThumbnailError(true)}

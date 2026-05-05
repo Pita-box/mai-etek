@@ -1,5 +1,18 @@
 
 > chrome-extension@1.0.0 build /Users/mai/Documents/App/Ds/apps/chrome-extension
-> echo "Skipping build for now"
+> webpack --mode production
 
-Skipping build for now
+assets by status 44.8 KiB [1m[32m[emitted][39m[22m
+  asset [1m[32mbackground.js[39m[22m 21.8 KiB [1m[32m[emitted][39m[22m (name: background)
+  asset [1m[32mpopup.js[39m[22m 13.2 KiB [1m[32m[emitted][39m[22m (name: popup)
+  asset [1m[32mcontent.js[39m[22m 9.82 KiB [1m[32m[emitted][39m[22m (name: content)
+assets by status 4.54 KiB [1m[33m[compared for emit][39m[22m
+  asset [1m[32mpopup.css[39m[22m 2.41 KiB [1m[33m[compared for emit][39m[22m [from: src/popup/popup.css] [1m[32m[copied][39m[22m
+  asset [1m[32mpopup.html[39m[22m 1.52 KiB [1m[33m[compared for emit][39m[22m [from: src/popup/popup.html] [1m[32m[copied][39m[22m
+  asset [1m[32mmanifest.json[39m[22m 632 bytes [1m[33m[compared for emit][39m[22m [from: public/manifest.json] [1m[32m[copied][39m[22m
+orphan modules 14.6 KiB [1m[33m[orphan][39m[22m 6 modules
+cacheable modules 45.3 KiB
+  [1m./src/background/service-worker.ts + 6 modules[39m[22m 22.3 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1m./src/popup/popup.ts + 4 modules[39m[22m 13.3 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1m./src/content/index.ts[39m[22m 9.75 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 1738 ms

@@ -20,6 +20,7 @@ import {
   Trophy,
 } from "lucide-react";
 import {
+  type SuperAdminUser,
   useClaimUser,
   useRevealPassword,
   useSuperAdminUsers,
@@ -30,21 +31,15 @@ import {
   setPageAccessEnabled,
 } from "@/lib/page-access/config";
 import { DashboardPageSkeleton } from "@/components/shared/DashboardSkeletons";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { useToast } from "@/components/shared/useToast";
 import type {
   DashboardPageIconKey,
   DashboardPageItem,
-  PageAccessAppConfig,
 } from "@/types/page-access";
 
 type SuperAdminClientProps = {
   pages: DashboardPageItem[];
-};
-
-type SuperAdminUser = {
-  id: string;
-  email?: string | null;
-  role: "unassigned" | "sub" | "dom";
-  app_config?: PageAccessAppConfig | null;
 };
 
 const iconByKey: Record<DashboardPageIconKey, LucideIcon> = {
@@ -62,6 +57,7 @@ const iconByKey: Record<DashboardPageIconKey, LucideIcon> = {
 };
 
 export function SuperAdminClient({ pages }: SuperAdminClientProps) {
+  const toast = useToast();
   const { users, loading, error, refetch } = useSuperAdminUsers();
   const { claim, loading: claiming } = useClaimUser();
   const { updateConfig, loading: updatingConfig } = useUpdateAppConfig();
@@ -72,8 +68,16 @@ export function SuperAdminClient({ pages }: SuperAdminClientProps) {
   const [updatingPage, setUpdatingPage] = useState<string | null>(null);
 
   const handleClaim = async (id: string) => {
-    await claim(id);
-    void refetch();
+    try {
+      await claim(id);
+      toast.success("Uživatel byl přiřazen.");
+      void refetch();
+    } catch (caughtError) {
+      toast.error(
+        "Uživatele se nepodařilo přiřadit.",
+        caughtError instanceof Error ? caughtError.message : "Neznámá chyba.",
+      );
+    }
   };
 
   const handleReveal = async (id: string) => {
@@ -88,7 +92,10 @@ export function SuperAdminClient({ pages }: SuperAdminClientProps) {
       const password = await reveal(id);
       setRevealedPasswords((prev) => ({ ...prev, [id]: password }));
     } catch (caughtError) {
-      alert(caughtError instanceof Error ? caughtError.message : "Chyba");
+      toast.error(
+        "Heslo se nepodařilo zobrazit.",
+        caughtError instanceof Error ? caughtError.message : "Neznámá chyba.",
+      );
     }
   };
 
@@ -107,6 +114,15 @@ export function SuperAdminClient({ pages }: SuperAdminClientProps) {
     try {
       await updateConfig(user.id, nextConfig);
       await refetch();
+      toast.success(
+        "Přístup ke stránce byl uložen.",
+        `${page.label}: ${currentEnabled ? "nepovoleno" : "povoleno"}.`,
+      );
+    } catch (caughtError) {
+      toast.error(
+        "Přístup ke stránce se nepodařilo uložit.",
+        caughtError instanceof Error ? caughtError.message : "Neznámá chyba.",
+      );
     } finally {
       setUpdatingPage(null);
     }
@@ -116,8 +132,13 @@ export function SuperAdminClient({ pages }: SuperAdminClientProps) {
 
   if (error) {
     return (
-      <div role="alert" className="p-8 text-red-500">
-        Chyba: {error}
+      <div className="p-8">
+        <EmptyState
+          variant="danger"
+          icon={AlertTriangle}
+          title="SuperAdmin data se nepodařilo načíst."
+          description={error}
+        />
       </div>
     );
   }
@@ -181,6 +202,11 @@ export function SuperAdminClient({ pages }: SuperAdminClientProps) {
                           ? "Skrýt heslo"
                           : "Zobrazit heslo"
                       }
+                      aria-label={
+                        revealedPasswords[user.id]
+                          ? "Skrýt heslo"
+                          : "Zobrazit heslo"
+                      }
                     >
                       {revealedPasswords[user.id] ? (
                         <EyeOff size={18} />
@@ -205,9 +231,14 @@ export function SuperAdminClient({ pages }: SuperAdminClientProps) {
                 <tr>
                   <td
                     colSpan={3}
-                    className="px-6 py-4 text-center text-gray-500"
+                    className="px-6 py-6"
                   >
-                    Žádní volní uživatelé
+                    <EmptyState
+                      variant="compact"
+                      icon={CheckCircle2}
+                      title="Žádné účty nečekají na přiřazení."
+                      description="Jakmile se registruje nový účet bez role, objeví se tady."
+                    />
                   </td>
                 </tr>
               ) : null}
@@ -254,6 +285,11 @@ export function SuperAdminClient({ pages }: SuperAdminClientProps) {
                       disabled={revealing}
                       className="flex-shrink-0 cursor-pointer text-muted-foreground transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                       title={
+                        revealedPasswords[user.id]
+                          ? "Skrýt heslo"
+                          : "Zobrazit heslo"
+                      }
+                      aria-label={
                         revealedPasswords[user.id]
                           ? "Skrýt heslo"
                           : "Zobrazit heslo"
@@ -320,9 +356,14 @@ export function SuperAdminClient({ pages }: SuperAdminClientProps) {
                 <tr>
                   <td
                     colSpan={3}
-                    className="px-6 py-4 text-center text-gray-500"
+                    className="px-6 py-6"
                   >
-                    Žádní podřízení uživatelé
+                    <EmptyState
+                      variant="compact"
+                      icon={Heart}
+                      title="Zatím nemáš přiřazený žádný SUB účet."
+                      description="Přiřazené SUB účty se zobrazí tady včetně správy přístupů ke stránkám."
+                    />
                   </td>
                 </tr>
               ) : null}

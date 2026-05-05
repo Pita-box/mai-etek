@@ -143,13 +143,12 @@ export function ChatHeader({
 
           {/* Socket connection status */}
           <div
-            className={`inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-[11px] font-medium ${
-              isConnected ? "text-emerald-400" : "text-zinc-300"
-            }`}>
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-[11px] font-medium text-zinc-300"
+            aria-label={isConnected ? "Chat server je připojený" : "Chat server se znovu připojuje"}>
             {isConnected ? (
-              <Wifi className="h-3 w-3" />
+              <Wifi className="h-3 w-3 text-primary" />
             ) : (
-              <WifiOff className="h-3 w-3" />
+              <WifiOff className="h-3 w-3 text-amber-300" />
             )}
             <span className="hidden sm:inline">
               {isConnected ? "Připojeno" : "Obnovuji"}

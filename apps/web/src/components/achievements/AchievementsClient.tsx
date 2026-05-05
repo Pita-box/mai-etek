@@ -13,6 +13,7 @@ import {
   ShieldAlert,
   Trophy,
 } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { markPageNotificationsRead } from "@/actions/notifications";
 import {
@@ -23,6 +24,9 @@ import {
   removeAchievementFromSub,
   updateAchievementDefinition,
 } from "@/actions/gamification";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { useToast } from "@/components/shared/useToast";
+import { fadeInUp } from "@/lib/motion";
 import type { Achievement, AchievementsData } from "@/types/gamification";
 import { AchievementCard } from "./AchievementCard";
 import { AchievementForm } from "./AchievementForm";
@@ -65,6 +69,8 @@ function getInitialTab(data: AchievementsData): AchievementsTab {
 
 export function AchievementsClient({ data }: AchievementsClientProps) {
   const router = useRouter();
+  const toast = useToast();
+  const prefersReducedMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState<AchievementsTab>(() =>
     getInitialTab(data),
   );
@@ -120,9 +126,11 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
       const result = await createAchievementDefinition(formData);
       if (result?.error) {
         setError(result.error);
+        toast.error("Odznak se nepodařilo vytvořit.", result.error);
         return;
       }
       setShowCreateForm(false);
+      toast.success("Odznak byl vytvořen.");
       router.refresh();
     });
   };
@@ -133,9 +141,11 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
       const result = await updateAchievementDefinition(achievementId, formData);
       if (result?.error) {
         setError(result.error);
+        toast.error("Odznak se nepodařilo uložit.", result.error);
         return;
       }
       setEditingAchievement(null);
+      toast.success("Odznak byl uložen.");
       router.refresh();
     });
   };
@@ -150,8 +160,10 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
       const result = await deleteAchievementDefinition(achievementId);
       if (result?.error) {
         setError(result.error);
+        toast.error("Odznak se nepodařilo smazat.", result.error);
         return;
       }
+      toast.success("Odznak byl smazán.");
       router.refresh();
     });
   };
@@ -159,7 +171,9 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
   const assignBadge = (achievementId: string) => {
     const reason = assignReasons[achievementId]?.trim() || "";
     if (!reason) {
-      setError("Přidělení odznaku vyžaduje důvod.");
+      const validationError = "Přidělení odznaku vyžaduje důvod.";
+      setError(validationError);
+      toast.error("Odznak se nepodařilo přidělit.", validationError);
       return;
     }
 
@@ -168,9 +182,11 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
       const result = await assignAchievementToSub(achievementId, reason);
       if (result?.error) {
         setError(result.error);
+        toast.error("Odznak se nepodařilo přidělit.", result.error);
         return;
       }
       setAssignReasons((current) => ({ ...current, [achievementId]: "" }));
+      toast.success("Odznak byl přidělen.");
       router.refresh();
     });
   };
@@ -178,7 +194,9 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
   const removeBadge = (userAchievementId: string) => {
     const reason = removeReasons[userAchievementId]?.trim() || "";
     if (!reason) {
-      setError("Odebrání odznaku vyžaduje důvod.");
+      const validationError = "Odebrání odznaku vyžaduje důvod.";
+      setError(validationError);
+      toast.error("Odznak se nepodařilo odebrat.", validationError);
       return;
     }
 
@@ -191,9 +209,11 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
       const result = await removeAchievementFromSub(userAchievementId, reason);
       if (result?.error) {
         setError(result.error);
+        toast.error("Odznak se nepodařilo odebrat.", result.error);
         return;
       }
       setRemoveReasons((current) => ({ ...current, [userAchievementId]: "" }));
+      toast.success("Odznak byl odebrán.");
       router.refresh();
     });
   };
@@ -204,12 +224,16 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
     const reason = disciplineReason.trim();
 
     if (!Number.isFinite(points) || points <= 0) {
-      setError("Body dluhu musí být kladné číslo.");
+      const validationError = "Body dluhu musí být kladné číslo.";
+      setError(validationError);
+      toast.error("Dluh se nepodařilo přidat.", validationError);
       return;
     }
 
     if (!reason) {
-      setError("Ruční kázeňská penalizace vyžaduje důvod.");
+      const validationError = "Ruční kázeňská penalizace vyžaduje důvod.";
+      setError(validationError);
+      toast.error("Dluh se nepodařilo přidat.", validationError);
       return;
     }
 
@@ -222,10 +246,12 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
       const result = await applyManualDiscipline(points, reason);
       if (result?.error) {
         setError(result.error);
+        toast.error("Dluh se nepodařilo přidat.", result.error);
         return;
       }
       setDisciplinePoints("");
       setDisciplineReason("");
+      toast.success("Kázeňský dluh byl přidán.");
       router.refresh();
     });
   };
@@ -359,38 +385,56 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
         data.activeAchievements.length > 0 ? (
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {data.activeAchievements.map((achievement) => (
-              <AchievementCard
+              <motion.div
                 key={achievement.userAchievementId || achievement.id}
-                achievement={achievement}
-                role={data.role}
-                mode="active"
-                isPending={isPending}
-                removeReason={
-                  achievement.userAchievementId
-                    ? removeReasons[achievement.userAchievementId] || ""
-                    : ""
-                }
-                onRemoveReasonChange={(value) => {
-                  if (!achievement.userAchievementId) return;
-                  setRemoveReasons((current) => ({
-                    ...current,
-                    [achievement.userAchievementId as string]: value,
-                  }));
-                }}
-                onRemove={() => {
-                  if (achievement.userAchievementId) {
-                    removeBadge(achievement.userAchievementId);
+                initial={prefersReducedMotion ? false : "hidden"}
+                animate="visible"
+                variants={fadeInUp}
+              >
+                <AchievementCard
+                  achievement={achievement}
+                  role={data.role}
+                  mode="active"
+                  isPending={isPending}
+                  removeReason={
+                    achievement.userAchievementId
+                      ? removeReasons[achievement.userAchievementId] || ""
+                      : ""
                   }
-                }}
-              />
+                  onRemoveReasonChange={(value) => {
+                    if (!achievement.userAchievementId) return;
+                    setRemoveReasons((current) => ({
+                      ...current,
+                      [achievement.userAchievementId as string]: value,
+                    }));
+                  }}
+                  onRemove={() => {
+                    if (achievement.userAchievementId) {
+                      removeBadge(achievement.userAchievementId);
+                    }
+                  }}
+                />
+              </motion.div>
             ))}
           </section>
         ) : (
-          <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.03] px-5 py-10 text-center text-sm text-zinc-400">
-            {data.role === "dom"
-              ? "SUB zatím nedrží žádný odznak."
-              : "Zatím nemáš žádný aktivní odznak."}
-          </div>
+          <EmptyState
+            icon={Award}
+            title={
+              data.role === "dom"
+                ? "SUB zatím nedrží žádný odznak."
+                : "Zatím nemáš žádný aktivní odznak."
+            }
+            description={
+              data.role === "dom"
+                ? "Otevři katalog a přiděl odznak ručně, nebo počkej na automatické splnění podmínky."
+                : "Nové odznaky se tady objeví po splnění podmínky nebo ručním přidělení."
+            }
+            actionLabel={data.role === "dom" ? "Otevřít katalog" : undefined}
+            onAction={
+              data.role === "dom" ? () => setActiveTab("catalog") : undefined
+            }
+          />
         )
       ) : null}
 
@@ -398,33 +442,46 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
         data.catalog.length > 0 ? (
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {data.catalog.map((achievement) => (
-              <AchievementCard
+              <motion.div
                 key={achievement.id}
-                achievement={achievement}
-                role="dom"
-                mode="catalog"
-                isPending={isPending}
-                alreadyAssigned={activeByAchievementId.has(achievement.id)}
-                assignReason={assignReasons[achievement.id] || ""}
-                onAssignReasonChange={(value) =>
-                  setAssignReasons((current) => ({
-                    ...current,
-                    [achievement.id]: value,
-                  }))
-                }
-                onAssign={() => assignBadge(achievement.id)}
-                onEdit={() => {
-                  setShowCreateForm(false);
-                  setEditingAchievement(achievement);
-                }}
-                onDelete={() => deleteDefinition(achievement.id)}
-              />
+                initial={prefersReducedMotion ? false : "hidden"}
+                animate="visible"
+                variants={fadeInUp}
+              >
+                <AchievementCard
+                  achievement={achievement}
+                  role="dom"
+                  mode="catalog"
+                  isPending={isPending}
+                  alreadyAssigned={activeByAchievementId.has(achievement.id)}
+                  assignReason={assignReasons[achievement.id] || ""}
+                  onAssignReasonChange={(value) =>
+                    setAssignReasons((current) => ({
+                      ...current,
+                      [achievement.id]: value,
+                    }))
+                  }
+                  onAssign={() => assignBadge(achievement.id)}
+                  onEdit={() => {
+                    setShowCreateForm(false);
+                    setEditingAchievement(achievement);
+                  }}
+                  onDelete={() => deleteDefinition(achievement.id)}
+                />
+              </motion.div>
             ))}
           </section>
         ) : (
-          <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.03] px-5 py-10 text-center text-sm text-zinc-400">
-            Katalog je zatím prázdný. Vytvoř první odznak.
-          </div>
+          <EmptyState
+            icon={LayoutGrid}
+            title="Katalog odznaků je prázdný."
+            description="Vytvoř první pozitivní nebo kázeňský odznak pro SUB."
+            actionLabel="Vytvořit první odznak"
+            onAction={() => {
+              setEditingAchievement(null);
+              setShowCreateForm(true);
+            }}
+          />
         )
       ) : null}
 
@@ -432,18 +489,26 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
         data.lostAchievements.length > 0 ? (
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {data.lostAchievements.map((achievement) => (
-              <AchievementCard
+              <motion.div
                 key={achievement.userAchievementId || achievement.id}
-                achievement={achievement}
-                role={data.role}
-                mode="history"
-              />
+                initial={prefersReducedMotion ? false : "hidden"}
+                animate="visible"
+                variants={fadeInUp}
+              >
+                <AchievementCard
+                  achievement={achievement}
+                  role={data.role}
+                  mode="history"
+                />
+              </motion.div>
             ))}
           </section>
         ) : (
-          <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.03] px-5 py-10 text-center text-sm text-zinc-400">
-            Zatím žádné odebrané odznaky.
-          </div>
+          <EmptyState
+            icon={Archive}
+            title="Zatím žádné odebrané odznaky."
+            description="Historie ztracených nebo odebraných odznaků se zobrazí tady."
+          />
         )
       ) : null}
 
@@ -479,9 +544,12 @@ export function AchievementsClient({ data }: AchievementsClientProps) {
                 </div>
               ))
             ) : (
-              <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.03] px-5 py-10 text-center text-sm text-zinc-400">
-                Zatím žádný kázeňský dluh v ledgeru.
-              </div>
+              <EmptyState
+                icon={ShieldAlert}
+                variant="compact"
+                title="Zatím žádný kázeňský dluh v ledgeru."
+                description="Ruční penalizace, kázeňské odznaky a další dluhové záznamy se zobrazí tady."
+              />
             )}
           </section>
 

@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from 'react';
 import { CheckCircle2, FileText, Loader2, Sparkles } from 'lucide-react';
 import { saveTaskTextEvidence } from '@/actions/tasks';
+import { useToast } from '@/components/shared/useToast';
 import { Task } from '@/types/task';
 import { hasRichTextContent, richTextToHtml } from '@/lib/task-rich-text';
 import { TaskRichTextEditor } from './TaskRichTextEditor';
@@ -14,6 +15,7 @@ type TaskTextEvidenceProps = {
 };
 
 export function TaskTextEvidence({ task, role, onTaskMutated }: TaskTextEvidenceProps) {
+  const toast = useToast();
   const [isPending, startTransition] = useTransition();
   const attempts = task.task_attempts || [];
   const latestAttempt = attempts[0];
@@ -30,6 +32,7 @@ export function TaskTextEvidence({ task, role, onTaskMutated }: TaskTextEvidence
     if (!value.trim()) {
       setError('Textové odevzdání nemůže být prázdné.');
       setSaveMessage(null);
+      toast.error('Textové odevzdání je prázdné.');
       return;
     }
 
@@ -39,10 +42,12 @@ export function TaskTextEvidence({ task, role, onTaskMutated }: TaskTextEvidence
       const result = await saveTaskTextEvidence(task.id, value);
       if (result?.error) {
         setError(result.error);
+        toast.error('Textové odevzdání se nepodařilo uložit.', result.error);
         return;
       }
       setSaveMessage('Textové odevzdání bylo uloženo.');
       await onTaskMutated();
+      toast.success('Textové odevzdání bylo uložené.');
     });
   };
 

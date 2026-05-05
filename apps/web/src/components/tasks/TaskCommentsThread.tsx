@@ -3,6 +3,7 @@
 import { Heart, Pencil, Send, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import { addTaskComment, getTaskComments, updateTaskComment, deleteTaskComment, toggleTaskCommentLike } from '@/actions/tasks';
+import { useToast } from '@/components/shared/useToast';
 import { createClient } from '@/utils/supabase/client';
 import { EvidenceTab } from './TaskEvidenceTabs';
 
@@ -41,6 +42,7 @@ export function TaskCommentsThread(props: TaskCommentsThreadProps) {
 }
 
 function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
+  const toast = useToast();
   const [body, setBody] = useState('');
   const [comments, setComments] = useState<TaskComment[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -128,10 +130,12 @@ function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
       const result = await addTaskComment(taskId, tabType, text);
       if (result?.error) {
         setError(result.error);
+        toast.error('Komentář se nepodařilo přidat.', result.error);
         return;
       }
       setBody('');
       await loadComments();
+      toast.success('Komentář byl přidán.');
     });
   };
 
@@ -142,10 +146,12 @@ function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
       const result = await updateTaskComment(id, text);
       if (result?.error) {
         setError(result.error);
+        toast.error('Komentář se nepodařilo upravit.', result.error);
         return;
       }
       setEditingId(null);
       await loadComments();
+      toast.success('Komentář byl uložen.');
     });
   };
 
@@ -155,9 +161,11 @@ function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
       const result = await deleteTaskComment(id);
       if (result?.error) {
         setError(result.error);
+        toast.error('Komentář se nepodařilo smazat.', result.error);
         return;
       }
       await loadComments();
+      toast.success('Komentář byl smazán.');
     });
   };
 
@@ -169,9 +177,11 @@ function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
       const result = await toggleTaskCommentLike(id);
       if (result?.error) {
         setError(result.error);
+        toast.error('Reakci se nepodařilo uložit.', result.error);
         return;
       }
       await loadComments();
+      toast.success('Reakce byla uložená.');
     });
   };
 
@@ -201,12 +211,23 @@ function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
 
                 <div className="flex items-center gap-2">
                   {comment.can_edit && editingId !== comment.id && (
-                    <button onClick={() => { setEditingId(comment.id); setEditBody(comment.body); }} className="text-zinc-500 hover:text-white transition">
+                    <button
+                      type="button"
+                      aria-label="Upravit komentář"
+                      onClick={() => { setEditingId(comment.id); setEditBody(comment.body); }}
+                      className="text-zinc-500 transition hover:text-white focus:outline-none focus:ring-2 focus:ring-primary/60"
+                    >
                       <Pencil className="h-3 w-3" />
                     </button>
                   )}
                   {comment.can_delete && (
-                    <button onClick={() => submitDelete(comment.id)} disabled={isPending} className="text-zinc-500 hover:text-red-400 transition">
+                    <button
+                      type="button"
+                      aria-label="Smazat komentář"
+                      onClick={() => submitDelete(comment.id)}
+                      disabled={isPending}
+                      className="text-zinc-500 transition hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-primary/60 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
                       <Trash2 className="h-3 w-3" />
                     </button>
                   )}
@@ -222,8 +243,8 @@ function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
                     rows={4}
                   />
                   <div className="flex justify-end gap-2">
-                    <button onClick={() => setEditingId(null)} className="rounded-lg px-3 py-1 text-xs text-zinc-400 hover:text-white hover:bg-white/5 transition">Zrušit</button>
-                    <button onClick={() => submitEdit(comment.id)} disabled={isPending || !editBody.trim()} className="rounded-lg bg-primary px-3 py-1 text-xs text-white hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed">Uložit</button>
+                    <button type="button" onClick={() => setEditingId(null)} className="rounded-lg px-3 py-1 text-xs text-zinc-400 transition hover:bg-white/5 hover:text-white">Zrušit</button>
+                    <button type="button" onClick={() => submitEdit(comment.id)} disabled={isPending || !editBody.trim()} className="rounded-lg bg-primary px-3 py-1 text-xs text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">Uložit</button>
                   </div>
                 </div>
               ) : (
@@ -233,6 +254,8 @@ function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
                   <div className="mt-2 flex justify-end">
                     {(!comment.can_edit || comment.like_count > 0) && (
                       <button
+                        type="button"
+                        aria-label={comment.liked_by_me ? 'Odebrat reakci' : 'Přidat reakci'}
                         onClick={() => toggleLike(comment.id)}
                         disabled={comment.can_edit}
                         className={`flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition ${comment.liked_by_me
@@ -270,6 +293,7 @@ function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
         <button
           id={`task-comment-submit-${tabType}`}
           type="button"
+          aria-label="Odeslat komentář"
           disabled={isPending || !body.trim()}
           onClick={submit}
           className="rounded-xl bg-primary px-4 py-3 text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
@@ -281,4 +305,3 @@ function TaskCommentsThreadInner({ taskId, tabType }: TaskCommentsThreadProps) {
     </div>
   );
 }
-

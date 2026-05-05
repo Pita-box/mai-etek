@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { Coins, Gift, Loader2, Plus } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { markPageNotificationsRead } from "@/actions/notifications";
 import {
@@ -11,6 +12,9 @@ import {
   reviewRewardClaim,
   updateReward,
 } from "@/actions/rewards";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { useToast } from "@/components/shared/useToast";
+import { fadeInUp } from "@/lib/motion";
 import type {
   Reward,
   RewardClaim,
@@ -37,6 +41,8 @@ function getInitialTab(data: RewardsData): RewardsTab {
 
 export function RewardsClient({ data }: RewardsClientProps) {
   const router = useRouter();
+  const toast = useToast();
+  const prefersReducedMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState<RewardsTab>(() =>
     getInitialTab(data),
   );
@@ -66,9 +72,11 @@ export function RewardsClient({ data }: RewardsClientProps) {
       const result = await createReward(formData);
       if (result?.error) {
         setError(result.error);
+        toast.error("Odměnu se nepodařilo vytvořit.", result.error);
         return;
       }
       setShowCreateForm(false);
+      toast.success("Odměna byla vytvořena.");
       router.refresh();
     });
   };
@@ -79,9 +87,11 @@ export function RewardsClient({ data }: RewardsClientProps) {
       const result = await updateReward(rewardId, formData);
       if (result?.error) {
         setError(result.error);
+        toast.error("Odměnu se nepodařilo uložit.", result.error);
         return;
       }
       setEditingReward(null);
+      toast.success("Odměna byla uložena.");
       router.refresh();
     });
   };
@@ -94,8 +104,10 @@ export function RewardsClient({ data }: RewardsClientProps) {
       const result = await deleteReward(rewardId);
       if (result?.error) {
         setError(result.error);
+        toast.error("Odměnu se nepodařilo smazat.", result.error);
         return;
       }
+      toast.success("Odměna byla smazána.");
       router.refresh();
     });
   };
@@ -106,9 +118,11 @@ export function RewardsClient({ data }: RewardsClientProps) {
       const result = await claimReward(rewardId);
       if (result?.error) {
         setError(result.error);
+        toast.error("Žádost o odměnu se nepodařilo odeslat.", result.error);
         return;
       }
       setActiveTab("claims");
+      toast.success("Žádost o odměnu byla odeslána.");
       router.refresh();
     });
   };
@@ -123,8 +137,14 @@ export function RewardsClient({ data }: RewardsClientProps) {
       const result = await reviewRewardClaim(claimId, nextStatus, note);
       if (result?.error) {
         setError(result.error);
+        toast.error("Žádost se nepodařilo vyřídit.", result.error);
         return;
       }
+      toast.success(
+        nextStatus === "approved"
+          ? "Žádost o odměnu byla schválena."
+          : "Žádost o odměnu byla odmítnuta.",
+      );
       router.refresh();
     });
   };
@@ -262,28 +282,46 @@ export function RewardsClient({ data }: RewardsClientProps) {
         data.rewards.length > 0 ? (
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {data.rewards.map((reward) => (
-              <RewardCard
+              <motion.div
                 key={reward.id}
-                reward={reward}
-                role={data.role}
-                availablePoints={data.stats.availablePoints}
-                pendingClaim={pendingClaimsByRewardId.get(reward.id)}
-                isPending={isPending}
-                onClaim={() => claim(reward.id)}
-                onEdit={() => {
-                  setShowCreateForm(false);
-                  setEditingReward(reward);
-                }}
-                onDelete={() => removeReward(reward.id)}
-              />
+                initial={prefersReducedMotion ? false : "hidden"}
+                animate="visible"
+                variants={fadeInUp}
+              >
+                <RewardCard
+                  reward={reward}
+                  role={data.role}
+                  availablePoints={data.stats.availablePoints}
+                  pendingClaim={pendingClaimsByRewardId.get(reward.id)}
+                  isPending={isPending}
+                  onClaim={() => claim(reward.id)}
+                  onEdit={() => {
+                    setShowCreateForm(false);
+                    setEditingReward(reward);
+                  }}
+                  onDelete={() => removeReward(reward.id)}
+                />
+              </motion.div>
             ))}
           </section>
         ) : (
-          <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.03] px-5 py-10 text-center text-sm text-zinc-400">
-            {data.role === "dom"
-              ? "Zatím nejsou vytvořené žádné odměny."
-              : "Zatím nejsou dostupné žádné odměny."}
-          </div>
+          <EmptyState
+            icon={Gift}
+            title={
+              data.role === "dom"
+                ? "Zatím nejsou vytvořené žádné odměny."
+                : "Zatím nejsou dostupné žádné odměny."
+            }
+            description={
+              data.role === "dom"
+                ? "Vytvoř první odměnu, kterou může SUB získat za dostupné XP."
+                : "Až DOM připraví odměny, zobrazí se tady."
+            }
+            actionLabel={data.role === "dom" ? "Vytvořit odměnu" : undefined}
+            onAction={
+              data.role === "dom" ? () => setShowCreateForm(true) : undefined
+            }
+          />
         )
       ) : null}
 
@@ -293,11 +331,26 @@ export function RewardsClient({ data }: RewardsClientProps) {
           role={data.role}
           isPending={isPending}
           onReview={review}
+          emptyTitle={
+            data.role === "dom"
+              ? "Žádné odměny nečekají na schválení."
+              : "Zatím nemáš žádné čekající žádosti."
+          }
+          emptyDescription={
+            data.role === "dom"
+              ? "Nové žádosti SUBa se zobrazí v této sekci."
+              : "Po získání odměny se žádost přesune sem a bude čekat na schválení."
+          }
         />
       ) : null}
 
       {activeTab === "history" ? (
-        <RewardClaimsPanel claims={historyClaims} role={data.role} />
+        <RewardClaimsPanel
+          claims={historyClaims}
+          role={data.role}
+          emptyTitle="Historie odměn je zatím prázdná."
+          emptyDescription="Schválené a odmítnuté žádosti se zobrazí tady."
+        />
       ) : null}
     </div>
   );

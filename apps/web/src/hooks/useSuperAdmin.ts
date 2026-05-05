@@ -1,27 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { fetchApi } from '../lib/api-client';
+import type { PageAccessAppConfig } from '../types/page-access';
+
+export type SuperAdminUser = {
+  id: string;
+  email?: string | null;
+  role: 'unassigned' | 'sub' | 'dom';
+  app_config?: PageAccessAppConfig | null;
+};
+
+type RevealPasswordResponse = {
+  password: string;
+};
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : 'Neznámá chyba';
+}
 
 export function useSuperAdminUsers() {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<SuperAdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await fetchApi('/superadmin/users');
+      const data = (await fetchApi('/superadmin/users')) as SuperAdminUser[];
       setUsers(data);
       setError(null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    loadUsers();
-  }, []);
+    const timeoutId = setTimeout(() => {
+      void loadUsers();
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [loadUsers]);
 
   return { users, loading, error, refetch: loadUsers };
 }
@@ -44,7 +64,10 @@ export function useClaimUser() {
 export function useUpdateAppConfig() {
   const [loading, setLoading] = useState(false);
 
-  const updateConfig = async (subId: string, app_config: any) => {
+  const updateConfig = async (
+    subId: string,
+    app_config: PageAccessAppConfig,
+  ) => {
     setLoading(true);
     try {
       await fetchApi(`/superadmin/config/${subId}`, {
@@ -65,7 +88,9 @@ export function useRevealPassword() {
   const reveal = async (userId: string) => {
     setLoading(true);
     try {
-      const data = await fetchApi(`/superadmin/vault/reveal/${userId}`);
+      const data = (await fetchApi(
+        `/superadmin/vault/reveal/${userId}`,
+      )) as RevealPasswordResponse;
       return data.password;
     } finally {
       setLoading(false);

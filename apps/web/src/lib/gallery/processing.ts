@@ -1,5 +1,4 @@
 import { execFile } from "node:child_process";
-import { existsSync, readdirSync } from "node:fs";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -40,45 +39,13 @@ function getSafeExtension(filename: string, fallback: string) {
   return extension || fallback;
 }
 
-function getWorkspaceRoots() {
-  const roots = [
-    process.cwd(),
-    process.env.PWD,
-    process.env.INIT_CWD,
-    path.resolve(process.cwd(), ".."),
-    path.resolve(process.cwd(), "../.."),
-    path.resolve(process.cwd(), "../../.."),
-  ];
-
-  return Array.from(new Set(roots.filter((root): root is string => Boolean(root))));
-}
-
-function getPnpmFfmpegCandidates(root: string) {
-  const pnpmDir = path.join(root, "node_modules", ".pnpm");
-  if (!existsSync(pnpmDir)) return [];
-
-  return readdirSync(pnpmDir)
-    .filter((entry) => entry.startsWith("ffmpeg-static@"))
-    .map((entry) => path.join(pnpmDir, entry, "node_modules", "ffmpeg-static", FFMPEG_BINARY));
-}
-
 function getFfmpegPath() {
-  if (cachedFfmpegPath && existsSync(cachedFfmpegPath)) return cachedFfmpegPath;
+  if (cachedFfmpegPath) return cachedFfmpegPath;
 
-  const workspaceRoots = getWorkspaceRoots();
-  const candidates = [
-    typeof ffmpegStatic === "string" ? ffmpegStatic : null,
-    ...workspaceRoots.map((root) => path.join(root, "node_modules", "ffmpeg-static", FFMPEG_BINARY)),
-    ...workspaceRoots.flatMap(getPnpmFfmpegCandidates),
-  ].filter((candidate): candidate is string => Boolean(candidate));
-
-  const found = candidates.find((candidate) => existsSync(candidate));
-  if (!found) {
-    throw new Error(`FFmpeg binary is not available. Checked: ${candidates.join(", ")}`);
-  }
-
-  cachedFfmpegPath = found;
-  return found;
+  const configuredPath = process.env.FFMPEG_PATH?.trim();
+  cachedFfmpegPath =
+    configuredPath || (typeof ffmpegStatic === "string" ? ffmpegStatic : null) || FFMPEG_BINARY;
+  return cachedFfmpegPath;
 }
 
 async function fileToBuffer(file: File) {

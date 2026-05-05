@@ -5,6 +5,7 @@ import { AlertCircle, Award, Calendar, Clock, Eye, Layers3, Loader2, Repeat2, Se
 import { format } from 'date-fns';
 import { cs } from 'date-fns/locale';
 import { submitTask } from '@/actions/tasks';
+import { useToast } from '@/components/shared/useToast';
 import { Task } from '@/types/task';
 import { PriorityBadge, TaskStatusBadge } from './Badges';
 import { EvidenceTab, TaskEvidenceTabs } from './TaskEvidenceTabs';
@@ -20,6 +21,7 @@ type TaskDetailContentProps = {
 };
 
 export function TaskDetailContent({ task, role, titleId, layout = 'popup', onTaskMutated }: TaskDetailContentProps) {
+  const toast = useToast();
   const deadlineDate = task.deadline ? new Date(task.deadline) : null;
   const [activeEvidenceTab, setActiveEvidenceTab] = useState<EvidenceTab>('text');
   const [isSubmitting, startTransition] = useTransition();
@@ -35,9 +37,11 @@ export function TaskDetailContent({ task, role, titleId, layout = 'popup', onTas
       const result = await submitTask(task.id, {});
       if (result?.error) {
         console.error('Task submit failed:', result.error);
+        toast.error('Úkol se nepodařilo odevzdat.', result.error);
         return;
       }
       await onTaskMutated();
+      toast.success('Úkol byl odevzdán ke kontrole.');
     });
   };
 
@@ -196,7 +200,7 @@ export function TaskDetailContent({ task, role, titleId, layout = 'popup', onTas
 
           {showDomApproval ? <DOMApproval taskId={task.id} onTaskMutated={onTaskMutated} /> : null}
 
-          {role === 'dom' ? <DomTaskControls task={task} /> : null}
+          {role === 'dom' ? <DomTaskControls task={task} onTaskMutated={onTaskMutated} /> : null}
 
           {task.dom_feedback ? (
             <div className="rounded-3xl border border-amber-300/20 bg-amber-400/10 p-5">

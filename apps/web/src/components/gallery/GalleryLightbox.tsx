@@ -4,6 +4,7 @@ import { useEffect, useTransition } from "react";
 import { ChevronLeft, ChevronRight, ExternalLink, Heart, Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { setGalleryFavorite } from "@/actions/gallery";
+import { useToast } from "@/components/shared/useToast";
 import type { GalleryMedia, GalleryViewerRole } from "@/types/gallery";
 
 type GalleryLightboxProps = {
@@ -16,6 +17,7 @@ type GalleryLightboxProps = {
 
 export function GalleryLightbox({ media, activeIndex, role, onClose, onNavigate }: GalleryLightboxProps) {
   const router = useRouter();
+  const toast = useToast();
   const [isPending, startTransition] = useTransition();
   const active = media[activeIndex];
   const hasPrevious = activeIndex > 0;
@@ -40,7 +42,17 @@ export function GalleryLightbox({ media, activeIndex, role, onClose, onNavigate 
   const toggleFavorite = () => {
     startTransition(async () => {
       const result = await setGalleryFavorite(active.id, !active.is_favorite);
-      if (!result?.error) router.refresh();
+      if (result?.error) {
+        toast.error("Favourite se nepodařilo uložit.", result.error);
+        return;
+      }
+
+      toast.success(
+        active.is_favorite
+          ? "Médium bylo odebráno z Favourite."
+          : "Médium bylo přidané do Favourite.",
+      );
+      router.refresh();
     });
   };
 

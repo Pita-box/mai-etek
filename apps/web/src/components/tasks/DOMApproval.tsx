@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react';
 import { approveTask, rejectTask } from '@/actions/tasks';
+import { useToast } from '@/components/shared/useToast';
 import { Check, X, Star, ShieldAlert } from 'lucide-react';
 
 export const DOMApproval = ({ taskId, onTaskMutated }: { taskId: string; onTaskMutated: () => Promise<void> }) => {
+  const toast = useToast();
   const [rating, setRating] = useState(3);
   const [feedback, setFeedback] = useState('');
   const [penaltyEnabled, setPenaltyEnabled] = useState(false);
@@ -23,9 +25,13 @@ export const DOMApproval = ({ taskId, onTaskMutated }: { taskId: string; onTaskM
         throw new Error(result.error);
       }
       await onTaskMutated();
+      toast.success('Úkol byl schválen.');
     } catch (e) {
       console.error(e);
-      alert('Chyba při schvalování');
+      toast.error(
+        'Úkol se nepodařilo schválit.',
+        e instanceof Error ? e.message : undefined,
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -33,13 +39,13 @@ export const DOMApproval = ({ taskId, onTaskMutated }: { taskId: string; onTaskM
 
   const handleReject = async () => {
     if (!feedback) {
-      alert('Při zamítnutí je nutné zadat zpětnou vazbu (důvod).');
+      toast.error('Doplň zpětnou vazbu.', 'Při zamítnutí je nutné zadat důvod.');
       return;
     }
 
     const parsedPenalty = parseInt(penaltyPoints, 10);
     if (penaltyEnabled && (!Number.isFinite(parsedPenalty) || parsedPenalty <= 0)) {
-      alert('Body kázeňské penalizace musí být kladné číslo.');
+      toast.error('Penalizace není platná.', 'Body kázeňské penalizace musí být kladné číslo.');
       return;
     }
 
@@ -60,9 +66,13 @@ export const DOMApproval = ({ taskId, onTaskMutated }: { taskId: string; onTaskM
         throw new Error(result.error);
       }
       await onTaskMutated();
+      toast.success('Úkol byl odmítnut.');
     } catch (e) {
       console.error(e);
-      alert('Chyba při zamítání');
+      toast.error(
+        'Úkol se nepodařilo odmítnout.',
+        e instanceof Error ? e.message : undefined,
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -80,6 +90,7 @@ export const DOMApproval = ({ taskId, onTaskMutated }: { taskId: string; onTaskM
               <button
                 key={star}
                 type="button"
+                aria-label={`Nastavit hodnocení ${star} z 5`}
                 onClick={() => setRating(star)}
                 className={`p-1 transition-colors ${rating >= star ? 'text-yellow-400' : 'text-gray-600'}`}
               >
@@ -142,16 +153,18 @@ export const DOMApproval = ({ taskId, onTaskMutated }: { taskId: string; onTaskM
 
         <div className="flex gap-4 pt-4">
           <button
+            type="button"
             onClick={handleApprove}
             disabled={isSubmitting}
-            className="flex-1 flex items-center justify-center gap-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 font-semibold py-3 px-4 rounded-lg hover:bg-emerald-500/30 transition-colors disabled:opacity-50"
+            className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-emerald-500/50 bg-emerald-500/20 px-4 py-3 font-semibold text-emerald-400 transition-colors hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Check className="w-5 h-5" /> Schválit úkol
           </button>
           <button
+            type="button"
             onClick={handleReject}
             disabled={isSubmitting}
-            className="flex-1 flex items-center justify-center gap-2 bg-red-500/20 text-red-400 border border-red-500/50 font-semibold py-3 px-4 rounded-lg hover:bg-red-500/30 transition-colors disabled:opacity-50"
+            className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-red-500/50 bg-red-500/20 px-4 py-3 font-semibold text-red-400 transition-colors hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <X className="w-5 h-5" /> Odmítnout úkol
           </button>

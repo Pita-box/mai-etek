@@ -3,6 +3,7 @@
 import { ChangeEvent, useMemo, useRef, useState } from 'react';
 import { CheckCircle2, Image as ImageIcon, Loader2, UploadCloud, Video, X } from 'lucide-react';
 import { uploadTaskMedia } from '@/actions/tasks';
+import { useToast } from '@/components/shared/useToast';
 import {
   formatTaskMediaBytes,
   getTaskMediaBatchSizeError,
@@ -15,6 +16,7 @@ import {
 type TaskMediaUploadProps = {
   taskId: string;
   mediaType: 'image' | 'video';
+  onUploaded?: () => Promise<void>;
 };
 
 type QueuedFileStatus = 'ready' | 'uploading' | 'uploaded' | 'error';
@@ -46,7 +48,8 @@ function createQueuedFile(file: File): QueuedFile {
   };
 }
 
-export function TaskMediaUpload({ taskId, mediaType }: TaskMediaUploadProps) {
+export function TaskMediaUpload({ taskId, mediaType, onUploaded }: TaskMediaUploadProps) {
+  const toast = useToast();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [files, setFiles] = useState<QueuedFile[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -93,8 +96,16 @@ export function TaskMediaUpload({ taskId, mediaType }: TaskMediaUploadProps) {
 
   const submit = async () => {
     if (!canUpload) {
-      if (batchTooLarge) setError(getTaskMediaBatchSizeError());
-      if (hasInvalidFiles) setError('Některé soubory nesplňují požadavky. Odeber je a zkus to znovu.');
+      if (batchTooLarge) {
+        const message = getTaskMediaBatchSizeError();
+        setError(message);
+        toast.error('Nahrávání se nedá spustit.', message);
+      }
+      if (hasInvalidFiles) {
+        const message = 'Některé soubory nesplňují požadavky. Odeber je a zkus to znovu.';
+        setError(message);
+        toast.error('Nahrávání se nedá spustit.', message);
+      }
       return;
     }
 
@@ -128,11 +139,16 @@ export function TaskMediaUpload({ taskId, mediaType }: TaskMediaUploadProps) {
 
     if (uploadedCount > 0) {
       setFiles((current) => current.filter((entry) => entry.status === 'error'));
-      setSuccess(uploadedCount === 1 ? 'Soubor byl nahrán a uložen k úkolu.' : `${uploadedCount} souborů bylo nahráno a uloženo k úkolu.`);
+      const message = uploadedCount === 1 ? 'Soubor byl nahrán a uložen k úkolu.' : `${uploadedCount} souborů bylo nahráno a uloženo k úkolu.`;
+      setSuccess(message);
+      toast.success(uploadedCount === 1 ? 'Soubor byl nahrán.' : `${uploadedCount} souborů bylo nahráno.`);
+      await onUploaded?.();
     }
 
     if (uploadedCount < files.length) {
-      setError('Některé soubory se nepodařilo nahrát. Zkontroluj chyby u souborů.');
+      const message = 'Některé soubory se nepodařilo nahrát. Zkontroluj chyby u souborů.';
+      setError(message);
+      toast.error('Nahrávání nebylo kompletní.', message);
     }
   };
 

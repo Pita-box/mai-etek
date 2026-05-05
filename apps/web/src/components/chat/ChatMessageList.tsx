@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Loader2, MessageSquareText, ChevronDown } from 'lucide-react';
+import { EmptyState } from '@/components/shared/EmptyState';
 import type { ChatMessageItem } from '@/types/chat';
 import { ChatMessageBubble } from './ChatMessageBubble';
 import { ChatState } from './ChatState';
@@ -92,7 +93,11 @@ export function ChatMessageList({
   // Initial scroll na konec
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'instant' });
-    syncAtBottomState(true);
+    const frame = requestAnimationFrame(() => {
+      syncAtBottomState(true);
+    });
+
+    return () => cancelAnimationFrame(frame);
   }, [syncAtBottomState]);
 
   const readCurrentScrollState = useCallback(() => {
@@ -153,18 +158,19 @@ export function ChatMessageList({
     return (
       <div className="flex flex-1 items-center justify-center p-6">
         {isSearchMode ? (
-          <ChatState
-            title={searchError ? "Hledání selhalo" : "Nic jsem nenašel"}
+          <EmptyState
+            icon={MessageSquareText}
+            title={searchError ? "Hledání selhalo" : "V chatu není žádná shoda"}
             description={searchError || `Pro výraz „${searchQuery.trim()}” není v chatu žádná shoda.`}
-            icon={<MessageSquareText className="h-6 w-6" />}
-            tone={searchError ? "error" : "default"}
+            variant={searchError ? "danger" : "compact"}
             className="min-h-[280px]"
           />
         ) : (
-          <ChatState
-            title="Konverzace je zatím prázdná"
-            description="Pošli první zprávu a otevři bezpečný komunikační kanál."
-            icon={<MessageSquareText className="h-6 w-6" />}
+          <EmptyState
+            icon={MessageSquareText}
+            title="Konverzace zatím čeká na první zprávu"
+            description="Pošli první zprávu a otevři soukromý komunikační kanál."
+            variant="compact"
             className="min-h-[280px]"
           />
         )}

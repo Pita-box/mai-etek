@@ -53,10 +53,14 @@ export function ChatMessageBubble({
   const hasHeart = Boolean(heartReaction?.reactedByViewer)
   const heartCount = heartReaction?.count ?? 0
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!onDelete || !confirm("Opravdu chcete smazat tuto zprávu?")) return
     setIsDeleting(true)
-    onDelete()
+    try {
+      await onDelete()
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   const handleToggleHeart = async () => {
@@ -162,7 +166,8 @@ export function ChatMessageBubble({
                 onClick={handleDelete}
                 disabled={isDeleting}
                 className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all text-slate-500 hover:text-rose-400"
-                title="Smazat zprávu">
+                title="Smazat zprávu"
+                aria-label="Smazat zprávu">
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             )}
@@ -218,6 +223,7 @@ export function ChatMessageBubble({
               <button
                 type="button"
                 onClick={onReply}
+                aria-label="Odpovědět na zprávu"
                 className="inline-flex h-7 cursor-pointer items-center gap-1 rounded-full border border-white/10 bg-black/30 px-2 text-[11px] text-slate-400 transition-all duration-400 hover:border-primary/30 hover:bg-primary/10 hover:text-primary"
                 title="Odpovědět"
               >
@@ -229,6 +235,7 @@ export function ChatMessageBubble({
                 type="button"
                 onClick={handleToggleHeart}
                 disabled={isReacting}
+                aria-label={hasHeart ? "Odebrat srdce" : "Dát srdce"}
                 className={cn(
                   "inline-flex h-7 cursor-pointer items-center gap-1 rounded-full border px-2 text-[11px] transition-all duration-400 disabled:cursor-not-allowed disabled:opacity-60",
                   hasHeart

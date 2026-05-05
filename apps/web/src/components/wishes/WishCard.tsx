@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { deleteWish, updateWish } from "@/actions/wishes";
+import { useToast } from "@/components/shared/useToast";
 import type { Wish, WishStatus, WishViewerRole } from "@/types/wish";
 import { WishDomControls } from "./WishDomControls";
 import { WishForm } from "./WishForm";
@@ -58,6 +59,7 @@ function isEditableStatus(status: WishStatus) {
 
 export function WishCard({ wish, role }: WishCardProps) {
   const router = useRouter();
+  const toast = useToast();
   const cardRef = useRef<HTMLElement | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,9 +74,11 @@ export function WishCard({ wish, role }: WishCardProps) {
       const result = await updateWish(wish.id, formData);
       if (result?.error) {
         setError(result.error);
+        toast.error("Přání se nepodařilo uložit.", result.error);
         return;
       }
       setIsEditing(false);
+      toast.success("Přání bylo uloženo.");
       router.refresh();
     });
   };
@@ -87,8 +91,10 @@ export function WishCard({ wish, role }: WishCardProps) {
       const result = await deleteWish(wish.id);
       if (result?.error) {
         setError(result.error);
+        toast.error("Přání se nepodařilo smazat.", result.error);
         return;
       }
+      toast.success("Přání bylo smazáno.");
       router.refresh();
     });
   };

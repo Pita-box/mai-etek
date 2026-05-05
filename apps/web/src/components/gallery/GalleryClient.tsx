@@ -15,6 +15,7 @@ import {
   bulkSetGalleryFavorite,
 } from "@/actions/gallery";
 import { markPageNotificationsRead } from "@/actions/notifications";
+import { useToast } from "@/components/shared/useToast";
 import type {
   GalleryFilter,
   GalleryMedia,
@@ -33,6 +34,7 @@ type GalleryClientProps = {
 
 export function GalleryClient({ media, role }: GalleryClientProps) {
   const router = useRouter();
+  const toast = useToast();
   const dragDepthRef = useRef(0);
   const uploadRef = useRef<GalleryUploadHandle | null>(null);
   const [filter, setFilter] = useState<GalleryFilter>("all");
@@ -62,6 +64,21 @@ export function GalleryClient({ media, role }: GalleryClientProps) {
   }, [filter, media]);
 
   const selectedCount = selectedIds.size;
+  const emptyState = useMemo(() => {
+    if (media.length === 0) {
+      return {
+        title: "Galerie zatím neobsahuje žádné soubory",
+        description: "Nahraj první fotku nebo video a galerie se začne plnit.",
+        actionLabel: "Vybrat soubory",
+      };
+    }
+
+    return {
+      title: "Žádné médium neodpovídá aktuálním filtrům",
+      description: "Zkus jiný filtr nebo nahraj nové médium.",
+      actionLabel: "Vybrat soubory",
+    };
+  }, [media.length]);
 
   useEffect(() => {
     void markPageNotificationsRead("gallery");
@@ -93,9 +110,15 @@ export function GalleryClient({ media, role }: GalleryClientProps) {
       const result = await bulkSetGalleryFavorite(ids, isFavorite);
       if (result?.error) {
         setError(result.error);
+        toast.error("Favourite se nepodařilo uložit.", result.error);
         return;
       }
       clearSelection();
+      toast.success(
+        isFavorite
+          ? `${ids.length} médií bylo přidaných do Favourite.`
+          : `${ids.length} médií bylo odebraných z Favourite.`,
+      );
       router.refresh();
     });
   };
@@ -110,10 +133,16 @@ export function GalleryClient({ media, role }: GalleryClientProps) {
       const result = await bulkDeleteGalleryMedia(ids);
       if (result?.error) {
         setError(result.error);
+        toast.error("Média se nepodařilo smazat.", result.error);
         return;
       }
       clearSelection();
       setActiveIndex(null);
+      toast.success(
+        ids.length === 1
+          ? "Médium bylo smazáno."
+          : `${ids.length} médií bylo smazáno.`,
+      );
       router.refresh();
     });
   };
@@ -262,6 +291,10 @@ export function GalleryClient({ media, role }: GalleryClientProps) {
           role={role}
           selectedIds={selectedIds}
           isPending={isPending}
+          emptyTitle={emptyState.title}
+          emptyDescription={emptyState.description}
+          emptyActionLabel={emptyState.actionLabel}
+          onEmptyAction={() => uploadRef.current?.openFilePicker()}
           onOpen={setActiveIndex}
           onToggleSelected={toggleSelected}
         />

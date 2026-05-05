@@ -4,6 +4,7 @@ import { ChangeEvent, useMemo, useRef, useState } from "react";
 import { CheckCircle2, Image as ImageIcon, Loader2, UploadCloud, Video, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { uploadWishMedia } from "@/actions/wishes";
+import { useToast } from "@/components/shared/useToast";
 import {
   formatWishMediaBytes,
   getWishMediaBatchSizeError,
@@ -51,6 +52,7 @@ function getFileError(file: File) {
 
 export function WishMediaUpload({ wishId }: WishMediaUploadProps) {
   const router = useRouter();
+  const toast = useToast();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [files, setFiles] = useState<QueuedFile[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -91,8 +93,11 @@ export function WishMediaUpload({ wishId }: WishMediaUploadProps) {
 
   const submit = async () => {
     if (!canUpload) {
-      if (batchTooLarge) setError(getWishMediaBatchSizeError());
-      if (hasInvalidFiles) setError("Některé soubory nesplňují požadavky.");
+      const validationError = batchTooLarge
+        ? getWishMediaBatchSizeError()
+        : "Některé soubory nesplňují požadavky.";
+      setError(validationError);
+      toast.error("Nahrávání se nepodařilo spustit.", validationError);
       return;
     }
 
@@ -140,12 +145,19 @@ export function WishMediaUpload({ wishId }: WishMediaUploadProps) {
 
     if (uploadedCount > 0) {
       setFiles((current) => current.filter((entry) => entry.status === "error"));
-      setSuccess(uploadedCount === 1 ? "Soubor byl nahrán." : `${uploadedCount} souborů bylo nahráno.`);
+      const successMessage =
+        uploadedCount === 1
+          ? "Soubor byl nahrán."
+          : `${uploadedCount} souborů bylo nahráno.`;
+      setSuccess(successMessage);
+      toast.success(successMessage);
       router.refresh();
     }
 
     if (uploadedCount < files.length) {
-      setError("Některé soubory se nepodařilo nahrát.");
+      const uploadError = "Některé soubory se nepodařilo nahrát.";
+      setError(uploadError);
+      toast.error("Nahrávání nebylo kompletní.", uploadError);
     }
   };
 
