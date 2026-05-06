@@ -16,6 +16,8 @@ Tento dokument popisuje prvni produkcni cil pro Phase 6. Realny deploy se nespou
 ```env
 NEXT_PUBLIC_API_URL=https://maietek.maiweb.zip/api
 INTERNAL_API_URL=http://server:4000/api
+NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=<base64-32-byte-key>
+NEXT_DEPLOYMENT_ID=<deployment-version>
 ```
 
 Chat funguje pres stejnou subdomenu jen tehdy, kdyz sdileny reverse proxy smeruje pouze Express cesty na `apps/server` a nenecha spolknout Next API routy pro media a cron.
@@ -36,6 +38,8 @@ NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase-anon-key>
 SUPABASE_SERVICE_KEY=<supabase-service-role-key>
 CRON_SECRET=<strong-random-cron-secret>
+NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=<base64-32-byte-key>
+NEXT_DEPLOYMENT_ID=<deployment-version>
 GOOGLE_DRIVE_ROOT_FOLDER_ID=<google-drive-root-folder-id>
 GOOGLE_DRIVE_OAUTH_CLIENT_ID=<google-oauth-client-id>
 GOOGLE_DRIVE_OAUTH_CLIENT_SECRET=<google-oauth-client-secret>
@@ -121,7 +125,9 @@ Produkce zamerne neobsahuje MinIO ani lokalni PostgreSQL. Databaze zustava v Sup
 
 Env hodnoty se predavaji pres shell environment nebo `.env` soubor na serveru. Jako vychozi seznam slouzi `.env.example`; skutecne hodnoty nepatri do repozitare.
 
-`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SUPABASE_URL` a `NEXT_PUBLIC_SUPABASE_ANON_KEY` se predavaji i jako Docker build args pro `web`, protoze Next.js je potrebuje uz pri buildu klienta.
+`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` a `NEXT_DEPLOYMENT_ID` se predavaji i jako Docker build args pro `web`, protoze Next.js je potrebuje uz pri buildu klienta.
+
+`NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` musi zustat stabilni mezi buildy. Vygeneruj ho jednou pres `openssl rand -base64 32` a nemen pri beznych deployich. `NEXT_DEPLOYMENT_ID` naopak nastavuj pro kazdy release, napr. na `git rev-parse --short HEAD`, aby Next dokazal detekovat version skew a klient nevolal stare Server Actions po novem deployi.
 
 ## DNS a SSL
 

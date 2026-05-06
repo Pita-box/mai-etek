@@ -125,6 +125,38 @@ git clone <TVUJ_REPO_URL> maietek
 cd /opt/apps/maietek
 ```
 
+## Pull Github new commits
+
+cd /opt/apps
+sudo chown -R ubuntu:ubuntu /opt/apps/maietek
+
+cd /opt/apps/maietek
+git pull
+
+## CHYBA:
+
+error: Your local changes to the following files would be overwritten by merge:
+.env
+Please commit your changes or stash them before you merge.
+Aborting
+
+## FIX:
+
+cd /opt/apps/maietek
+
+cp .env /opt/apps/maietek.env.backup
+chmod 600 /opt/apps/maietek.env.backup
+
+git restore -- .env
+git pull
+
+cp /opt/apps/maietek.env.backup .env
+chmod 600 .env
+
+## CHECK GOOGLE VARIABLE for example:
+
+docker compose -f docker-compose.prod.yml config | grep -E 'GOOGLE_DRIVE_ROOT_FOLDER_ID|INTERNAL_API_URL|NEXT_PUBLIC_API_URL'
+
 ## 7. Produkcni env soubor
 
 ```bash
@@ -144,6 +176,8 @@ NEXT_PUBLIC_APP_URL=https://maietek.maiweb.zip
 NEXT_PUBLIC_SITE_URL=https://maietek.maiweb.zip
 TASK_CRON_BASE_URL=https://maietek.maiweb.zip
 WEB_BUILD_NODE_OPTIONS=--max-old-space-size=3072
+NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=...
+NEXT_DEPLOYMENT_ID=...
 
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
@@ -177,16 +211,32 @@ Pouzij pro:
 - `JWT_SECRET`
 - `CRON_SECRET`
 
+Next Server Actions key musi byt base64 AES key:
+
+```bash
+openssl rand -base64 32
+```
+
+Pouzij pro:
+
+- `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY`
+
+`NEXT_DEPLOYMENT_ID` nastav pri kazdem deployi na aktualni git commit, aby se klientovi nepletly stare a nove Server Actions:
+
+```bash
+export NEXT_DEPLOYMENT_ID=$(git rev-parse --short HEAD)
+```
+
 Po zmene `.env` vzdy zkontroluj, ze hodnoty vidi i Docker Compose:
 
 ```bash
-docker compose -f docker-compose.prod.yml config | grep -E 'GOOGLE_DRIVE_ROOT_FOLDER_ID|INTERNAL_API_URL|NEXT_PUBLIC_API_URL|NEXT_PUBLIC_SUPABASE_URL|SUPABASE_URL'
+docker compose -f docker-compose.prod.yml config | grep -E 'GOOGLE_DRIVE_ROOT_FOLDER_ID|INTERNAL_API_URL|NEXT_PUBLIC_API_URL|NEXT_PUBLIC_SUPABASE_URL|SUPABASE_URL|NEXT_SERVER_ACTIONS_ENCRYPTION_KEY|NEXT_DEPLOYMENT_ID'
 ```
 
 Po restartu over hodnoty primo v bezicich kontejnerech bez vypsani secretu:
 
 ```bash
-docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID GOOGLE_DRIVE_OAUTH_CLIENT_ID GOOGLE_DRIVE_OAUTH_CLIENT_SECRET GOOGLE_DRIVE_OAUTH_REFRESH_TOKEN INTERNAL_API_URL NEXT_PUBLIC_API_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
+docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID GOOGLE_DRIVE_OAUTH_CLIENT_ID GOOGLE_DRIVE_OAUTH_CLIENT_SECRET GOOGLE_DRIVE_OAUTH_REFRESH_TOKEN INTERNAL_API_URL NEXT_PUBLIC_API_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY NEXT_SERVER_ACTIONS_ENCRYPTION_KEY NEXT_DEPLOYMENT_ID; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
 
 docker compose -f docker-compose.prod.yml exec server sh -lc 'for key in SUPABASE_URL SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY JWT_SECRET REDIS_URL; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
 ```
