@@ -12,6 +12,7 @@ import {
   MONITORING_HEARTBEAT_INTERVAL_SECONDS,
   MONITORING_PAIRING_CODE_TTL_MINUTES,
 } from "@/lib/monitoring/constants"
+import { createAdminClient } from "@/utils/supabase/admin"
 import { createClient } from "@/utils/supabase/server"
 import type {
   MonitoringData,
@@ -26,6 +27,7 @@ import type {
 import { deleteMonitoringDriveFile } from "@/lib/google-drive/monitoring"
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
+type SupabaseQueryClient = Pick<SupabaseServerClient, "from">
 
 type ProfileRow = {
   id: string
@@ -144,7 +146,7 @@ async function getMonitoringContext(supabase: SupabaseServerClient) {
 }
 
 async function getSubAccounts(
-  supabase: SupabaseServerClient,
+  supabase: SupabaseQueryClient,
   domId: string,
 ): Promise<MonitoringSubAccount[]> {
   const { data, error } = await supabase
@@ -333,7 +335,7 @@ function normalizeScreenshotRow(
 }
 
 async function getMonitoringEvents(
-  supabase: SupabaseServerClient,
+  supabase: SupabaseQueryClient,
   domId: string,
 ) {
   const events: MonitoringEventRow[] = []
@@ -376,11 +378,12 @@ export async function getMonitoringData(): Promise<
     return { error: contextError || "Nepodařilo se načíst monitoring." }
   }
 
-  const subAccounts = await getSubAccounts(supabase, context.userId)
+  const readClient = createAdminClient()
+  const subAccounts = await getSubAccounts(readClient, context.userId)
   const subNamesById = new Map(subAccounts.map((sub) => [sub.id, sub.name]))
 
   const [pairingCodesResult, devicesResult, eventsResult] = await Promise.all([
-    supabase
+    readClient
       .from("monitoring_pairing_codes")
       .select(
         "id, sub_id, display_code, expires_at, used_at, revoked_at, created_at",
@@ -388,14 +391,14 @@ export async function getMonitoringData(): Promise<
       .eq("dom_id", context.userId)
       .order("created_at", { ascending: false })
       .limit(20),
-    supabase
+    readClient
       .from("monitoring_devices")
       .select(
         "id, sub_id, name, paired_at, last_heartbeat_at, last_seen_at, extension_version, sync_status, pending_items, last_error, revoked_at",
       )
       .eq("dom_id", context.userId)
       .order("created_at", { ascending: false }),
-    getMonitoringEvents(supabase, context.userId),
+    getMonitoringEvents(readClient, context.userId),
   ])
 
   if (pairingCodesResult.error) {

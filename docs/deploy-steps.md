@@ -144,7 +144,10 @@ if test -f .env; then
 fi
 
 git status --short
-git pull
+if ! git pull; then
+  git restore -- .env
+  git pull
+fi
 
 if test -f /opt/apps/maietek.env.backup; then
   test -f .env || cp /opt/apps/maietek.env.backup .env
@@ -470,7 +473,10 @@ cp .env /opt/apps/maietek.env.backup
 chmod 600 /opt/apps/maietek.env.backup
 
 git status --short
-git pull
+if ! git pull; then
+  git restore -- .env
+  git pull
+fi
 
 test -f .env || cp /opt/apps/maietek.env.backup .env
 chmod 600 .env
