@@ -15,9 +15,11 @@ Tento dokument popisuje prvni produkcni cil pro Phase 6. Realny deploy se nespou
 
 ```env
 NEXT_PUBLIC_API_URL=https://maietek.maiweb.zip/api
+INTERNAL_API_URL=http://server:4000/api
 ```
 
 Chat funguje pres stejnou subdomenu jen tehdy, kdyz sdileny reverse proxy smeruje pouze Express cesty na `apps/server` a nenecha spolknout Next API routy pro media a cron.
+Server-side chat akce ve web kontejneru pouzivaji `INTERNAL_API_URL`, aby pri Docker deployi nemusely obchazet pres Cloudflare.
 
 ## Env rozdeleni
 
@@ -29,6 +31,7 @@ Chat funguje pres stejnou subdomenu jen tehdy, kdyz sdileny reverse proxy smeruj
 NODE_ENV=production
 SITE_URL=https://maietek.maiweb.zip
 NEXT_PUBLIC_API_URL=https://maietek.maiweb.zip/api
+INTERNAL_API_URL=http://server:4000/api
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase-anon-key>
 SUPABASE_SERVICE_KEY=<supabase-service-role-key>
@@ -154,6 +157,8 @@ Sdileny host Nginx musi routovat:
 
 Toto rozdeleni je dulezite, protoze Next app ma vlastni `/api/*` routy pro media proxy a cron endpointy. Hlavne neposilat cele `/api/chat/*` do Expressu, protoze `/api/chat/media/*` patri Next media proxy.
 
+Pokud je Cloudflare v rezimu `Proxied`, `/socket.io/`, `/api/*` a `/health` musi mit cache bypass. Socket.IO handshake nesmi vracet `cf-cache-status: HIT`, jinak klienti muzou dostat stary session id a realtime bude nestabilni.
+
 ## Cron
 
 Cron routy jsou na web runtime a chrani je `CRON_SECRET`. Secret se nacita z env, nepatri primo do crontabu.
@@ -176,6 +181,7 @@ CRON_SECRET=<strong-random-cron-secret>
 ```bash
 curl -I https://maietek.maiweb.zip
 curl https://maietek.maiweb.zip/health
+curl -i 'https://maietek.maiweb.zip/socket.io/?EIO=4&transport=polling&t=smoke1'
 node scripts/run-task-cron.mjs expire
 ```
 

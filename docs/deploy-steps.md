@@ -139,6 +139,7 @@ NODE_ENV=production
 SITE_URL=https://maietek.maiweb.zip
 WEB_URL=https://maietek.maiweb.zip
 NEXT_PUBLIC_API_URL=https://maietek.maiweb.zip/api
+INTERNAL_API_URL=http://server:4000/api
 NEXT_PUBLIC_APP_URL=https://maietek.maiweb.zip
 NEXT_PUBLIC_SITE_URL=https://maietek.maiweb.zip
 TASK_CRON_BASE_URL=https://maietek.maiweb.zip
@@ -176,13 +177,32 @@ Pouzij pro:
 - `JWT_SECRET`
 - `CRON_SECRET`
 
-## 8. Docker compose kontrola a build
+Po zmene `.env` vzdy zkontroluj, ze hodnoty vidi i Docker Compose:
 
 ```bash
-docker compose -f docker-compose.prod.yml config
-docker compose -f docker-compose.prod.yml build
-docker compose -f docker-compose.prod.yml up -d
-docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml config | grep -E 'GOOGLE_DRIVE_ROOT_FOLDER_ID|INTERNAL_API_URL|NEXT_PUBLIC_API_URL|NEXT_PUBLIC_SUPABASE_URL|SUPABASE_URL'
+```
+
+Po restartu over hodnoty primo v bezicich kontejnerech bez vypsani secretu:
+
+```bash
+docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID GOOGLE_DRIVE_OAUTH_CLIENT_ID GOOGLE_DRIVE_OAUTH_CLIENT_SECRET GOOGLE_DRIVE_OAUTH_REFRESH_TOKEN INTERNAL_API_URL NEXT_PUBLIC_API_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
+
+docker compose -f docker-compose.prod.yml exec server sh -lc 'for key in SUPABASE_URL SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY JWT_SECRET REDIS_URL; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
+```
+
+## 8. Docker compose kontrola a build
+
+## spustění build
+
+```bash
+cd /opt/apps/maietek
+
+sudo docker compose -f docker-compose.prod.yml config
+sudo docker compose -f docker-compose.prod.yml build
+sudo docker compose -f docker-compose.prod.yml up -d
+sudo docker compose -f docker-compose.prod.yml ps
+
 ```
 
 Pokud Docker build spadne na `Cannot find module '/app/scripts/ensure-pnpm.js'`, stahni posledni verzi repozitare a rebuildni image:
@@ -259,7 +279,23 @@ nginx -t
 systemctl reload nginx
 ```
 
-## 11. Jak musi byt routovany provoz
+## 11. Cloudflare cache pravidlo
+
+Realtime a backend API nesmi byt cachovane na Cloudflare. V `Rules` -> `Cache Rules` vytvor pravidlo pro `maietek.maiweb.zip`:
+
+```text
+(http.host eq "maietek.maiweb.zip" and (starts_with(http.request.uri.path, "/socket.io/") or starts_with(http.request.uri.path, "/api/") or http.request.uri.path eq "/health"))
+```
+
+Akce:
+
+```text
+Bypass cache
+```
+
+Toto pravidlo dej nad pripadna obecna cache pravidla pro web.
+
+## 12. Jak musi byt routovany provoz
 
 Sdileny Nginx musi routovat:
 
@@ -276,14 +312,17 @@ To je dulezite, protoze:
 - Next obsluhuje media proxy a cron routy
 - cele `/api/chat/*` se nesmi posilat do Expressu, protoze `/api/chat/media/*` patri Next appce
 
-## 12. Verejny smoke test
+## 13. Verejny smoke test
 
 Z VPS nebo z lokalniho pocitace:
 
 ```bash
 curl -I https://maietek.maiweb.zip
 curl https://maietek.maiweb.zip/health
+curl -i 'https://maietek.maiweb.zip/socket.io/?EIO=4&transport=polling&t=smoke1'
 ```
+
+U `/socket.io/` cekej `HTTP/2 200`, telo zacinajici `0{...}` a `cf-cache-status` nema byt `HIT`.
 
 Pak rucne v prohlizeci over:
 
@@ -296,7 +335,7 @@ Pak rucne v prohlizeci over:
 - chat realtime pripojeni
 - tasky
 
-## 13. Cron kontrola
+## 14. Cron kontrola
 
 ```bash
 node scripts/run-task-cron.mjs expire
@@ -306,7 +345,7 @@ node scripts/run-task-cron.mjs monitoring-cleanup
 
 Pokud budou bezet z cronu mimo kontejner, spoustej je z rootu projektu, kde lezi `.env`.
 
-## 14. Aktualizace po dalsim release
+## 15. Aktualizace po dalsim release
 
 ```bash
 cd /opt/apps/maietek
@@ -316,7 +355,7 @@ docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml ps
 ```
 
-## 15. Rychly troubleshooting
+## 16. Rychly troubleshooting
 
 Backend nebezi:
 
@@ -345,9 +384,10 @@ Cloudflare / SSL problem:
 - over, ze Cloudflare zustal v `Full (strict)`
 - over, ze origin cert odpovida `maietek.maiweb.zip`
 
-## 16. Co nedelat
+## 17. Co nedelat
 
 - nedavat Maietek vlastni Nginx kontejner na `80/443`, kdyz na VPS pobezi vic aplikaci
 - neposilat cele `/api/*` nebo cele `/api/chat/*` do Expressu
+- necachovat `/socket.io/`, `/api/*` ani `/health` na Cloudflare
 - neukladat realne secrety do gitu
 - nepouzivat stare nebo revokovane Google OAuth hodnoty

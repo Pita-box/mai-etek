@@ -21,6 +21,7 @@ services:
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://maietek.maiweb.zip}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://maietek.maiweb.zip}
       TASK_CRON_BASE_URL: ${TASK_CRON_BASE_URL:-https://maietek.maiweb.zip}
+      INTERNAL_API_URL: ${INTERNAL_API_URL:-http://server:4000/api}
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://maietek.maiweb.zip/api}
       NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}

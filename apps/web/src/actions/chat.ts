@@ -13,11 +13,12 @@ import type {
 } from '@maietek/types';
 import { createClient } from '@/utils/supabase/server';
 import { uploadChatFileToDrive } from '@/lib/google-drive/chat';
-import { getApiBaseUrl } from '@/lib/api-url';
+import { getServerApiBaseUrl } from '@/lib/server-api-url';
 import type { ChatMessageItem, SendChatMessageInput } from '@/types/chat';
 
 const CHAT_MEDIA_MAX_BYTES = 50 * 1024 * 1024;
 const CHAT_THUMBNAIL_MAX_BYTES = 5 * 1024 * 1024;
+const CHAT_API_TIMEOUT_MS = 15_000;
 
 async function fetchChatApi<T>(endpoint: string, accessToken: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers);
@@ -27,10 +28,11 @@ async function fetchChatApi<T>(endpoint: string, accessToken: string, options: R
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(`${getApiBaseUrl()}${endpoint}`, {
+  const response = await fetch(`${getServerApiBaseUrl()}${endpoint}`, {
     ...options,
     headers,
     cache: 'no-store',
+    signal: options.signal ?? AbortSignal.timeout(CHAT_API_TIMEOUT_MS),
   });
 
   if (!response.ok) {
