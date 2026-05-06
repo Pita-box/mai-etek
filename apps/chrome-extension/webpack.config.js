@@ -71,6 +71,21 @@ function getApiConfig() {
   }
 
   const url = new URL(apiBaseUrl)
+  const isProductionBuild =
+    process.env.NODE_ENV === "production" ||
+    process.argv.includes("production") ||
+    process.argv.includes("--mode=production")
+
+  if (
+    isProductionBuild &&
+    ["localhost", "127.0.0.1", "::1"].includes(url.hostname) &&
+    env.ALLOW_LOCAL_EXTENSION_API !== "true"
+  ) {
+    throw new Error(
+      "Production extension build nesmi pouzit localhost API. Nastav EXTENSION_API_BASE_URL=https://maietek.maiweb.zip/api.",
+    )
+  }
+
   return {
     apiBaseUrl: apiBaseUrl.replace(/\/+$/, ""),
     apiOrigin: url.origin,

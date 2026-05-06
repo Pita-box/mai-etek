@@ -11,7 +11,7 @@
     "service_worker": "background.js"
   },
   "permissions": ["storage", "alarms", "tabs", "activeTab"],
-  "host_permissions": ["http://localhost:3000/*", "http://*/*", "https://*/*"],
+  "host_permissions": ["https://maietek.maiweb.zip/*", "http://*/*", "https://*/*"],
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],

@@ -170,9 +170,9 @@ Pokud je Cloudflare v rezimu `Proxied`, `/socket.io/`, `/api/*` a `/health` musi
 Cron routy jsou na web runtime a chrani je `CRON_SECRET`. Secret se nacita z env, nepatri primo do crontabu.
 
 ```bash
-node scripts/run-task-cron.mjs expire
-node scripts/run-task-cron.mjs recurring
-node scripts/run-task-cron.mjs monitoring-cleanup
+docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs expire
+docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs recurring
+docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs monitoring-cleanup
 ```
 
 Produkce:
@@ -182,13 +182,29 @@ TASK_CRON_BASE_URL=https://maietek.maiweb.zip
 CRON_SECRET=<strong-random-cron-secret>
 ```
 
+## Chrome Extension
+
+Production extension build musi mit explicitni API URL:
+
+```env
+EXTENSION_API_BASE_URL=https://maietek.maiweb.zip/api
+```
+
+Build:
+
+```bash
+pnpm --filter chrome-extension build
+```
+
+Do Chrome nacitej `apps/chrome-extension/dist`. Po kazdem rebuildu klikni v `chrome://extensions` na reload u unpacked extension, jinak muze zustat bezet stary service worker s puvodni API URL.
+
 ## Smoke test po nasazeni
 
 ```bash
 curl -I https://maietek.maiweb.zip
 curl https://maietek.maiweb.zip/health
 curl -i 'https://maietek.maiweb.zip/socket.io/?EIO=4&transport=polling&t=smoke1'
-node scripts/run-task-cron.mjs expire
+docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs expire
 ```
 
 Rucne overit:

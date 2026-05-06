@@ -125,23 +125,36 @@ git clone <TVUJ_REPO_URL> maietek
 cd /opt/apps/maietek
 ```
 
-## Pull Github new commits
+Pokud jsi projekt naklonoval jako `root`, ale deploy bude delat uzivatel `ubuntu`, srovnej vlastnictvi:
 
+```bash
 cd /opt/apps
 sudo chown -R ubuntu:ubuntu /opt/apps/maietek
+```
 
+## 6.1 Pull novych commitu
+
+Bezpecny zaklad pro kazdy dalsi pull:
+
+```bash
 cd /opt/apps/maietek
+if test -f .env; then
+  cp .env /opt/apps/maietek.env.backup
+  chmod 600 /opt/apps/maietek.env.backup
+fi
+
+git status --short
 git pull
 
-## CHYBA:
+if test -f /opt/apps/maietek.env.backup; then
+  test -f .env || cp /opt/apps/maietek.env.backup .env
+  chmod 600 .env
+fi
+```
 
-error: Your local changes to the following files would be overwritten by merge:
-.env
-Please commit your changes or stash them before you merge.
-Aborting
+Pokud `git pull` spadne na lokalni zmenu `.env`, nedelej commit produkcnich secretu. Zalohuj `.env`, vrat tracked soubor, pullni a produkcni `.env` vrat zpatky:
 
-## FIX:
-
+```bash
 cd /opt/apps/maietek
 
 cp .env /opt/apps/maietek.env.backup
@@ -152,10 +165,7 @@ git pull
 
 cp /opt/apps/maietek.env.backup .env
 chmod 600 .env
-
-## CHECK GOOGLE VARIABLE for example:
-
-docker compose -f docker-compose.prod.yml config | grep -E 'GOOGLE_DRIVE_ROOT_FOLDER_ID|INTERNAL_API_URL|NEXT_PUBLIC_API_URL'
+```
 
 ## 7. Produkcni env soubor
 
@@ -224,7 +234,13 @@ Pouzij pro:
 `NEXT_DEPLOYMENT_ID` nastav pri kazdem deployi na aktualni git commit, aby se klientovi nepletly stare a nove Server Actions:
 
 ```bash
-export NEXT_DEPLOYMENT_ID=$(git rev-parse --short HEAD)
+git rev-parse --short HEAD
+```
+
+Vystup zkopiruj do `.env`:
+
+```env
+NEXT_DEPLOYMENT_ID=<short-commit-hash>
 ```
 
 Po zmene `.env` vzdy zkontroluj, ze hodnoty vidi i Docker Compose:
@@ -243,16 +259,13 @@ docker compose -f docker-compose.prod.yml exec server sh -lc 'for key in SUPABAS
 
 ## 8. Docker compose kontrola a build
 
-## spustění build
-
 ```bash
 cd /opt/apps/maietek
 
-sudo docker compose -f docker-compose.prod.yml config
-sudo docker compose -f docker-compose.prod.yml build
-sudo docker compose -f docker-compose.prod.yml up -d
-sudo docker compose -f docker-compose.prod.yml ps
-
+docker compose -f docker-compose.prod.yml config
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml ps
 ```
 
 Pokud Docker build spadne na `Cannot find module '/app/scripts/ensure-pnpm.js'`, stahni posledni verzi repozitare a rebuildni image:
@@ -285,6 +298,13 @@ A rebuildni web:
 ```bash
 docker compose -f docker-compose.prod.yml build --no-cache web
 docker compose -f docker-compose.prod.yml up -d
+```
+
+Po kazdem buildu over, ze produkcni env hodnoty jsou v kontejnerech nastavene. Prikazy nevypisuji hodnoty secretu, jen jestli existuji:
+
+```bash
+docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID INTERNAL_API_URL NEXT_PUBLIC_API_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY NEXT_SERVER_ACTIONS_ENCRYPTION_KEY NEXT_DEPLOYMENT_ID; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
+docker compose -f docker-compose.prod.yml exec server sh -lc 'for key in SUPABASE_URL SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY JWT_SECRET REDIS_URL; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
 ```
 
 ## 9. Lokalni smoke test na VPS
@@ -369,43 +389,142 @@ Z VPS nebo z lokalniho pocitace:
 ```bash
 curl -I https://maietek.maiweb.zip
 curl https://maietek.maiweb.zip/health
-curl -i 'https://maietek.maiweb.zip/socket.io/?EIO=4&transport=polling&t=smoke1'
+curl -i "https://maietek.maiweb.zip/socket.io/?EIO=4&transport=polling&t=$(date +%s)"
 ```
 
-U `/socket.io/` cekej `HTTP/2 200`, telo zacinajici `0{...}` a `cf-cache-status` nema byt `HIT`.
+Ocekavani:
+
+- web vraci `HTTP 307` na `/dashboard` nebo `HTTP 200` podle aktualni route
+- `/health` vraci `{"status":"ok"}`
+- `/socket.io/` vraci `HTTP 200`
+- telo `/socket.io/` zacina `0{...}`
+- `cf-cache-status` u `/socket.io/` nema byt `HIT`
 
 Pak rucne v prohlizeci over:
 
 - login
-- superadmin
-- gallery zobrazeni
-- gallery upload
-- gallery delete
-- chat nacteni zprav
-- chat realtime pripojeni
-- tasky
+- Dashboard bez `Auth session missing`
+- Superadmin page bez `fetch failed`
+- Chat nacte zpravy
+- Chat odesle novou zpravu
+- Chat smaze zpravu
+- Galerie zobrazi media z Google Drive
+- Galerie uploadne nove medium
+- Galerie smaze medium
+- Tasks page bez layout shiftu pri live sync indikatoru
+
+Pokud se po deployi objevi `POST /chat 404` nebo `UnrecognizedActionError`, je to typicky stara klientská Server Actions verze. Ověř, že `.env` ma aktualni `NEXT_DEPLOYMENT_ID`, rebuildni `web` a udelej hard refresh v prohlizeci.
 
 ## 14. Cron kontrola
 
-```bash
-node scripts/run-task-cron.mjs expire
-node scripts/run-task-cron.mjs recurring
-node scripts/run-task-cron.mjs monitoring-cleanup
-```
-
-Pokud budou bezet z cronu mimo kontejner, spoustej je z rootu projektu, kde lezi `.env`.
-
-## 15. Aktualizace po dalsim release
+Jednorazove smoke spust pres `web` kontejner, aby se pouzily stejne env hodnoty jako v produkcni Next appce:
 
 ```bash
 cd /opt/apps/maietek
+docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs expire
+docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs recurring
+docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs monitoring-cleanup
+```
+
+Pokud budou bezet z host cronu, spoustej je porad pres Docker Compose z rootu projektu, kde lezi `.env`.
+
+Produkci lze nastavit pres system cron uzivatele, ktery ma pristup k `/opt/apps/maietek/.env`:
+
+```bash
+crontab -e
+```
+
+Priklad rozvrhu:
+
+```cron
+*/10 * * * * cd /opt/apps/maietek && docker compose -f docker-compose.prod.yml exec -T web node scripts/run-task-cron.mjs expire >> /var/log/maietek-cron.log 2>&1
+*/15 * * * * cd /opt/apps/maietek && docker compose -f docker-compose.prod.yml exec -T web node scripts/run-task-cron.mjs recurring >> /var/log/maietek-cron.log 2>&1
+0 3 * * * cd /opt/apps/maietek && docker compose -f docker-compose.prod.yml exec -T web node scripts/run-task-cron.mjs monitoring-cleanup >> /var/log/maietek-cron.log 2>&1
+```
+
+## 15. Chrome extension build
+
+Production extension se builduje zvlast a musi mit live API URL:
+
+```bash
+cd /opt/apps/maietek
+EXTENSION_API_BASE_URL=https://maietek.maiweb.zip/api pnpm --filter chrome-extension build
+```
+
+Do Chrome nacitej slozku:
+
+```text
+apps/chrome-extension/dist
+```
+
+Po kazdem rebuildu otevri `chrome://extensions` a klikni `Reload` u unpacked extension. Bez reloadu muze zustat aktivni stary service worker s puvodni API URL.
+
+## 16. Kazdy dalsi release
+
+Toto je bezny deploy checklist po tom, co uz VPS bezi:
+
+```bash
+cd /opt/apps/maietek
+
+cp .env /opt/apps/maietek.env.backup
+chmod 600 /opt/apps/maietek.env.backup
+
+git status --short
 git pull
+
+test -f .env || cp /opt/apps/maietek.env.backup .env
+chmod 600 .env
+
+git rev-parse --short HEAD
+nano .env
+
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml ps
+
+curl http://127.0.0.1:4100/health
+curl -I https://maietek.maiweb.zip
+curl -i "https://maietek.maiweb.zip/socket.io/?EIO=4&transport=polling&t=$(date +%s)"
+```
+
+V `.env` pri kazdem release zmen jen:
+
+```env
+NEXT_DEPLOYMENT_ID=<short-commit-hash-z-git-rev-parse>
+```
+
+`NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` nemen pri beznem deployi.
+
+## 17. Rollback
+
+Pokud novy release rozbije produkci, vrat se na predchozi commit a rebuildni kontejnery:
+
+```bash
+cd /opt/apps/maietek
+
+git log --oneline -5
+git checkout <predchozi-funkcni-commit>
+
+nano .env
 docker compose -f docker-compose.prod.yml build
 docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml ps
 ```
 
-## 16. Rychly troubleshooting
+V `.env` pri rollbacku nastav `NEXT_DEPLOYMENT_ID` na commit, na ktery ses vratil:
+
+```bash
+git rev-parse --short HEAD
+```
+
+Po oprave na `main` se vrat zpatky:
+
+```bash
+git checkout main
+git pull
+```
+
+## 18. Rychly troubleshooting
 
 Backend nebezi:
 
@@ -434,7 +553,31 @@ Cloudflare / SSL problem:
 - over, ze Cloudflare zustal v `Full (strict)`
 - over, ze origin cert odpovida `maietek.maiweb.zip`
 
-## 17. Co nedelat
+Google Drive hlasi `GOOGLE_DRIVE_ROOT_FOLDER_ID is not configured`:
+
+```bash
+cd /opt/apps/maietek
+docker compose -f docker-compose.prod.yml config | grep -E 'GOOGLE_DRIVE_ROOT_FOLDER_ID|GOOGLE_DRIVE_OAUTH|INTERNAL_API_URL|NEXT_PUBLIC_API_URL'
+docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID GOOGLE_DRIVE_OAUTH_CLIENT_ID GOOGLE_DRIVE_OAUTH_CLIENT_SECRET GOOGLE_DRIVE_OAUTH_REFRESH_TOKEN; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
+```
+
+Chat submit/delete timeout:
+
+```bash
+docker compose -f docker-compose.prod.yml logs --tail=200 server
+docker compose -f docker-compose.prod.yml logs --tail=200 web
+```
+
+Chrome extension hlasi `Web API neni dostupne`:
+
+```bash
+rg -n 'API_BASE_URL =|maietek\\.maiweb\\.zip|localhost:3000' apps/chrome-extension/dist
+EXTENSION_API_BASE_URL=https://maietek.maiweb.zip/api pnpm --filter chrome-extension build
+```
+
+Po buildu v Chrome znovu nacti unpacked extension.
+
+## 19. Co nedelat
 
 - nedavat Maietek vlastni Nginx kontejner na `80/443`, kdyz na VPS pobezi vic aplikaci
 - neposilat cele `/api/*` nebo cele `/api/chat/*` do Expressu
