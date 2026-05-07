@@ -85,7 +85,7 @@ Ověření:
 
 ```bash
 docker --version
-docker compose version
+sudo docker compose version
 docker run --rm hello-world
 ```
 
@@ -246,37 +246,37 @@ Vystup zkopiruj do `.env`:
 NEXT_DEPLOYMENT_ID=<short-commit-hash>
 ```
 
-Po zmene `.env` vzdy zkontroluj, ze hodnoty vidi i Docker Compose:
+Po zmene `.env` vzdy zkontroluj, ze hodnoty vidi i sudo docker compose:
 
 ```bash
-docker compose -f docker-compose.prod.yml config | grep -E 'GOOGLE_DRIVE_ROOT_FOLDER_ID|INTERNAL_API_URL|NEXT_PUBLIC_API_URL|NEXT_PUBLIC_SUPABASE_URL|SUPABASE_URL|NEXT_SERVER_ACTIONS_ENCRYPTION_KEY|NEXT_DEPLOYMENT_ID'
+sudo docker compose -f docker-compose.prod.yml config | grep -E 'GOOGLE_DRIVE_ROOT_FOLDER_ID|INTERNAL_API_URL|NEXT_PUBLIC_API_URL|NEXT_PUBLIC_SUPABASE_URL|SUPABASE_URL|NEXT_SERVER_ACTIONS_ENCRYPTION_KEY|NEXT_DEPLOYMENT_ID'
 ```
 
 Po restartu over hodnoty primo v bezicich kontejnerech bez vypsani secretu:
 
 ```bash
-docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID GOOGLE_DRIVE_OAUTH_CLIENT_ID GOOGLE_DRIVE_OAUTH_CLIENT_SECRET GOOGLE_DRIVE_OAUTH_REFRESH_TOKEN INTERNAL_API_URL NEXT_PUBLIC_API_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY NEXT_SERVER_ACTIONS_ENCRYPTION_KEY NEXT_DEPLOYMENT_ID; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
+sudo docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID GOOGLE_DRIVE_OAUTH_CLIENT_ID GOOGLE_DRIVE_OAUTH_CLIENT_SECRET GOOGLE_DRIVE_OAUTH_REFRESH_TOKEN INTERNAL_API_URL NEXT_PUBLIC_API_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY NEXT_SERVER_ACTIONS_ENCRYPTION_KEY NEXT_DEPLOYMENT_ID; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
 
-docker compose -f docker-compose.prod.yml exec server sh -lc 'for key in SUPABASE_URL SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY JWT_SECRET REDIS_URL; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
+sudo docker compose -f docker-compose.prod.yml exec server sh -lc 'for key in SUPABASE_URL SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY JWT_SECRET REDIS_URL; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
 ```
 
-## 8. Docker compose kontrola a build
+## 8. sudo docker compose kontrola a build
 
 ```bash
 cd /opt/apps/maietek
 
-docker compose -f docker-compose.prod.yml config
-docker compose -f docker-compose.prod.yml build
-docker compose -f docker-compose.prod.yml up -d
-docker compose -f docker-compose.prod.yml ps
+sudo docker compose -f docker-compose.prod.yml config
+sudo docker compose -f docker-compose.prod.yml build
+sudo docker compose -f docker-compose.prod.yml up -d
+sudo docker compose -f docker-compose.prod.yml ps
 ```
 
 Pokud Docker build spadne na `Cannot find module '/app/scripts/ensure-pnpm.js'`, stahni posledni verzi repozitare a rebuildni image:
 
 ```bash
 git pull
-docker compose -f docker-compose.prod.yml build --no-cache
-docker compose -f docker-compose.prod.yml up -d
+sudo docker compose -f docker-compose.prod.yml build --no-cache
+sudo docker compose -f docker-compose.prod.yml up -d
 ```
 
 Pokud Docker build spadne na `JavaScript heap out of memory` pri `pnpm --filter web build`, zvys build heap a pripadne pridej swap:
@@ -299,15 +299,15 @@ WEB_BUILD_NODE_OPTIONS=--max-old-space-size=4096
 A rebuildni web:
 
 ```bash
-docker compose -f docker-compose.prod.yml build --no-cache web
-docker compose -f docker-compose.prod.yml up -d
+sudo docker compose -f docker-compose.prod.yml build --no-cache web
+sudo docker compose -f docker-compose.prod.yml up -d
 ```
 
 Po kazdem buildu over, ze produkcni env hodnoty jsou v kontejnerech nastavene. Prikazy nevypisuji hodnoty secretu, jen jestli existuji:
 
 ```bash
-docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID INTERNAL_API_URL NEXT_PUBLIC_API_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY NEXT_SERVER_ACTIONS_ENCRYPTION_KEY NEXT_DEPLOYMENT_ID; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
-docker compose -f docker-compose.prod.yml exec server sh -lc 'for key in SUPABASE_URL SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY JWT_SECRET REDIS_URL; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
+sudo docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID INTERNAL_API_URL NEXT_PUBLIC_API_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY NEXT_SERVER_ACTIONS_ENCRYPTION_KEY NEXT_DEPLOYMENT_ID; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
+sudo docker compose -f docker-compose.prod.yml exec server sh -lc 'for key in SUPABASE_URL SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY JWT_SECRET REDIS_URL; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
 ```
 
 ## 9. Lokalni smoke test na VPS
@@ -324,8 +324,8 @@ Pokud `127.0.0.1:4100/health` nevraci JSON se stavem `ok`, nejdriv oprav backend
 Logy:
 
 ```bash
-docker compose -f docker-compose.prod.yml logs -f web
-docker compose -f docker-compose.prod.yml logs -f server
+sudo docker compose -f docker-compose.prod.yml logs -f web
+sudo docker compose -f docker-compose.prod.yml logs -f server
 ```
 
 ## 10. Sdileny host Nginx
@@ -424,12 +424,12 @@ Jednorazove smoke spust pres `web` kontejner, aby se pouzily stejne env hodnoty 
 
 ```bash
 cd /opt/apps/maietek
-docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs expire
-docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs recurring
-docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs monitoring-cleanup
+sudo docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs expire
+sudo docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs recurring
+sudo docker compose -f docker-compose.prod.yml exec web node scripts/run-task-cron.mjs monitoring-cleanup
 ```
 
-Pokud budou bezet z host cronu, spoustej je porad pres Docker Compose z rootu projektu, kde lezi `.env`.
+Pokud budou bezet z host cronu, spoustej je porad pres sudo docker compose z rootu projektu, kde lezi `.env`.
 
 Produkci lze nastavit pres system cron uzivatele, ktery ma pristup k `/opt/apps/maietek/.env`:
 
@@ -440,9 +440,9 @@ crontab -e
 Priklad rozvrhu:
 
 ```cron
-*/10 * * * * cd /opt/apps/maietek && docker compose -f docker-compose.prod.yml exec -T web node scripts/run-task-cron.mjs expire >> /var/log/maietek-cron.log 2>&1
-*/15 * * * * cd /opt/apps/maietek && docker compose -f docker-compose.prod.yml exec -T web node scripts/run-task-cron.mjs recurring >> /var/log/maietek-cron.log 2>&1
-0 3 * * * cd /opt/apps/maietek && docker compose -f docker-compose.prod.yml exec -T web node scripts/run-task-cron.mjs monitoring-cleanup >> /var/log/maietek-cron.log 2>&1
+*/10 * * * * cd /opt/apps/maietek && sudo docker compose -f docker-compose.prod.yml exec -T web node scripts/run-task-cron.mjs expire >> /var/log/maietek-cron.log 2>&1
+*/15 * * * * cd /opt/apps/maietek && sudo docker compose -f docker-compose.prod.yml exec -T web node scripts/run-task-cron.mjs recurring >> /var/log/maietek-cron.log 2>&1
+0 3 * * * cd /opt/apps/maietek && sudo docker compose -f docker-compose.prod.yml exec -T web node scripts/run-task-cron.mjs monitoring-cleanup >> /var/log/maietek-cron.log 2>&1
 ```
 
 ## 15. Chrome extension build
@@ -484,9 +484,9 @@ chmod 600 .env
 git rev-parse --short HEAD
 nano .env
 
-docker compose -f docker-compose.prod.yml build
-docker compose -f docker-compose.prod.yml up -d
-docker compose -f docker-compose.prod.yml ps
+sudo docker compose -f docker-compose.prod.yml build
+sudo docker compose -f docker-compose.prod.yml up -d
+sudo docker compose -f docker-compose.prod.yml ps
 
 curl http://127.0.0.1:4100/health
 curl -I https://maietek.maiweb.zip
@@ -512,9 +512,9 @@ git log --oneline -5
 git checkout <predchozi-funkcni-commit>
 
 nano .env
-docker compose -f docker-compose.prod.yml build
-docker compose -f docker-compose.prod.yml up -d
-docker compose -f docker-compose.prod.yml ps
+sudo docker compose -f docker-compose.prod.yml build
+sudo docker compose -f docker-compose.prod.yml up -d
+sudo docker compose -f docker-compose.prod.yml ps
 ```
 
 V `.env` pri rollbacku nastav `NEXT_DEPLOYMENT_ID` na commit, na ktery ses vratil:
@@ -535,14 +535,14 @@ git pull
 Backend nebezi:
 
 ```bash
-docker compose -f docker-compose.prod.yml logs -f server
+sudo docker compose -f docker-compose.prod.yml logs -f server
 curl http://127.0.0.1:4100/health
 ```
 
 Web nebezi:
 
 ```bash
-docker compose -f docker-compose.prod.yml logs -f web
+sudo docker compose -f docker-compose.prod.yml logs -f web
 curl http://127.0.0.1:3100
 ```
 
@@ -563,15 +563,15 @@ Google Drive hlasi `GOOGLE_DRIVE_ROOT_FOLDER_ID is not configured`:
 
 ```bash
 cd /opt/apps/maietek
-docker compose -f docker-compose.prod.yml config | grep -E 'GOOGLE_DRIVE_ROOT_FOLDER_ID|GOOGLE_DRIVE_OAUTH|INTERNAL_API_URL|NEXT_PUBLIC_API_URL'
-docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID GOOGLE_DRIVE_OAUTH_CLIENT_ID GOOGLE_DRIVE_OAUTH_CLIENT_SECRET GOOGLE_DRIVE_OAUTH_REFRESH_TOKEN; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
+sudo docker compose -f docker-compose.prod.yml config | grep -E 'GOOGLE_DRIVE_ROOT_FOLDER_ID|GOOGLE_DRIVE_OAUTH|INTERNAL_API_URL|NEXT_PUBLIC_API_URL'
+sudo docker compose -f docker-compose.prod.yml exec web sh -lc 'for key in GOOGLE_DRIVE_ROOT_FOLDER_ID GOOGLE_DRIVE_OAUTH_CLIENT_ID GOOGLE_DRIVE_OAUTH_CLIENT_SECRET GOOGLE_DRIVE_OAUTH_REFRESH_TOKEN; do eval value=\$$key; printf "%s=%s\n" "$key" "${value:+<set>}"; done'
 ```
 
 Chat submit/delete timeout:
 
 ```bash
-docker compose -f docker-compose.prod.yml logs --tail=200 server
-docker compose -f docker-compose.prod.yml logs --tail=200 web
+sudo docker compose -f docker-compose.prod.yml logs --tail=200 server
+sudo docker compose -f docker-compose.prod.yml logs --tail=200 web
 ```
 
 Chrome extension hlasi `Web API neni dostupne`:
@@ -590,3 +590,15 @@ Po buildu v Chrome znovu nacti unpacked extension.
 - necachovat `/socket.io/`, `/api/*` ani `/health` na Cloudflare
 - neukladat realne secrety do gitu
 - nepouzivat stare nebo revokovane Google OAuth hodnoty
+
+## Rebuild Chrome extension
+
+cd /Users/mai/Documents/App/Ds/maietek
+EXTENSION_API_BASE_URL=https://maietek.maiweb.zip/api pnpm --filter chrome-extension build
+
+Pak si můžeš ověřit, že se manifest opravdu přepsal:
+git diff -- apps/chrome-extension/dist/manifest.json
+
+A teprve potom:
+git add .
+git status

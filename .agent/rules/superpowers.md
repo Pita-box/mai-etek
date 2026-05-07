@@ -4,7 +4,7 @@ trigger: always_on
 
 # Superpowers Rules (Always-On)
 
-These rules apply to ALL work unless the user explicitly opts out. Always use Czech language with the user. If needed to run Local Binary Pattern (LBP) use python3.
+These rules apply to ALL work unless the user explicitly opts out. Always use Czech language with the user. If needed to run Local Binary Pattern (LBP) use python3. All edits must work on localhost and on live server also. Folder maietek is a submodule link, on VPS is pulled from https://github.com/Pita-box/mai-etek.git
 
 ## 1) Plan gate for non-trivial work
 
