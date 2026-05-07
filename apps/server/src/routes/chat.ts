@@ -695,7 +695,7 @@ router.post("/messages", async (req, res) => {
         participantId !== auth.user!.id && !isUserOnline(participantId),
     );
 
-    if (offlineRecipientIds.length > 0) {
+    if (profile.role === "sub" && offlineRecipientIds.length > 0) {
       const preview = getMessagePreview(message);
       void Promise.all(
         offlineRecipientIds.map((recipientId) =>

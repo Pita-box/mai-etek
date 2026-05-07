@@ -100,6 +100,13 @@ const domProfile = {
   dom_id: null,
 };
 
+const subProfile = {
+  id: "sub-1",
+  full_name: "Sub",
+  role: "sub",
+  dom_id: "dom-1",
+};
+
 const messageRow = {
   id: "message-1",
   sender_id: "dom-1",
@@ -111,6 +118,11 @@ const messageRow = {
   is_read: false,
   read_at: null,
   created_at: "2026-05-04T12:00:00.000Z",
+};
+
+const subMessageRow = {
+  ...messageRow,
+  sender_id: "sub-1",
 };
 
 describe("chat API integration", () => {
@@ -215,6 +227,74 @@ describe("chat API integration", () => {
     );
     expect(mocks.deleteCacheByPattern).toHaveBeenCalledWith(
       "chat:search:v1:sub-1:*",
+    );
+  });
+
+  it("does not send Telegram notifications when DOM sends a chat message", async () => {
+    mocks.isUserOnline.mockImplementation(
+      (userId: string) => userId !== "sub-1",
+    );
+    queueSupabaseResults(
+      { data: domProfile },
+      { data: [{ id: "sub-1" }] },
+      { data: messageRow },
+      { data: [] },
+      {
+        data: [
+          {
+            id: "dom-1",
+            full_name: "Dom",
+            role: "dom",
+            last_online_at: null,
+          },
+        ],
+      },
+    );
+
+    const response = await request(createTestApp())
+      .post("/api/chat/messages")
+      .set("Authorization", "Bearer test-token")
+      .send({ type: "text", text: "Ahoj světe" });
+
+    expect(response.status).toBe(201);
+    expect(mocks.sendTelegramNotification).not.toHaveBeenCalled();
+  });
+
+  it("sends Telegram notification when SUB sends a chat message and DOM is offline", async () => {
+    mocks.getAuthenticatedUserFromAuthorizationHeader.mockResolvedValue({
+      user: { id: "sub-1" },
+      error: null,
+      status: 200,
+    });
+    mocks.isUserOnline.mockImplementation(
+      (userId: string) => userId !== "dom-1",
+    );
+    queueSupabaseResults(
+      { data: subProfile },
+      { data: subMessageRow },
+      { data: [] },
+      {
+        data: [
+          {
+            id: "sub-1",
+            full_name: "Sub",
+            role: "sub",
+            last_online_at: null,
+          },
+        ],
+      },
+    );
+
+    const response = await request(createTestApp())
+      .post("/api/chat/messages")
+      .set("Authorization", "Bearer test-token")
+      .send({ type: "text", text: "Ahoj světe" });
+
+    expect(response.status).toBe(201);
+    expect(mocks.sendTelegramNotification).toHaveBeenCalledWith(
+      "dom-1",
+      "Ahoj světe",
+      "Sub",
     );
   });
 });
