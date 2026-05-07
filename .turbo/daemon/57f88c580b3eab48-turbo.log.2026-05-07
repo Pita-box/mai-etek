@@ -484,3 +484,5 @@
 2026-05-07T02:56:42.958242Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
 2026-05-07T02:56:51.057885Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".agent/rules/superpowers.md")}
 2026-05-07T02:56:51.057900Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-05-07T03:06:42.246493Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/chrome-extension/dist/content.js"), AnchoredSystemPathBuf("apps/chrome-extension/dist/background.js"), AnchoredSystemPathBuf("apps/chrome-extension/dist/popup.js"), AnchoredSystemPathBuf(".gitignore")}
+2026-05-07T03:06:42.246535Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("chrome-extension"), path: AnchoredSystemPathBuf("apps/chrome-extension") }}))
