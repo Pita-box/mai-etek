@@ -400,9 +400,8 @@ export async function bulkDeleteGalleryMedia(mediaIds: string[]) {
   const supabaseAdmin = createAdminClient();
   const { error } = await supabaseAdmin
     .from("gallery_media")
-    .update({ deleted_at: new Date().toISOString() })
-    .in("id", ids)
-    .is("deleted_at", null);
+    .delete()
+    .in("id", ids);
 
   if (error) {
     console.error("Error bulk deleting gallery media:", error);

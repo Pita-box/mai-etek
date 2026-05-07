@@ -581,12 +581,41 @@ export async function deleteMonitoringDevice(formData: FormData) {
   const deviceId = String(formData.get("device_id") || "")
   if (!deviceId) return { error: "Zařízení nebylo nalezeno." }
 
-  const { error } = await supabase
+  const readClient = createAdminClient()
+  const { data: device, error: deviceError } = await readClient
+    .from("monitoring_devices")
+    .select("id")
+    .eq("id", deviceId)
+    .eq("dom_id", context.userId)
+    .not("revoked_at", "is", null)
+    .maybeSingle()
+
+  if (deviceError) {
+    console.error("Error loading monitoring device for delete:", deviceError)
+    return { error: "Zneplatněnou instalaci se nepodařilo načíst." }
+  }
+
+  if (!device) {
+    return { error: "Zneplatněná instalace nebyla nalezena." }
+  }
+
+  const { error: codesDeleteError } = await readClient
+    .from("monitoring_pairing_codes")
+    .delete()
+    .eq("used_device_id", deviceId)
+    .eq("dom_id", context.userId)
+
+  if (codesDeleteError) {
+    console.error("Error deleting monitoring pairing code:", codesDeleteError)
+    return { error: "Párovací záznam instalace se nepodařilo smazat." }
+  }
+
+  // Preserve monitoring event history; monitoring_events.device_id is detached by ON DELETE SET NULL.
+  const { error } = await readClient
     .from("monitoring_devices")
     .delete()
     .eq("id", deviceId)
     .eq("dom_id", context.userId)
-    .not("revoked_at", "is", null)
 
   if (error) {
     console.error("Error deleting monitoring device:", error)

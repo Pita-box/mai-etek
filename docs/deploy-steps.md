@@ -26,7 +26,7 @@ git push
 ## 2. Prihlaseni na VPS
 
 ```bash
-ssh root@141.227.135.23
+ssh ubuntu@141.227.135.23
 
 nebo
 

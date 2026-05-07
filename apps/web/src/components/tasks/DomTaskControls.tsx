@@ -47,17 +47,17 @@ export function DomTaskControls({ task, onTaskMutated }: DomTaskControlsProps) {
   };
 
   const cancel = () => {
-    if (!window.confirm('Opravdu zrušit/smazat tento úkol?')) return;
+    if (!window.confirm('Opravdu smazat tento úkol? Tím se odstraní i všechna navázaná data.')) return;
     setError(null);
     setSuccess(null);
     startTransition(async () => {
       const result = await deleteTask(task.id);
       if (result?.error) {
         setError(result.error);
-        toast.error('Úkol se nepodařilo zrušit.', result.error);
+        toast.error('Úkol se nepodařilo smazat.', result.error);
         return;
       }
-      const message = result?.cancelled ? 'Úkol byl zrušen.' : 'Úkol byl smazán.';
+      const message = 'Úkol byl smazán.';
       setSuccess(message);
       toast.success(message);
       await onTaskMutated();

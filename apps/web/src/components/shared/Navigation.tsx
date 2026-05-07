@@ -79,6 +79,7 @@ export default function Navigation({
       <Link
         key={page.href}
         href={page.href}
+        prefetch={false}
         aria-label={
           showBadge
             ? `${page.label}, ${formatBadgeCount(badgeCount)} nové`

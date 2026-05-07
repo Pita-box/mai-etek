@@ -1,5 +1,7 @@
 node_modules
 package-lock.json
+.DS_Store
+maietek/
 
 # Local and production secrets
 .env

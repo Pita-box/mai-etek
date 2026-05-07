@@ -1,6 +1,7 @@
 "use server";
 
 import { createActivityNotification } from "@/actions/notifications";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { createClient } from "@/utils/supabase/server";
 import { uploadTaskFileToDrive } from "@/lib/google-drive/tasks";
 import {
@@ -478,62 +479,89 @@ export async function updateTask(id: string, formData: FormData) {
 
 export async function deleteTask(id: string) {
   const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  const [
-    { count: evidenceCount },
-    { count: mediaCount },
-    { count: attemptCount },
-    { count: commentCount },
-  ] = await Promise.all([
-    supabase
-      .from("task_evidence")
-      .select("id", { count: "exact", head: true })
-      .eq("task_id", id),
-    supabase
-      .from("task_media")
-      .select("id", { count: "exact", head: true })
-      .eq("task_id", id),
-    supabase
-      .from("task_attempts")
-      .select("id", { count: "exact", head: true })
-      .eq("task_id", id),
-    supabase
-      .from("task_comments")
-      .select("id", { count: "exact", head: true })
-      .eq("task_id", id),
-  ]);
-
-  const hasHistory = Boolean(
-    (evidenceCount || 0) +
-    (mediaCount || 0) +
-    (attemptCount || 0) +
-    (commentCount || 0),
-  );
-
-  if (hasHistory) {
-    const { data, error } = await supabase
-      .from("tasks")
-      .update({ status: "cancelled", cancelled_at: new Date().toISOString() })
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error cancelling task:", error);
-      return { error: error.message };
-    }
-
-    revalidateTaskPaths(data);
-    return { success: true, cancelled: true };
+  if (!session) {
+    return { error: "Not authenticated" };
   }
 
-  const { error } = await supabase.from("tasks").delete().eq("id", id);
+  const { data: task, error: taskError } = await supabase
+    .from("tasks")
+    .select("id, assigned_by, public_task_id")
+    .eq("id", id)
+    .single();
+
+  if (taskError || !task) {
+    console.error("Error fetching task for delete:", taskError);
+    return { error: taskError?.message || "Task not found" };
+  }
+
+  if (task.assigned_by !== session.user.id) {
+    return { error: "Forbidden" };
+  }
+
+  const admin = createAdminClient();
+  const { data: taskComments, error: taskCommentsError } = await admin
+    .from("task_comments")
+    .select("id")
+    .eq("task_id", id);
+
+  if (taskCommentsError && !isMissingRelationError(taskCommentsError)) {
+    console.error("Error loading task comments for delete:", taskCommentsError);
+    return { error: taskCommentsError.message };
+  }
+
+  const commentIds = (taskComments || []).map((comment) => comment.id);
+
+  if (commentIds.length > 0) {
+    const { error: likesDeleteError } = await admin
+      .from("task_comment_likes")
+      .delete()
+      .in("comment_id", commentIds);
+
+    if (likesDeleteError && !isMissingRelationError(likesDeleteError)) {
+      console.error("Error deleting task comment likes:", likesDeleteError);
+      return { error: likesDeleteError.message };
+    }
+  }
+
+  const cleanupSteps = [
+    () => admin.from("notifications").delete().eq("task_id", id),
+    () => admin.from("task_view_summary").delete().eq("task_id", id),
+    () => admin.from("task_user_visibility").delete().eq("task_id", id),
+    () => admin.from("task_evidence").delete().eq("task_id", id),
+    () => admin.from("task_media").delete().eq("task_id", id),
+    () => admin.from("task_comments").delete().eq("task_id", id),
+    () => admin.from("task_attempts").delete().eq("task_id", id),
+  ];
+
+  for (const cleanupStep of cleanupSteps) {
+    const { error: cleanupError } = await cleanupStep();
+
+    if (cleanupError && !isMissingRelationError(cleanupError)) {
+      console.error("Error cleaning up related task rows:", cleanupError);
+      return { error: cleanupError.message };
+    }
+  }
+
+  const { data: deletedRows, error } = await admin
+    .from("tasks")
+    .delete()
+    .eq("id", id)
+    .select("id");
 
   if (error) {
     console.error("Error deleting task:", error);
     return { error: error.message };
   }
 
+  if (!deletedRows?.length) {
+    return { error: "Úkol se nepodařilo odstranit z databáze." };
+  }
+
+  revalidateTaskPaths(task);
   revalidatePath("/tasks");
   return { success: true };
 }

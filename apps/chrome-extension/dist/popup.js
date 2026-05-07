@@ -1,13 +1,21 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
 
-;// ./src/shared/config.ts
-const API_BASE_URL = "https://maietek.maiweb.zip/api".replace(/\/+$/, "");
-const EXTENSION_VERSION = "1.0.0";
-const HEARTBEAT_ALARM_NAME = "mmm-heartbeat";
+/***/ "./src/shared/api-client.ts"
+/*!**********************************!*\
+  !*** ./src/shared/api-client.ts ***!
+  \**********************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-;// ./src/shared/api-client.ts
-/* unused harmony import specifier */ var api_client_EXTENSION_VERSION;
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isRevokedRequestError: () => (/* binding */ isRevokedRequestError),
+/* harmony export */   pairDevice: () => (/* binding */ pairDevice),
+/* harmony export */   sendHeartbeat: () => (/* binding */ sendHeartbeat),
+/* harmony export */   syncMonitoringEvents: () => (/* binding */ syncMonitoringEvents)
+/* harmony export */ });
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./config */ "./src/shared/config.ts");
 
 const REQUEST_TIMEOUT_MS = 10000;
 class ApiRequestError extends Error {
@@ -31,7 +39,7 @@ async function requestJson(endpoint, options = {}) {
         headers.set("Content-Type", "application/json");
     }
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const response = await fetch(`${_config__WEBPACK_IMPORTED_MODULE_0__.API_BASE_URL}${endpoint}`, {
             ...options,
             headers,
             signal: controller.signal,
@@ -63,7 +71,7 @@ async function pairDevice(code) {
         method: "POST",
         body: JSON.stringify({
             code,
-            extensionVersion: EXTENSION_VERSION,
+            extensionVersion: _config__WEBPACK_IMPORTED_MODULE_0__.EXTENSION_VERSION,
         }),
     });
 }
@@ -74,7 +82,7 @@ async function sendHeartbeat(deviceToken, input) {
             Authorization: `Bearer ${deviceToken}`,
         },
         body: JSON.stringify({
-            extensionVersion: EXTENSION_VERSION,
+            extensionVersion: _config__WEBPACK_IMPORTED_MODULE_0__.EXTENSION_VERSION,
             syncStatus: input?.syncStatus || "connected",
             pendingItems: input?.pendingItems || 0,
             lastError: input?.lastError || null,
@@ -88,13 +96,28 @@ async function syncMonitoringEvents(deviceToken, events) {
             Authorization: `Bearer ${deviceToken}`,
         },
         body: JSON.stringify({
-            extensionVersion: api_client_EXTENSION_VERSION,
+            extensionVersion: _config__WEBPACK_IMPORTED_MODULE_0__.EXTENSION_VERSION,
             events,
         }),
     });
 }
 
-;// ./src/shared/auth-storage.ts
+
+/***/ },
+
+/***/ "./src/shared/auth-storage.ts"
+/*!************************************!*\
+  !*** ./src/shared/auth-storage.ts ***!
+  \************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearSession: () => (/* binding */ clearSession),
+/* harmony export */   getSession: () => (/* binding */ getSession),
+/* harmony export */   saveSession: () => (/* binding */ saveSession),
+/* harmony export */   updateSession: () => (/* binding */ updateSession)
+/* harmony export */ });
 const SESSION_KEY = "mmm_monitoring_session";
 async function getSession() {
     const result = await chrome.storage.local.get(SESSION_KEY);
@@ -115,8 +138,45 @@ async function updateSession(updater) {
     return nextSession;
 }
 
-;// ./src/shared/event-buffer.ts
-/* unused harmony import specifier */ var event_buffer_updateSession;
+
+/***/ },
+
+/***/ "./src/shared/config.ts"
+/*!******************************!*\
+  !*** ./src/shared/config.ts ***!
+  \******************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   API_BASE_URL: () => (/* binding */ API_BASE_URL),
+/* harmony export */   EXTENSION_VERSION: () => (/* binding */ EXTENSION_VERSION),
+/* harmony export */   HEARTBEAT_ALARM_NAME: () => (/* binding */ HEARTBEAT_ALARM_NAME)
+/* harmony export */ });
+const API_BASE_URL = "https://maietek.maiweb.zip/api".replace(/\/+$/, "");
+const EXTENSION_VERSION = "1.0.0";
+const HEARTBEAT_ALARM_NAME = "mmm-heartbeat";
+
+
+/***/ },
+
+/***/ "./src/shared/event-buffer.ts"
+/*!************************************!*\
+  !*** ./src/shared/event-buffer.ts ***!
+  \************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearMonitoringEventBuffer: () => (/* binding */ clearMonitoringEventBuffer),
+/* harmony export */   getLastCapture: () => (/* binding */ getLastCapture),
+/* harmony export */   getQueuedEventBatch: () => (/* binding */ getQueuedEventBatch),
+/* harmony export */   getQueuedEvents: () => (/* binding */ getQueuedEvents),
+/* harmony export */   queueMonitoringEvent: () => (/* binding */ queueMonitoringEvent),
+/* harmony export */   removeQueuedEvents: () => (/* binding */ removeQueuedEvents),
+/* harmony export */   saveLastCapture: () => (/* binding */ saveLastCapture)
+/* harmony export */ });
+/* harmony import */ var _auth_storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./auth-storage */ "./src/shared/auth-storage.ts");
 
 const EVENT_BUFFER_KEY = "mmm_monitoring_event_buffer";
 const LAST_CAPTURE_KEY = "mmm_monitoring_last_capture";
@@ -165,7 +225,7 @@ async function queueMonitoringEvent(event) {
         label: getEventLabel(event),
         status: "queued",
     });
-    await event_buffer_updateSession((session) => ({
+    await (0,_auth_storage__WEBPACK_IMPORTED_MODULE_0__.updateSession)((session) => ({
         ...session,
         pendingItems: nextEvents.length,
         syncStatus: nextEvents.length > 0 ? "pending" : session.syncStatus,
@@ -189,7 +249,7 @@ async function removeQueuedEvents(syncedEvents) {
             status: "synced",
         });
     }
-    await event_buffer_updateSession((session) => ({
+    await (0,_auth_storage__WEBPACK_IMPORTED_MODULE_0__.updateSession)((session) => ({
         ...session,
         pendingItems: nextEvents.length,
         syncStatus: nextEvents.length > 0 ? "pending" : "connected",
@@ -223,7 +283,81 @@ function getEventLabel(event) {
     return event.title || event.url;
 }
 
-;// ./src/popup/popup.ts
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+/*!****************************!*\
+  !*** ./src/popup/popup.ts ***!
+  \****************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_api_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/api-client */ "./src/shared/api-client.ts");
+/* harmony import */ var _shared_auth_storage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/auth-storage */ "./src/shared/auth-storage.ts");
+/* harmony import */ var _shared_event_buffer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/event-buffer */ "./src/shared/event-buffer.ts");
 
 
 
@@ -262,13 +396,13 @@ function setBusy(isBusy) {
     heartbeatButton.disabled = isBusy;
 }
 async function clearRevokedSession() {
-    await clearSession();
-    await clearMonitoringEventBuffer();
+    await (0,_shared_auth_storage__WEBPACK_IMPORTED_MODULE_1__.clearSession)();
+    await (0,_shared_event_buffer__WEBPACK_IMPORTED_MODULE_2__.clearMonitoringEventBuffer)();
 }
 async function renderPaired(session) {
     const [capture, queuedEvents] = await Promise.all([
-        getLastCapture(),
-        getQueuedEvents(),
+        (0,_shared_event_buffer__WEBPACK_IMPORTED_MODULE_2__.getLastCapture)(),
+        (0,_shared_event_buffer__WEBPACK_IMPORTED_MODULE_2__.getQueuedEvents)(),
     ]);
     statusPill.textContent = "Aktivní";
     statusPill.classList.add("active");
@@ -291,10 +425,10 @@ function renderPairing() {
     pairingView.classList.remove("hidden");
 }
 async function refresh() {
-    const session = await getSession();
+    const session = await (0,_shared_auth_storage__WEBPACK_IMPORTED_MODULE_1__.getSession)();
     if (session) {
         await chrome.runtime.sendMessage({ type: "mmm:heartbeat" }).catch(() => null);
-        const latestSession = await getSession();
+        const latestSession = await (0,_shared_auth_storage__WEBPACK_IMPORTED_MODULE_1__.getSession)();
         if (!latestSession) {
             renderPairing();
             setMessage("Extension byla zneplatněna. Je potřeba nové párování.", true);
@@ -314,7 +448,7 @@ async function pair() {
     setBusy(true);
     setMessage("Páruji extension...");
     try {
-        const response = await pairDevice(code);
+        const response = await (0,_shared_api_client__WEBPACK_IMPORTED_MODULE_0__.pairDevice)(code);
         if (!response.success || !response.deviceToken || !response.deviceId) {
             throw new Error(response.error || "Párování se nepodařilo.");
         }
@@ -328,7 +462,7 @@ async function pair() {
             syncStatus: "connected",
             pendingItems: 0,
         };
-        await saveSession(session);
+        await (0,_shared_auth_storage__WEBPACK_IMPORTED_MODULE_1__.saveSession)(session);
         await chrome.runtime.sendMessage({ type: "mmm:heartbeat" }).catch(() => null);
         setMessage("Extension je spárovaná.");
         await renderPaired(session);
@@ -341,7 +475,7 @@ async function pair() {
     }
 }
 async function heartbeat() {
-    const session = await getSession();
+    const session = await (0,_shared_auth_storage__WEBPACK_IMPORTED_MODULE_1__.getSession)();
     if (!session) {
         renderPairing();
         return;
@@ -349,7 +483,7 @@ async function heartbeat() {
     setBusy(true);
     setMessage("Odesílám heartbeat...");
     try {
-        const response = await sendHeartbeat(session.deviceToken, {
+        const response = await (0,_shared_api_client__WEBPACK_IMPORTED_MODULE_0__.sendHeartbeat)(session.deviceToken, {
             syncStatus: session.syncStatus,
             pendingItems: session.pendingItems,
         });
@@ -367,12 +501,12 @@ async function heartbeat() {
             syncStatus: "connected",
             pendingItems: 0,
         };
-        await saveSession(nextSession);
+        await (0,_shared_auth_storage__WEBPACK_IMPORTED_MODULE_1__.saveSession)(nextSession);
         await renderPaired(nextSession);
         setMessage("Heartbeat odeslán.");
     }
     catch (error) {
-        if (isRevokedRequestError(error)) {
+        if ((0,_shared_api_client__WEBPACK_IMPORTED_MODULE_0__.isRevokedRequestError)(error)) {
             await clearRevokedSession();
             renderPairing();
             setMessage("Extension byla zneplatněna. Je potřeba nové párování.", true);
@@ -394,6 +528,8 @@ pairingCodeInput.addEventListener("keydown", (event) => {
 });
 void refresh();
 window.setInterval(() => void refresh(), 5000);
+
+})();
 
 /******/ })()
 ;
