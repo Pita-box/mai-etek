@@ -132,17 +132,22 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 1. Chat Message Flow:
    Client -> Socket.IO -> Server -> PostgreSQL + Google Drive (media)
    Server -> Socket.IO -> Other Client
-   Server -> Telegram Bot -> Notification
+   Server -> Telegram Bot -> Notification (SUB-authored messages only, and only when the recipient is offline)
 
-2. Task Flow:
+2. Auth Route Guard Flow:
+   Browser -> Next.js proxy -> Supabase session check
+   Logged-in user on /login, /register, /forgot-password -> redirect to /dashboard
+   Anonymous user on protected routes -> redirect to /login?next=...
+
+3. Task Flow:
    DOM creates task -> API -> PostgreSQL -> Socket.IO -> SUB notification
    SUB submits evidence -> API -> Google Drive (media) + PostgreSQL
    DOM approves -> API -> Gamification Engine -> PostgreSQL -> Socket.IO + Telegram
 
-3. Monitoring Flow:
+4. Monitoring Flow:
    Chrome Extension -> Batch sync -> API -> PostgreSQL + Google Drive (screenshots)
 
-4. Media Upload Flow:
+5. Media Upload Flow:
    Client -> API -> Google Drive (original) -> BullMQ worker
    Worker -> Sharp/FFmpeg -> thumbnail + watermark -> Google Drive -> PostgreSQL (file ids/metadata)
 ```
@@ -1143,7 +1148,7 @@ domsub-app/
 │   │   │   │   ├── supabase/
 │   │   │   │   │   ├── client.ts         # Browser Supabase client
 │   │   │   │   │   ├── server.ts         # Server Supabase client
-│   │   │   │   │   └── middleware.ts      # Auth middleware
+│   │   │   │   │   └── proxy.ts           # Auth route guard + session sync
 │   │   │   │   ├── socket.ts             # Socket.IO client singleton
 │   │   │   │   ├── api.ts                # Axios/fetch API client
 │   │   │   │   ├── google-drive.ts       # Google Drive media client
@@ -2123,6 +2128,12 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [ ] Log aggregation
 
 **Deliverable**: Production-deployed application, CI/CD, monitoring.
+
+### Production Bugfix Notes
+
+- Auth route guard: the production redirect logic for `/login`, `/register`, and `/forgot-password` lives in `apps/web/src/proxy.ts`. The old `apps/web/proxy.ts` placement could behave differently between local dev and VPS builds.
+- Telegram chat notifications: `POST /api/chat/messages` now sends Telegram alerts only for SUB-authored messages, and only when the recipient is offline. DOM-authored chat messages stay in-app only.
+- The auth symptom was not a Cloudflare cache issue. The root cause was the Next.js proxy placement plus a stale production build, so the fix is code plus rebuild, not cache invalidation.
 
 ## Appendix
 

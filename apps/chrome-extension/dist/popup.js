@@ -223,11 +223,63 @@ function getEventLabel(event) {
     return event.title || event.url;
 }
 
+;// ./src/shared/popup-lock.ts
+const POPUP_LOCK_KEY = "mmm_popup_lock_state";
+const POPUP_UNLOCK_DURATION_MS = 60_000;
+const DEFAULT_POPUP_PASSWORD = "1Conduongdai";
+function toState(value) {
+    if (!value || typeof value !== "object")
+        return null;
+    const unlockedUntil = value.unlockedUntil;
+    if (unlockedUntil !== null && typeof unlockedUntil !== "number")
+        return null;
+    return {
+        unlockedUntil: unlockedUntil ?? null,
+    };
+}
+async function getPopupLockState() {
+    const result = await chrome.storage.local.get(POPUP_LOCK_KEY);
+    return toState(result[POPUP_LOCK_KEY]);
+}
+async function savePopupLockState(state) {
+    await chrome.storage.local.set({ [POPUP_LOCK_KEY]: state });
+}
+async function isPopupUnlocked() {
+    const state = await getPopupLockState();
+    return Boolean(state?.unlockedUntil && state.unlockedUntil > Date.now());
+}
+async function unlockPopup(password) {
+    if (password !== DEFAULT_POPUP_PASSWORD)
+        return false;
+    await savePopupLockState({
+        unlockedUntil: Date.now() + POPUP_UNLOCK_DURATION_MS,
+    });
+    return true;
+}
+async function extendPopupUnlockWindow() {
+    const state = await getPopupLockState();
+    if (!state?.unlockedUntil || state.unlockedUntil <= Date.now())
+        return false;
+    await savePopupLockState({
+        unlockedUntil: Date.now() + POPUP_UNLOCK_DURATION_MS,
+    });
+    return true;
+}
+async function lockPopup() {
+    await savePopupLockState({
+        unlockedUntil: Date.now() + POPUP_UNLOCK_DURATION_MS,
+    });
+}
+
 ;// ./src/popup/popup.ts
 
 
 
+
 const statusPill = document.querySelector("#statusPill");
+const lockView = document.querySelector("#lockView");
+const lockPasswordInput = document.querySelector("#lockPassword");
+const unlockButton = document.querySelector("#unlockButton");
 const pairingView = document.querySelector("#pairingView");
 const connectedView = document.querySelector("#connectedView");
 const pairingCodeInput = document.querySelector("#pairingCode");
@@ -238,6 +290,8 @@ const lastCapture = document.querySelector("#lastCapture");
 const lastHeartbeat = document.querySelector("#lastHeartbeat");
 const syncStatus = document.querySelector("#syncStatus");
 const message = document.querySelector("#message");
+const REFRESH_INTERVAL_MS = 5_000;
+const LOCK_REFRESH_INTERVAL_MS = 10_000;
 const dateFormatter = new Intl.DateTimeFormat("cs-CZ", {
     day: "2-digit",
     month: "2-digit",
@@ -245,6 +299,9 @@ const dateFormatter = new Intl.DateTimeFormat("cs-CZ", {
     hour: "2-digit",
     minute: "2-digit",
 });
+let isUnlocked = false;
+let refreshTimerId = null;
+let lockRefreshTimerId = null;
 function setMessage(value, isError = false) {
     message.textContent = value;
     message.classList.toggle("error", isError);
@@ -258,12 +315,47 @@ function formatDateTime(value) {
     return dateFormatter.format(date);
 }
 function setBusy(isBusy) {
+    unlockButton.disabled = isBusy;
     pairButton.disabled = isBusy;
     heartbeatButton.disabled = isBusy;
 }
 async function clearRevokedSession() {
     await clearSession();
     await clearMonitoringEventBuffer();
+}
+function clearTimers() {
+    if (refreshTimerId !== null) {
+        window.clearInterval(refreshTimerId);
+        refreshTimerId = null;
+    }
+    if (lockRefreshTimerId !== null) {
+        window.clearInterval(lockRefreshTimerId);
+        lockRefreshTimerId = null;
+    }
+}
+function renderLocked() {
+    statusPill.textContent = "Zamčeno";
+    statusPill.classList.remove("active");
+    statusPill.classList.add("locked");
+    lockView.classList.remove("hidden");
+    pairingView.classList.add("hidden");
+    connectedView.classList.add("hidden");
+    clearTimers();
+    isUnlocked = false;
+}
+function renderUnlocked() {
+    statusPill.classList.remove("locked");
+    lockView.classList.add("hidden");
+    startUnlockedTimers();
+}
+function startUnlockedTimers() {
+    clearTimers();
+    refreshTimerId = window.setInterval(() => {
+        void refresh();
+    }, REFRESH_INTERVAL_MS);
+    lockRefreshTimerId = window.setInterval(() => {
+        void extendPopupUnlockWindow().catch(() => null);
+    }, LOCK_REFRESH_INTERVAL_MS);
 }
 async function renderPaired(session) {
     const [capture, queuedEvents] = await Promise.all([
@@ -272,6 +364,7 @@ async function renderPaired(session) {
     ]);
     statusPill.textContent = "Aktivní";
     statusPill.classList.add("active");
+    statusPill.classList.remove("locked");
     pairingView.classList.add("hidden");
     connectedView.classList.remove("hidden");
     deviceName.textContent = session.deviceName;
@@ -287,10 +380,14 @@ async function renderPaired(session) {
 function renderPairing() {
     statusPill.textContent = "Nespárováno";
     statusPill.classList.remove("active");
+    statusPill.classList.remove("locked");
     connectedView.classList.add("hidden");
     pairingView.classList.remove("hidden");
 }
 async function refresh() {
+    if (!isUnlocked)
+        return;
+    await extendPopupUnlockWindow().catch(() => null);
     const session = await getSession();
     if (session) {
         await chrome.runtime.sendMessage({ type: "mmm:heartbeat" }).catch(() => null);
@@ -304,6 +401,33 @@ async function refresh() {
         return;
     }
     renderPairing();
+}
+async function unlock() {
+    const password = lockPasswordInput.value.trim();
+    if (!password) {
+        setMessage("Zadej heslo.", true);
+        return;
+    }
+    setBusy(true);
+    setMessage("Odemykám extension...");
+    try {
+        const unlocked = await unlockPopup(password);
+        if (!unlocked) {
+            setMessage("Nesprávné heslo.", true);
+            return;
+        }
+        isUnlocked = true;
+        lockPasswordInput.value = "";
+        setMessage("Extension je odemknutá.");
+        renderUnlocked();
+        await refresh();
+    }
+    catch (error) {
+        setMessage(error instanceof Error ? error.message : "Odemknutí selhalo.", true);
+    }
+    finally {
+        setBusy(false);
+    }
 }
 async function pair() {
     const code = pairingCodeInput.value.trim();
@@ -384,6 +508,16 @@ async function heartbeat() {
         setBusy(false);
     }
 }
+async function initialize() {
+    isUnlocked = await isPopupUnlocked();
+    if (!isUnlocked) {
+        renderLocked();
+        return;
+    }
+    renderUnlocked();
+    await refresh();
+}
+unlockButton.addEventListener("click", () => void unlock());
 pairButton.addEventListener("click", () => void pair());
 heartbeatButton.addEventListener("click", () => void heartbeat());
 pairingCodeInput.addEventListener("keydown", (event) => {
@@ -392,8 +526,23 @@ pairingCodeInput.addEventListener("keydown", (event) => {
         void pair();
     }
 });
-void refresh();
-window.setInterval(() => void refresh(), 5000);
+lockPasswordInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        void unlock();
+    }
+});
+window.addEventListener("beforeunload", () => {
+    if (isUnlocked) {
+        void lockPopup().catch(() => null);
+    }
+});
+window.addEventListener("pagehide", () => {
+    if (isUnlocked) {
+        void lockPopup().catch(() => null);
+    }
+});
+void initialize();
 
 /******/ })()
 ;
