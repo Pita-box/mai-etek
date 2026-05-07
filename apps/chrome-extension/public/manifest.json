@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MMM",
-  "description": "Autorizované párování a stav monitoring spojení.",
+  "description": "Autorizované párování a stav SOsolution.",
   "version": "__VERSION__",
   "action": {
     "default_popup": "popup.html",

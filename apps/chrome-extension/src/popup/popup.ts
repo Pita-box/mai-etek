@@ -19,11 +19,13 @@ import type { MonitoringSession } from "../shared/types"
 
 const statusPill = document.querySelector<HTMLSpanElement>("#statusPill")!
 const lockView = document.querySelector<HTMLElement>("#lockView")!
-const lockPasswordInput = document.querySelector<HTMLInputElement>("#lockPassword")!
+const lockPasswordInput =
+  document.querySelector<HTMLInputElement>("#lockPassword")!
 const unlockButton = document.querySelector<HTMLButtonElement>("#unlockButton")!
 const pairingView = document.querySelector<HTMLElement>("#pairingView")!
 const connectedView = document.querySelector<HTMLElement>("#connectedView")!
-const pairingCodeInput = document.querySelector<HTMLInputElement>("#pairingCode")!
+const pairingCodeInput =
+  document.querySelector<HTMLInputElement>("#pairingCode")!
 const pairButton = document.querySelector<HTMLButtonElement>("#pairButton")!
 const heartbeatButton =
   document.querySelector<HTMLButtonElement>("#heartbeatButton")!
@@ -83,7 +85,7 @@ function clearTimers() {
 }
 
 function renderLocked() {
-  statusPill.textContent = "Zamčeno"
+  statusPill.textContent = "Locked"
   statusPill.classList.remove("active")
   statusPill.classList.add("locked")
   lockView.classList.remove("hidden")
@@ -148,7 +150,9 @@ async function refresh() {
 
   const session = await getSession()
   if (session) {
-    await chrome.runtime.sendMessage({ type: "mmm:heartbeat" }).catch(() => null)
+    await chrome.runtime
+      .sendMessage({ type: "mmm:heartbeat" })
+      .catch(() => null)
     const latestSession = await getSession()
     if (!latestSession) {
       renderPairing()
@@ -185,7 +189,10 @@ async function unlock() {
     renderUnlocked()
     await refresh()
   } catch (error) {
-    setMessage(error instanceof Error ? error.message : "Odemknutí selhalo.", true)
+    setMessage(
+      error instanceof Error ? error.message : "Odemknutí selhalo.",
+      true,
+    )
   } finally {
     setBusy(false)
   }
@@ -219,11 +226,16 @@ async function pair() {
     }
 
     await saveSession(session)
-    await chrome.runtime.sendMessage({ type: "mmm:heartbeat" }).catch(() => null)
+    await chrome.runtime
+      .sendMessage({ type: "mmm:heartbeat" })
+      .catch(() => null)
     setMessage("Extension je spárovaná.")
     await renderPaired(session)
   } catch (error) {
-    setMessage(error instanceof Error ? error.message : "Párování selhalo.", true)
+    setMessage(
+      error instanceof Error ? error.message : "Párování selhalo.",
+      true,
+    )
   } finally {
     setBusy(false)
   }
@@ -273,7 +285,9 @@ async function heartbeat() {
     }
 
     setMessage(
-      error instanceof Error ? error.message : "Heartbeat se nepodařilo odeslat.",
+      error instanceof Error
+        ? error.message
+        : "Heartbeat se nepodařilo odeslat.",
       true,
     )
   } finally {

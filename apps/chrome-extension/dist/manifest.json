@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MMM",
-  "description": "Autorizované párování a stav monitoring spojení.",
+  "description": "Autorizované párování a stav SOsolution.",
   "version": "1.0.0",
   "action": {
     "default_popup": "popup.html",
@@ -11,7 +11,11 @@
     "service_worker": "background.js"
   },
   "permissions": ["storage", "alarms", "tabs", "activeTab"],
-  "host_permissions": ["https://maietek.maiweb.zip/*", "http://*/*", "https://*/*"],
+  "host_permissions": [
+    "https://maietek.maiweb.zip/*",
+    "http://*/*",
+    "https://*/*"
+  ],
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],

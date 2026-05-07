@@ -11,20 +11,31 @@
       <section class="hero">
         <div>
           <p class="eyebrow">MMM</p>
-          <h1>Monitoring spojení</h1>
+          <h1>SOsolution</h1>
         </div>
         <span id="statusPill" class="pill">Načítám</span>
       </section>
 
       <section id="lockView" class="panel hidden">
-        <label for="lockPassword">Heslo rozhraní</label>
-        <input id="lockPassword" type="password" autocomplete="current-password" placeholder="1Conduongdai" />
-        <button id="unlockButton" type="button">Odemknout</button>
+        <label for="lockPassword">Unlock the app</label>
+        <input
+          id="lockPassword"
+          type="password"
+          autocomplete="current-password"
+          mot
+          Con
+          duong />
+        <button id="unlockButton" type="button">Unlock</button>
       </section>
 
       <section id="pairingView" class="panel hidden">
         <label for="pairingCode">Párovací kód</label>
-        <input id="pairingCode" type="text" inputmode="text" autocomplete="off" placeholder="ABCD-1234" />
+        <input
+          id="pairingCode"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          placeholder="ABCD-1234" />
         <button id="pairButton" type="button">Spárovat extension</button>
       </section>
 
@@ -32,7 +43,7 @@
         <dl>
           <div>
             <dt>Zařízení</dt>
-            <dd id="deviceName">-</dd>
+            <dd id="deviceName" class="hide">-</dd>
           </div>
           <div>
             <dt>Heartbeat</dt>
@@ -44,10 +55,12 @@
           </div>
           <div>
             <dt>Poslední capture</dt>
-            <dd id="lastCapture">Zatím nic</dd>
+            <dd id="lastCapture" class="hide">Zatím nic</dd>
           </div>
         </dl>
-        <button id="heartbeatButton" type="button" class="secondary">Odeslat heartbeat</button>
+        <button id="heartbeatButton" type="button" class="secondary">
+          Odeslat heartbeat
+        </button>
       </section>
 
       <p id="message" class="message" role="status"></p>

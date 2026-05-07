@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react"
 import {
   CalendarDays,
   Heart,
@@ -8,21 +8,21 @@ import {
   Pencil,
   Trash2,
   User,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { deleteWish, updateWish } from "@/actions/wishes";
-import { useToast } from "@/components/shared/useToast";
-import type { Wish, WishStatus, WishViewerRole } from "@/types/wish";
-import { WishDomControls } from "./WishDomControls";
-import { WishForm } from "./WishForm";
-import { WishMediaStrip } from "./WishMediaStrip";
-import { WishMediaUpload } from "./WishMediaUpload";
-import { useWishCardReadTracking } from "./useWishCardReadTracking";
+} from "lucide-react"
+import { useRouter } from "next/navigation"
+import { deleteWish, updateWish } from "@/actions/wishes"
+import { useToast } from "@/components/shared/useToast"
+import type { Wish, WishStatus, WishViewerRole } from "@/types/wish"
+import { WishDomControls } from "./WishDomControls"
+import { WishForm } from "./WishForm"
+import { WishMediaStrip } from "./WishMediaStrip"
+import { WishMediaUpload } from "./WishMediaUpload"
+import { useWishCardReadTracking } from "./useWishCardReadTracking"
 
 type WishCardProps = {
-  wish: Wish;
-  role: WishViewerRole;
-};
+  wish: Wish
+  role: WishViewerRole
+}
 
 const statusCopy: Record<WishStatus, string> = {
   new: "Nové",
@@ -30,7 +30,7 @@ const statusCopy: Record<WishStatus, string> = {
   planned: "Naplánováno",
   fulfilled: "Splněno",
   declined: "Zamítnuto",
-};
+}
 
 const statusClass: Record<WishStatus, string> = {
   new: "border-primary/30 bg-primary/10 text-primary",
@@ -38,11 +38,11 @@ const statusClass: Record<WishStatus, string> = {
   planned: "border-amber-300/25 bg-amber-300/10 text-amber-200",
   fulfilled: "border-emerald-300/25 bg-emerald-300/10 text-emerald-200",
   declined: "border-rose-300/25 bg-rose-400/10 text-rose-200",
-};
+}
 
 function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ""
 
   return new Intl.DateTimeFormat("cs-CZ", {
     day: "2-digit",
@@ -50,66 +50,64 @@ function formatDate(value: string) {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(date);
+  }).format(date)
 }
 
 function isEditableStatus(status: WishStatus) {
-  return status === "new" || status === "noted";
+  return status === "new" || status === "noted"
 }
 
 export function WishCard({ wish, role }: WishCardProps) {
-  const router = useRouter();
-  const toast = useToast();
-  const cardRef = useRef<HTMLElement | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-  const canEdit = role === "sub" && isEditableStatus(wish.status);
+  const router = useRouter()
+  const toast = useToast()
+  const cardRef = useRef<HTMLElement | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
+  const canEdit = role === "sub" && isEditableStatus(wish.status)
 
-  useWishCardReadTracking({ wishId: wish.id, cardRef });
+  useWishCardReadTracking({ wishId: wish.id, cardRef })
 
   const updateCurrentWish = (formData: FormData) => {
-    setError(null);
+    setError(null)
     startTransition(async () => {
-      const result = await updateWish(wish.id, formData);
+      const result = await updateWish(wish.id, formData)
       if (result?.error) {
-        setError(result.error);
-        toast.error("Přání se nepodařilo uložit.", result.error);
-        return;
+        setError(result.error)
+        toast.error("Přání se nepodařilo uložit.", result.error)
+        return
       }
-      setIsEditing(false);
-      toast.success("Přání bylo uloženo.");
-      router.refresh();
-    });
-  };
+      setIsEditing(false)
+      toast.success("Přání bylo uloženo.")
+      router.refresh()
+    })
+  }
 
   const removeCurrentWish = () => {
-    if (!window.confirm("Opravdu chceš smazat toto přání?")) return;
+    if (!window.confirm("Opravdu chceš smazat toto přání?")) return
 
-    setError(null);
+    setError(null)
     startTransition(async () => {
-      const result = await deleteWish(wish.id);
+      const result = await deleteWish(wish.id)
       if (result?.error) {
-        setError(result.error);
-        toast.error("Přání se nepodařilo smazat.", result.error);
-        return;
+        setError(result.error)
+        toast.error("Přání se nepodařilo smazat.", result.error)
+        return
       }
-      toast.success("Přání bylo smazáno.");
-      router.refresh();
-    });
-  };
+      toast.success("Přání bylo smazáno.")
+      router.refresh()
+    })
+  }
 
   return (
     <article
       ref={cardRef}
-      className="rounded-3xl border border-white/10 bg-white/[0.045] p-5 backdrop-blur-xl transition hover:border-primary/25 hover:bg-white/[0.06]"
-    >
+      className="rounded-3xl border border-white/10 bg-white/[0.045] p-5 backdrop-blur-xl transition hover:border-primary/25 hover:bg-white/[0.06]">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <span
-              className={`rounded-full border px-3 py-1 text-xs font-bold ${statusClass[wish.status]}`}
-            >
+              className={`rounded-full border px-3 py-1 text-xs font-bold ${statusClass[wish.status]}`}>
               {statusCopy[wish.status]}
             </span>
           </div>
@@ -147,8 +145,7 @@ export function WishCard({ wish, role }: WishCardProps) {
                 type="button"
                 onClick={() => setIsEditing((current) => !current)}
                 disabled={isPending}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-zinc-200 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary/60 disabled:cursor-not-allowed disabled:opacity-50"
-              >
+                className="inline-flex cursor-pointer items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-zinc-200 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary/60 disabled:cursor-not-allowed disabled:opacity-50">
                 <Pencil className="h-4 w-4" />
                 Upravit
               </button>
@@ -156,8 +153,7 @@ export function WishCard({ wish, role }: WishCardProps) {
                 type="button"
                 onClick={removeCurrentWish}
                 disabled={isPending}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-2xl border border-rose-400/20 bg-rose-500/10 px-3 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/20 focus:outline-none focus:ring-2 focus:ring-rose-300/60 disabled:cursor-not-allowed disabled:opacity-50"
-              >
+                className="inline-flex cursor-pointer items-center gap-2 rounded-2xl border border-rose-400/20 bg-rose-500/10 px-3 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/20 focus:outline-none focus:ring-2 focus:ring-rose-300/60 disabled:cursor-not-allowed disabled:opacity-50">
                 {isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -169,7 +165,7 @@ export function WishCard({ wish, role }: WishCardProps) {
           ) : role === "sub" ? (
             <span className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm font-semibold text-zinc-500">
               <Heart className="h-4 w-4" />
-              Uzamčeno
+              ULocked
             </span>
           ) : null}
         </div>
@@ -178,8 +174,7 @@ export function WishCard({ wish, role }: WishCardProps) {
       {error ? (
         <div
           role="alert"
-          className="mt-4 rounded-2xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100"
-        >
+          className="mt-4 rounded-2xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
           {error}
         </div>
       ) : null}
@@ -206,5 +201,5 @@ export function WishCard({ wish, role }: WishCardProps) {
         ) : null}
       </div>
     </article>
-  );
+  )
 }
