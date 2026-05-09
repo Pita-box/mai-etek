@@ -445,6 +445,29 @@ Priklad rozvrhu:
 0 3 * * * cd /opt/apps/maietek && sudo docker compose -f docker-compose.prod.yml exec -T web node scripts/run-task-cron.mjs monitoring-cleanup >> /var/log/maietek-cron.log 2>&1
 ```
 
+## 14.1 Zaloha databaze a logy
+
+Host-level databazi zalohuj pres `pg_dump` z repo skriptu. Potrebujes `SUPABASE_DB_URL` v `.env` a nainstalovany `postgresql-client`:
+
+```bash
+sudo apt install -y postgresql-client
+cd /opt/apps/maietek
+MAIETEK_ENV_FILE=/opt/apps/maietek/.env MAIETEK_BACKUP_DIR=/opt/backups/maietek ./scripts/backup-prod-db.sh
+```
+
+Priklad cronu:
+
+```cron
+0 2 * * * cd /opt/apps/maietek && MAIETEK_ENV_FILE=/opt/apps/maietek/.env MAIETEK_BACKUP_DIR=/opt/backups/maietek ./scripts/backup-prod-db.sh >> /var/log/maietek-backup.log 2>&1
+```
+
+Hostove logy z cronu a backupu rotuj pres `ops/logrotate/maietek`:
+
+```bash
+sudo cp /opt/apps/maietek/ops/logrotate/maietek /etc/logrotate.d/maietek
+sudo chmod 644 /etc/logrotate.d/maietek
+```
+
 ## 15. Chrome extension build
 
 Production extension se builduje zvlast a musi mit live API URL:

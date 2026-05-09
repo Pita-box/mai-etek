@@ -1,5 +1,6 @@
 import { createClient } from "redis";
 import { getEnvValue } from "./env";
+import { logger } from "./logger";
 
 type RedisClient = ReturnType<typeof createClient>;
 
@@ -25,7 +26,10 @@ function warnRedis(message: string, error: unknown) {
   if (now - lastWarningAt < REDIS_WARNING_THROTTLE_MS) return;
 
   lastWarningAt = now;
-  console.warn(`[Redis] ${message}:`, formatRedisError(error));
+  logger.warn("Redis cache warning", {
+    message,
+    error: formatRedisError(error),
+  });
 }
 
 function disableRedisTemporarily(client?: RedisClient | null) {

@@ -5,6 +5,7 @@ exports.setCachedJson = setCachedJson;
 exports.deleteCacheByPattern = deleteCacheByPattern;
 const redis_1 = require("redis");
 const env_1 = require("./env");
+const logger_1 = require("./logger");
 const REDIS_CONNECT_TIMEOUT_MS = 500;
 const REDIS_COMMAND_TIMEOUT_MS = 500;
 const REDIS_FAILURE_COOLDOWN_MS = 30_000;
@@ -23,7 +24,10 @@ function warnRedis(message, error) {
     if (now - lastWarningAt < REDIS_WARNING_THROTTLE_MS)
         return;
     lastWarningAt = now;
-    console.warn(`[Redis] ${message}:`, formatRedisError(error));
+    logger_1.logger.warn("Redis cache warning", {
+        message,
+        error: formatRedisError(error),
+    });
 }
 function disableRedisTemporarily(client) {
     disabledUntil = Date.now() + REDIS_FAILURE_COOLDOWN_MS;

@@ -3,6 +3,7 @@ import { Server } from "socket.io";
 import { createAdminClient } from "@maietek/db";
 import { socketAuthMiddleware, type AuthenticatedSocket } from "./auth";
 import { sendUserOnlineTelegramNotification } from "../services/notifications";
+import { logger } from "../utils/logger";
 
 /** Globální reference na Socket.IO server – importují ji route handlery pro broadcast */
 let io: Server | null = null;
@@ -63,10 +64,10 @@ async function updateLastOnlineAt(userId: string, value: string) {
     .eq("id", userId);
 
   if (error) {
-    console.error(
-      "[Socket.IO] Nepodařilo se uložit last_online_at:",
-      error.message,
-    );
+    logger.error("Socket.IO last_online_at update failed", {
+      userId,
+      error,
+    });
   }
 }
 
@@ -103,9 +104,11 @@ export function initSocketIO(httpServer: HttpServer): Server {
     const connectedAt = new Date().toISOString();
     void updateLastOnlineAt(userId, connectedAt);
 
-    console.log(
-      `[Socket.IO] ${userName} (${userId}) připojen – socket ${socket.id}`,
-    );
+    logger.info("Socket.IO user connected", {
+      userId,
+      userName,
+      socketId: socket.id,
+    });
 
     emitPresenceSync(socket, userId);
 
@@ -148,11 +151,16 @@ export function initSocketIO(httpServer: HttpServer): Server {
           socket.broadcast.emit("user:offline", { userId, lastOnlineAt });
         }
       }
-      console.log(`[Socket.IO] ${userName} (${userId}) odpojen – ${reason}`);
+      logger.info("Socket.IO user disconnected", {
+        userId,
+        userName,
+        socketId: socket.id,
+        reason,
+      });
     });
   });
 
-  console.log("[Socket.IO] Server inicializován s /chat namespace");
+  logger.info("Socket.IO chat namespace initialized");
 
   return io;
 }

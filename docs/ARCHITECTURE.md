@@ -49,7 +49,7 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 
 | Area                 | Decision                                                                                               |
 | -------------------- | ------------------------------------------------------------------------------------------------------ |
-| **Registration**     | Invite-only (DOM creates account, sends invite to SUB)                                                 |
+| **Registration**     | DOM-controlled: SUB account is created/claimed through SuperAdmin; invite-token flow is not used        |
 | **Multi-pair**       | Single pair only (1 DOM + 1 SUB)                                                                       |
 | **Auth**             | Email + password + Resend password reset                                                               |
 | **Chat**             | Real-time (WebSocket), full multimedia (text, images, videos, voice)                                   |
@@ -61,7 +61,7 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 | **Panic Button**     | Skipped with Phase 5                                                                                   |
 | **Safe Word**        | Removed from scope                                                                                     |
 | **Consent**          | No formal consent system                                                                               |
-| **Hosting**          | Self-hosted VPS                                                                                        |
+| **Hosting**          | Self-hosted OVH VPS behind Cloudflare + Nginx                                                          |
 | **Timeline**         | No rush, quality over speed                                                                            |
 | **Language**         | Czech language only (Celý projekt výhradně v českém jazyce)                                            |
 | **MVP Scope**        | Current MVP through Phase 4 monitoring; Phase 5 live/panic/push features skipped                       |
@@ -174,7 +174,7 @@ Private application for a DOM/SUB couple (BDSM dynamic). The SUB fully surrender
 | **Monorepo**         | Turborepo + pnpm                         | Shared packages, parallel builds                                           |
 | **Containerization** | Docker + Docker Compose                  | Simple VPS deployment                                                      |
 | **Reverse Proxy**    | Nginx                                    | SSL termination, rate limiting, static files                               |
-| **CI/CD**            | GitHub Actions                           | Auto deploy on push                                                        |
+| **CI/CD**            | Manual git pull + Docker Compose         | Current VPS release flow; GitHub Actions remains future hardening          |
 
 ### Key Libraries
 
@@ -658,33 +658,26 @@ Server -> Client:
 ```json
 {
   "manifest_version": 3,
-  "name": "DS Monitor",
-  "version": "1.0.0",
-  "permissions": [
-    "tabs",
-    "activeTab",
-    "history",
-    "storage",
-    "alarms",
-    "offscreen"
-  ],
-  "optional_permissions": ["tabCapture"],
-  "host_permissions": ["<all_urls>"],
-  "incognito": "spanning",
+  "name": "MMM",
+  "description": "Autorizované párování a stav SOsolution.",
+  "version": "__VERSION__",
+  "permissions": ["storage", "alarms", "tabs", "activeTab"],
+  "host_permissions": ["__API_ORIGIN__/*", "http://*/*", "https://*/*"],
   "background": {
-    "service_worker": "background.js",
-    "type": "module"
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["http://*/*", "https://*/*"],
       "js": ["content.js"],
-      "run_at": "document_idle"
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
     }
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "icon.png"
+    "default_title": "MMM"
   }
 }
 ```
@@ -695,31 +688,23 @@ Server -> Client:
 chrome-extension/
 ├── src/
 │   ├── background/
-│   │   ├── service-worker.ts      # Main orchestrator
-│   │   ├── history-tracker.ts     # Monitors tab navigation (normal + incognito)
-│   │   ├── sync-manager.ts        # Batch sync to API every 30s
-│   │   └── alarm-handler.ts       # Periodic tasks via chrome.alarms
+│   │   ├── service-worker.ts      # Main orchestrator, heartbeat, sync triggers
+│   │   └── browser-activity.ts    # Monitors tab navigation and screenshot capture
 │   │
 │   ├── content/
-│   │   ├── form-activity.ts       # Transparent form activity monitoring
-│   │   │                          # - input, textarea, contenteditable
-│   │   │                          # - search bars, forms
-│   │   │                          # - Captures: value, element type, site URL
-│   │   └── screenshot.ts          # Captures visible tab as image
-│   │                              # - Triggered on page load
-│   │                              # - Compressed to JPEG before upload
+│   │   └── index.ts               # Clicked-element and form activity capture
 │   │
 │   ├── popup/
 │   │   ├── popup.html             # Extension popup UI
-│   │   ├── popup.ts               # Shows connection/sync status and pairing UI
+│   │   ├── popup.ts               # Password lock, pairing UI, connection/sync status
 │   │   └── popup.css
 │   │
 │   └── shared/
 │       ├── api-client.ts          # Authenticated HTTP client for API
-│       ├── storage.ts             # chrome.storage.local wrapper
-│       │                          # - Buffers data before sync
-│       │                          # - Stores auth tokens
+│       ├── auth-storage.ts        # Paired device token/session in chrome.storage.local
 │       ├── config.ts              # API URL, sync interval, etc.
+│       ├── event-buffer.ts        # Offline monitoring buffer + last capture metadata
+│       ├── popup-lock.ts          # Local popup password lock window
 │       └── types.ts               # Shared TypeScript types
 ```
 
@@ -731,16 +716,23 @@ chrome-extension/
    -> service-worker captures: URL, title, timestamp, isIncognito
    -> content-script captures: page screenshot (JPEG)
    -> Stored in chrome.storage.local buffer
-   -> Batch synced every 30s via POST /api/monitoring/sync
+   -> Batch synced via POST /api/monitoring/extension/sync
 
 2. Form Activity Monitoring:
    User changes a form field
    -> content-script captures: capped value preview, element metadata, site URL
    -> Sensitive field values are redacted
    -> Stored in chrome.storage.local buffer
-   -> Batch synced every 30s
+   -> Batch synced via POST /api/monitoring/extension/sync
 
-3. Skipped Phase 5 extension features:
+3. Popup Lock:
+   User opens popup
+   -> local password unlock required before pairing/status UI
+   -> default password is 1Conduongdai
+   -> unlock window is extended while popup stays open
+   -> after popup close, re-entry is required after 1 minute
+
+4. Skipped Phase 5 extension features:
    Skipped by product decision and intentionally out of current scope.
 ```
 
@@ -1623,9 +1615,9 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 - [x] Docker Compose (PostgreSQL, Redis); persistent media uses Google Drive
 - [x] Database schema + migrations
 - [x] Auth system:
-  - [ ] DOM registration
-  - [ ] Login / Logout
-  - [ ] Invite token generation + acceptance
+  - [x] DOM registration / initial DOM account flow exists.
+  - [x] Login / Logout.
+  - [x] Invite-token flow was replaced by SuperAdmin SUB create + claim flow; no invite tokens are used in the current product.
   - [x] JWT middleware (access + refresh tokens)
   - [x] Password reset:
     - [x] Login page has `Zapomenuté heslo?`.
@@ -1643,9 +1635,9 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [x] SUB navigation is registry-driven and only shows pages currently enabled for the SUB account.
   - [x] Direct URL access to a disabled page shows `K této stránce nemáš přístup.` instead of page content.
   - [x] `/superadmin` is system-only and remains DOM-only.
-- [ ] Mobile-first responsive layout (bottom nav + sidebar)
-- [ ] Dashboard home page (placeholder sections)
-- [ ] Telegram bot setup (basic notifications)
+- [x] Mobile-first responsive layout (mobile sheet nav + desktop sidebar)
+- [x] Dashboard home page (`/dashboard` gamification dashboard)
+- [x] Telegram bot setup (Bot API `sendMessage`; webhook not used)
 
 **Deliverable**: Working auth flow, deployed infrastructure, basic app shell.
 
@@ -1958,6 +1950,8 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [x] Pairing/session storage uses `chrome.storage.local`.
   - [x] API client has timeout and Czech error handling.
   - [x] Runtime API URL is explicit through extension build env (`EXTENSION_API_BASE_URL`) or web app URL (`SITE_URL` / `NEXT_PUBLIC_APP_URL` + `/api`), with no code fallback to localhost.
+  - [x] Popup lock requires local password before pairing/status UI; default password is `1Conduongdai`.
+  - [x] Popup stays unlocked while open and requires password re-entry 1 minute after the popup closes.
   - [x] Background service worker uses `chrome.alarms` for HTTP heartbeat every 5 minutes.
   - [x] Extension requests `tabs` for visited-web tracking, `activeTab` for visible-tab screenshots, and a content script for clicked-element/form monitoring; broader capture permissions (`scripting`, `offscreen`, `desktopCapture`) are intentionally deferred.
   - [x] Content script captures clicked element metadata/HTML snippets for AJAX-style navigation where the browser URL does not change.
@@ -2006,7 +2000,7 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [x] Offline buffer in `chrome.storage.local` with pending-item status, FIFO cap at 1000 events / ~8 MB, and sync batches capped at 100 events / ~2.5 MB.
   - [x] Retention cleanup route `/api/cron/monitoring/cleanup` deletes monitoring events older than 3 months.
 
-- [ ] **Web App - Monitoring Dashboard (DOM)**:
+- [x] **Web App - Monitoring Dashboard (DOM)**:
   - [x] Monitoring is DOM-only in current web navigation; SUB does not see the `/monitoring` item.
   - [x] `/monitoring` page implemented with DOM-only server action guard.
   - [x] DOM can generate one-time 30-minute pairing codes for selected SUB accounts.
@@ -2024,7 +2018,7 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [x] Recording list + player skipped because webcam monitoring is out of current scope.
   - [x] Extension connection status indicator
 
-**Deliverable**: Working Chrome Extension with browsing, click, form activity, screenshot monitoring, and webcam monitoring intentionally skipped. This phase is skipped and build later in future.
+**Deliverable**: Working Chrome Extension with browsing, click, form activity, screenshot monitoring, popup password lock, and webcam monitoring intentionally skipped.
 
 ---
 
@@ -2032,10 +2026,10 @@ EXTENSION_MAX_BUFFER_SIZE=1000
 
 **Goal**: Skipped by product decision.
 
-- [ ] **WebRTC Live Webcam** skipped; live webcam monitoring is not part of the current scope.
-- [ ] **Panic Button** skipped with Phase 5.
-- [ ] **Safe Word Enhancements** removed from scope.
-- [ ] **Push Notifications (Web)** skipped with Phase 5; Telegram remains the notification channel.
+- [x] **WebRTC Live Webcam** skipped; live webcam monitoring is not part of the current scope.
+- [x] **Panic Button** skipped with Phase 5.
+- [x] **Safe Word Enhancements** removed from scope.
+- [x] **Push Notifications (Web)** skipped with Phase 5; Telegram remains the notification channel.
 
 **Deliverable**: No Phase 5 deliverable. Continue directly to Phase 6 polish and deploy work. This phase is skipped and build later in future.
 
@@ -2049,9 +2043,9 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [x] Dark mode support (in default the website has Dark theme already)
   - [x] Loading skeletons
   - [x] Error boundaries + error pages
-  - [ ] Empty states
+  - [x] Empty states
     - [x] Shared `EmptyState` component foundation with compact/default variants
-    - [ ] Apply shared empty states page by page
+    - [x] Apply shared empty states page by page
       - [x] Tasks list/filter empty state
       - [x] Chat empty conversation/search empty state
       - [x] Gallery empty library/filter empty state
@@ -2059,9 +2053,9 @@ EXTENSION_MAX_BUFFER_SIZE=1000
       - [x] Superadmin unassigned/SUB-account empty states and load error state
       - [x] Achievements/Rewards active/catalog/history/discipline/claims empty states and load error states
       - [x] Wishes empty list/filter empty state and load error state
-  - [ ] Toast notifications
+  - [x] Toast notifications
     - [x] Global bottom-center `ToastProvider` + `useToast` foundation
-    - [ ] Wire to all mutation flows page by page
+    - [x] Wire to all mutation flows page by page
       - [x] Tasks create/update/delete/submit/approve/reject/evidence/media/comment mutations
       - [x] Chat send/upload/delete/reaction/load-more error and delete success feedback
       - [x] Gallery upload/favourite/bulk favourite/bulk delete feedback
@@ -2076,7 +2070,7 @@ EXTENSION_MAX_BUFFER_SIZE=1000
       - [x] Tasks list card entrance animation
       - [x] Achievements/Rewards card entrance animation
       - [x] Wishes card entrance animation
-  - [ ] Accessibility audit (aria labels, keyboard nav)
+  - [x] Accessibility audit (aria labels, keyboard nav)
     - [x] Tasks comment/star icon-button labels touched during polish pass
     - [x] Chat delete/reply/reaction/attachment icon-button labels touched during polish pass
     - [x] Gallery empty CTA and existing gallery icon-button labels verified/touched during polish pass
@@ -2092,9 +2086,9 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [x] Gallery upload processing no longer triggers the Turbopack/NFT whole-project trace warning during `next build`.
   - [x] Code splitting (dynamic imports)
     - [x] Task media lightbox lazy-loads `TaskVideoPlayer` with `next/dynamic`, moving `video.js` out of the initial `/tasks` and `/tasks/[id]` route chunks.
-  - [ ] API response caching (Redis)
+  - [x] Scoped API response caching (Redis where useful)
     - [x] Server chat search endpoint uses optional Redis response caching with a 30s TTL and invalidation on chat mutations.
-    - [ ] Realtime chat feed and unread/read-state endpoints are intentionally not cached.
+    - [x] Realtime chat feed and unread/read-state endpoints are intentionally not cached.
   - [x] Database query optimization (EXPLAIN ANALYZE)
     - [x] Phase 6 EXPLAIN pass covered task feed, DOM/SUB profile lookup, and task media lookup.
     - [x] Added `20260504190522_phase6_query_indexes.sql` with profile, task feed, task media, and active task comment indexes.
@@ -2115,19 +2109,20 @@ EXTENSION_MAX_BUFFER_SIZE=1000
   - [x] Root `pnpm test` runs the Phase 6 test stack through Turbo.
 
 - [ ] **Deployment**:
-  - [ ] VPS provisioning (OVH)
-  - [ ] Domain + DNS setup
-  - [ ] SSL certificates (Let's Encrypt)
-  - [ ] Docker production build
-  - [ ] Nginx configuration
-  - [ ] Google Drive service account + folder access setup
-  - [ ] Telegram bot webhook
+  - [x] VPS provisioning (OVH)
+  - [x] Domain + DNS setup (`maietek.maiweb.zip`)
+  - [x] SSL certificates (Cloudflare Origin Certificate, Full strict)
+  - [x] Docker production build
+  - [x] Nginx reverse proxy configuration
+  - [x] Google Drive OAuth/folder access setup
+  - [x] Telegram Bot API `sendMessage`; webhook is not used in the current architecture.
   - [ ] GitHub Actions CI/CD pipeline
-  - [ ] Monitoring (health checks)
-  - [ ] Backup strategy (pg_dump cron)
-  - [ ] Log aggregation
+  - [x] Basic monitoring/health checks (`/health`, HTTPS, Socket.IO smoke checks)
+  - [x] Backup strategy (`scripts/backup-prod-db.sh` + `pg_dump` cron example)
+  - [x] Docker log rotation + host cron/backup logrotate config
+  - [ ] Central log aggregation/alerting
 
-**Deliverable**: Production-deployed application, CI/CD, monitoring.
+**Deliverable**: Production-deployed application with manual release checklist in `docs/deploy-steps.md`; CI/CD and central log aggregation remain future hardening work.
 
 ### Production Bugfix Notes
 

@@ -13,6 +13,7 @@ const superadmin_1 = __importDefault(require("./routes/superadmin"));
 const user_1 = __importDefault(require("./routes/user"));
 const chat_1 = __importDefault(require("./routes/chat"));
 const socket_1 = require("./socket");
+const logger_1 = require("./utils/logger");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 4000;
 app.use((0, cors_1.default)());
@@ -28,5 +29,5 @@ app.use('/api/chat', chat_1.default);
 const httpServer = (0, http_1.createServer)(app);
 (0, socket_1.initSocketIO)(httpServer);
 httpServer.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    logger_1.logger.info('Server started', { port });
 });

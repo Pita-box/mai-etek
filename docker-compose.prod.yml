@@ -1,5 +1,11 @@
 name: maietek-prod
 
+x-json-log-options: &json-log-options
+  driver: json-file
+  options:
+    max-size: "${DOCKER_LOG_MAX_SIZE:-10m}"
+    max-file: "${DOCKER_LOG_MAX_FILE:-5}"
+
 services:
   web:
     build:
@@ -44,10 +50,12 @@ services:
       TELEGRAM_MONITORING_CHAT_ID: ${TELEGRAM_MONITORING_CHAT_ID:-}
       TELEGRAM_SECURITY_CHAT_ID: ${TELEGRAM_SECURITY_CHAT_ID:-}
       TELEGRAM_PRESENCE_CHAT_ID: ${TELEGRAM_PRESENCE_CHAT_ID:-}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
     expose:
       - "3000"
     ports:
       - "127.0.0.1:3100:3000"
+    logging: *json-log-options
     restart: unless-stopped
 
   server:
@@ -78,6 +86,7 @@ services:
       TELEGRAM_MONITORING_CHAT_ID: ${TELEGRAM_MONITORING_CHAT_ID:-}
       TELEGRAM_SECURITY_CHAT_ID: ${TELEGRAM_SECURITY_CHAT_ID:-}
       TELEGRAM_PRESENCE_CHAT_ID: ${TELEGRAM_PRESENCE_CHAT_ID:-}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
     expose:
       - "4000"
     ports:
@@ -85,6 +94,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    logging: *json-log-options
     restart: unless-stopped
 
   redis:
@@ -97,6 +107,7 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
+    logging: *json-log-options
     restart: unless-stopped
 volumes:
   redis-data:

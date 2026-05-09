@@ -8,6 +8,7 @@ const socket_io_1 = require("socket.io");
 const db_1 = require("@maietek/db");
 const auth_1 = require("./auth");
 const notifications_1 = require("../services/notifications");
+const logger_1 = require("../utils/logger");
 /** Globální reference na Socket.IO server – importují ji route handlery pro broadcast */
 let io = null;
 /** Map userId → Set<socketId> pro cílené broadcasty */
@@ -52,7 +53,10 @@ async function updateLastOnlineAt(userId, value) {
         .update({ last_online_at: value })
         .eq("id", userId);
     if (error) {
-        console.error("[Socket.IO] Nepodařilo se uložit last_online_at:", error.message);
+        logger_1.logger.error("Socket.IO last_online_at update failed", {
+            userId,
+            error,
+        });
     }
 }
 function initSocketIO(httpServer) {
@@ -82,7 +86,11 @@ function initSocketIO(httpServer) {
         userSockets.get(userId).add(socket.id);
         const connectedAt = new Date().toISOString();
         void updateLastOnlineAt(userId, connectedAt);
-        console.log(`[Socket.IO] ${userName} (${userId}) připojen – socket ${socket.id}`);
+        logger_1.logger.info("Socket.IO user connected", {
+            userId,
+            userName,
+            socketId: socket.id,
+        });
         emitPresenceSync(socket, userId);
         // Broadcast online status
         socket.broadcast.emit("user:online", {
@@ -116,9 +124,14 @@ function initSocketIO(httpServer) {
                     socket.broadcast.emit("user:offline", { userId, lastOnlineAt });
                 }
             }
-            console.log(`[Socket.IO] ${userName} (${userId}) odpojen – ${reason}`);
+            logger_1.logger.info("Socket.IO user disconnected", {
+                userId,
+                userName,
+                socketId: socket.id,
+                reason,
+            });
         });
     });
-    console.log("[Socket.IO] Server inicializován s /chat namespace");
+    logger_1.logger.info("Socket.IO chat namespace initialized");
     return io;
 }

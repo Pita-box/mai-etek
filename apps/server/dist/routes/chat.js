@@ -475,7 +475,7 @@ router.post("/messages", async (req, res) => {
             // Socket.IO nemusí být inicializován – nevadí, REST response pokračuje
         }
         const offlineRecipientIds = participantIds.filter((participantId) => participantId !== auth.user.id && !(0, socket_1.isUserOnline)(participantId));
-        if (offlineRecipientIds.length > 0) {
+        if (profile.role === "sub" && offlineRecipientIds.length > 0) {
             const preview = getMessagePreview(message);
             void Promise.all(offlineRecipientIds.map((recipientId) => (0, notifications_1.sendTelegramNotification)(recipientId, preview, message.sender.fullName))).catch((notificationError) => {
                 console.error("[Chat] Telegram notification failed:", notificationError);

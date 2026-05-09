@@ -9,6 +9,7 @@ import superadminRoutes from './routes/superadmin';
 import userRoutes from './routes/user';
 import chatRoutes from './routes/chat';
 import { initSocketIO } from './socket';
+import { logger } from './utils/logger';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -30,5 +31,5 @@ const httpServer = createServer(app);
 initSocketIO(httpServer);
 
 httpServer.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  logger.info('Server started', { port });
 });

@@ -11,6 +11,7 @@ exports.sendTelegramNotification = sendTelegramNotification;
 const node_fs_1 = require("node:fs");
 const node_path_1 = __importDefault(require("node:path"));
 const db_1 = require("@maietek/db");
+const logger_1 = require("../utils/logger");
 const TELEGRAM_API_BASE = "https://api.telegram.org";
 const TELEGRAM_TIMEOUT_MS = 5000;
 const TELEGRAM_MESSAGE_LIMIT = 3900;
@@ -120,7 +121,10 @@ async function getProfileName(userId) {
 async function sendTelegramMessage(channel, text) {
     const config = getTelegramConfig(channel);
     if (!config) {
-        console.warn(`[Telegram] Notification skipped for ${channel}: missing bot token or chat id.`);
+        logger_1.logger.warn("Telegram notification skipped", {
+            channel,
+            reason: "missing bot token or chat id",
+        });
         return;
     }
     const controller = new AbortController();
@@ -139,11 +143,17 @@ async function sendTelegramMessage(channel, text) {
             signal: controller.signal,
         });
         if (!response.ok) {
-            console.error(`[Telegram] Notification failed for ${channel}:`, response.status);
+            logger_1.logger.error("Telegram notification failed", {
+                channel,
+                status: response.status,
+            });
         }
     }
     catch (error) {
-        console.error(`[Telegram] Notification failed for ${channel}:`, error instanceof Error ? error.message : "Unknown error");
+        logger_1.logger.error("Telegram notification failed", {
+            channel,
+            error,
+        });
     }
     finally {
         clearTimeout(timeout);

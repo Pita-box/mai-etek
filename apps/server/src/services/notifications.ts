@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs"
 import path from "node:path"
 import { createAdminClient } from "@maietek/db"
+import { logger } from "../utils/logger"
 
 const TELEGRAM_API_BASE = "https://api.telegram.org"
 const TELEGRAM_TIMEOUT_MS = 5000
@@ -184,9 +185,10 @@ async function sendTelegramMessage(channel: TelegramChannel, text: string) {
   const config = getTelegramConfig(channel)
 
   if (!config) {
-    console.warn(
-      `[Telegram] Notification skipped for ${channel}: missing bot token or chat id.`,
-    )
+    logger.warn("Telegram notification skipped", {
+      channel,
+      reason: "missing bot token or chat id",
+    })
     return
   }
 
@@ -211,16 +213,16 @@ async function sendTelegramMessage(channel: TelegramChannel, text: string) {
     )
 
     if (!response.ok) {
-      console.error(
-        `[Telegram] Notification failed for ${channel}:`,
-        response.status,
-      )
+      logger.error("Telegram notification failed", {
+        channel,
+        status: response.status,
+      })
     }
   } catch (error) {
-    console.error(
-      `[Telegram] Notification failed for ${channel}:`,
-      error instanceof Error ? error.message : "Unknown error",
-    )
+    logger.error("Telegram notification failed", {
+      channel,
+      error,
+    })
   } finally {
     clearTimeout(timeout)
   }
