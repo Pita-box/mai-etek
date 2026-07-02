@@ -77,7 +77,7 @@ services:
       JWT_REFRESH_EXPIRY: ${JWT_REFRESH_EXPIRY:-7d}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
-      EMAIL_FROM: ${EMAIL_FROM:-onboarding@resend.dev}
+      EMAIL_FROM: "${EMAIL_FROM:-Maietek <zprava@maiweb.zip>}"
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
       TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
       TELEGRAM_DOM_CHAT_ID: ${TELEGRAM_DOM_CHAT_ID:-}
