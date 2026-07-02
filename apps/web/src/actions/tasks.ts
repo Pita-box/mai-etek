@@ -385,11 +385,18 @@ export async function createTask(formData: FormData) {
   if (!assigned_to) {
     // If no assigned_to provided, and user is DOM, assign to their SUB
     // For now we just get the first SUB assigned to this DOM
-    const { data: subProfile } = await supabase
+    const { data: subProfile, error: subProfileError } = await supabase
       .from("profiles")
       .select("id")
       .eq("dom_id", session.user.id)
-      .single();
+      .eq("role", "sub")
+      .limit(1)
+      .maybeSingle();
+
+    if (subProfileError) {
+      console.error("Error finding assigned sub:", subProfileError);
+      return { error: subProfileError.message };
+    }
 
     if (subProfile) {
       assigned_to = subProfile.id;
